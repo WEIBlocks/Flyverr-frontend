@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Flyverr‑frontend
 
-## Getting Started
+<p align="center">
+  <img src="images/logo.png" alt="Flyverr Logo" width="150" />
+</p>
 
-First, run the development server:
+**Flyverr‑frontend** is a modern, scalable marketplace UI built with [Next.js](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), and TypeScript. Designed with best practices from 30+ years of full-stack experience, it delivers speed, usability, and maintainability for real-world SaaS and marketplace applications.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ✨ Features
+
+- ⚡ **Next.js 14** with App Router for SSR, SSG, and API routes
+- 🎨 **Tailwind CSS** & **shadcn/ui** for consistent, beautiful design
+- 🔒 **TypeScript** for type-safe, robust code
+- 📱 **Fully responsive** and mobile-first
+- 🔗 **Centralized Axios API helper** with interceptors for secure integration
+- 🧩 **Component-driven** architecture for easy scaling
+- 🛠️ **Ready-to-integrate** authentication (login/signup) flows
+- 🧪 **Easy to test and extend**
+
+---
+
+## 📂 Folder Structure
+
+```
+Flyverr-frontend/
+├── public/               # Static assets (images, favicon, etc.)
+├── src/
+│   ├── app/              # Next.js app directory (routing, pages)
+│   │   ├── login/        # Login page
+│   │   ├── signup/       # Signup page
+│   │   └── ...           # Other routes
+│   ├── components/
+│   │   ├── ui/           # Reusable UI components (Button, Input, etc.)
+│   │   └── ...           # Other shared components
+│   ├── lib/
+│   │   └── api.ts        # Axios API helper with interceptors
+│   └── ...               # Utilities, hooks, etc.
+├── .next/                # Next.js build output (auto-generated)
+├── node_modules/         # Dependencies
+├── package.json          # Project metadata and scripts
+├── tsconfig.json         # TypeScript config
+├── postcss.config.mjs    # PostCSS config
+├── tailwind.config.js    # Tailwind CSS config
+└── README.md             # Project documentation
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. **Clone the Repository**
+```bash
+git clone https://github.com/your-username/Flyverr-frontend.git
+cd Flyverr-frontend
+```
 
-## Learn More
+### 2. **Install Dependencies**
+```bash
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. **Run the Development Server**
+```bash
+npm run dev
+```
+Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🌐 Deployment
 
-## Deploy on Vercel
+### **Vercel (Recommended)**
+1. Push your code to GitHub/GitLab/Bitbucket.
+2. Go to [vercel.com](https://vercel.com/), import your repo, and deploy.
+3. Set environment variables in the Vercel dashboard as needed.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### **Manual Deployment**
+```bash
+npm run build
+npm start
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## ⚙️ Environment Variables
+- `NEXT_PUBLIC_API_URL` — Base URL for your backend API (set in `.env.local`)
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo and create your branch: `git checkout -b feature/your-feature`
+2. Commit your changes: `git commit -m 'Add some feature'`
+3. Push to the branch: `git push origin feature/your-feature`
+4. Open a Pull Request
+
+---
+
+## 📖 License
+
+This project is licensed under the MIT License.
+
+---
+
+<p align="center"><b>Crafted with care and 30+ years of full-stack experience.</b></p>
+
