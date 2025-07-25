@@ -1,8 +1,6 @@
 # 🚀 Flyverr‑frontend
 
-<p align="center">
-  <img src="images/logo.png" alt="Flyverr Logo" width="150" />
-</p>
+
 
 **Flyverr‑frontend** is a modern, scalable marketplace UI built with [Next.js](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), and TypeScript. Designed with best practices from 30+ years of full-stack experience, it delivers speed, usability, and maintainability for real-world SaaS and marketplace applications.
 
