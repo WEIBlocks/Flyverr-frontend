@@ -1,11 +1,11 @@
-import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 
 /**
  * Axios instance for all API requests.
  * Configured with base URL, credentials, and timeout.
  */
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api", // Set your API base URL
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api", // Updated to match your backend
   withCredentials: true, // Send cookies if needed
   timeout: 10000, // 10 seconds timeout
 });
@@ -15,7 +15,7 @@ const api = axios.create({
  * You can customize this to use cookies, localStorage, or any auth provider.
  */
 api.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config) => {
     // Example: Attach token from localStorage (customize as needed)
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (token && config.headers) {
@@ -23,7 +23,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error: AxiosError) => Promise.reject(error)
+  (error) => Promise.reject(error)
 );
 
 /**
@@ -31,8 +31,8 @@ api.interceptors.request.use(
  * You can add logging, error notifications, or global redirects here.
  */
 api.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  (error: AxiosError) => {
+  (response) => response,
+  (error) => {
     // Example: Handle 401 Unauthorized globally
     if (error.response && error.response.status === 401) {
       // Optionally, redirect to login or clear auth state
@@ -47,8 +47,8 @@ api.interceptors.response.use(
  * Generic API request helper for custom requests.
  * @param config AxiosRequestConfig
  */
-export const apiRequest = <T = any>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> => {
-  return api.request<T>(config);
+export const apiRequest = (config: Parameters<typeof api.request>[0]) => {
+  return api.request(config);
 };
 
 /**
@@ -59,10 +59,34 @@ export const login = (data: { email: string; password: string }) =>
   api.post("/auth/login", data);
 
 /**
- * Signup API helper
- * @param data { name, email, password }
+ * Signup API helper - Updated to match backend requirements
+ * @param data { firstName, lastName, username, email, password }
  */
-export const signup = (data: { name: string; email: string; password: string }) =>
-  api.post("/auth/signup", data);
+export const signup = (data: { 
+  firstName: string; 
+  lastName: string; 
+  username: string; 
+  email: string; 
+  password: string; 
+}) => api.post("/auth/signup", data);
+
+/**
+ * Forgot Password API helper
+ * @param data { email }
+ */
+export const forgotPassword = (data: { email: string }) =>
+  api.post("/auth/forgot-password", data);
+
+/**
+ * Reset Password API helper
+ * @param data { password, token }
+ */
+export const resetPassword = (data: { password: string; token: string }) => {
+  // console.log("🔍 API Helper - Reset Password Data:", {
+  //   password: data.password ? "***" : "undefined",
+  //   token: data.token ? data.token.substring(0, 20) + "..." : "undefined"
+  // });
+  return api.post("/auth/reset-password", data);
+};
 
 export default api; 
