@@ -20,33 +20,35 @@ function ResetPasswordContent() {
 
   // Extract token from URL parameters
   React.useEffect(() => {
-    console.log("🔍 Current URL:", window.location.href);
-    console.log("🔍 URL Hash:", window.location.hash);
-    console.log("🔍 URL Search:", window.location.search);
+    if (typeof window !== 'undefined') {
+      console.log("🔍 Current URL:", window.location.href);
+      console.log("🔍 URL Hash:", window.location.hash);
+      console.log("🔍 URL Search:", window.location.search);
+      
+      // Check for token in query parameters first
+      const accessToken = searchParams.get('access_token')
+      console.log("🔍 Access token from search params:", accessToken ? accessToken.substring(0, 20) + "..." : "null");
+      
+      // Check for token in hash (Supabase recovery links)
+      const tokenFromHash = window.location.hash ? 
+        new URLSearchParams(window.location.hash.substring(1)).get('access_token') : null
+      console.log("🔍 Token from hash:", tokenFromHash ? tokenFromHash.substring(0, 20) + "..." : "null");
+      
+      // Check for token in hash with type=recovery
+      const recoveryToken = window.location.hash && window.location.hash.includes('type=recovery') ? 
+        new URLSearchParams(window.location.hash.substring(1)).get('access_token') : null
+      console.log("🔍 Recovery token:", recoveryToken ? recoveryToken.substring(0, 20) + "..." : "null");
     
-    // Check for token in query parameters first
-    const accessToken = searchParams.get('access_token')
-    console.log("🔍 Access token from search params:", accessToken ? accessToken.substring(0, 20) + "..." : "null");
-    
-    // Check for token in hash (Supabase recovery links)
-    const tokenFromHash = window.location.hash ? 
-      new URLSearchParams(window.location.hash.substring(1)).get('access_token') : null
-    console.log("🔍 Token from hash:", tokenFromHash ? tokenFromHash.substring(0, 20) + "..." : "null");
-    
-    // Check for token in hash with type=recovery
-    const recoveryToken = window.location.hash && window.location.hash.includes('type=recovery') ? 
-      new URLSearchParams(window.location.hash.substring(1)).get('access_token') : null
-    console.log("🔍 Recovery token:", recoveryToken ? recoveryToken.substring(0, 20) + "..." : "null");
-    
-    const resetToken = accessToken || tokenFromHash || recoveryToken
-    
-    if (resetToken) {
-      console.log('✅ Reset token found:', resetToken.substring(0, 20) + '...')
-      setToken(resetToken)
-    } else {
-      console.log('❌ No reset token found in URL')
-      toast.error("Invalid or missing reset token. Please request a new password reset.")
-      router.push("/forgot-password")
+          const resetToken = accessToken || tokenFromHash || recoveryToken
+      
+      if (resetToken) {
+        console.log('✅ Reset token found:', resetToken.substring(0, 20) + '...')
+        setToken(resetToken)
+      } else {
+        console.log('❌ No reset token found in URL')
+        toast.error("Invalid or missing reset token. Please request a new password reset.")
+        router.push("/forgot-password")
+      }
     }
   }, [searchParams, router])
 

@@ -91,7 +91,7 @@ export default function SignupPage() {
           }
         )
         
-        if (responseData.data?.user) {
+        if (responseData.data?.user && typeof window !== 'undefined') {
           localStorage.setItem("pendingUser", JSON.stringify(responseData.data.user))
         }
         

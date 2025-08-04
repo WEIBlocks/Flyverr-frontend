@@ -33,11 +33,13 @@ export default function LoginPage() {
 
   // Check if user just signed up
   React.useEffect(() => {
-    const pendingUser = localStorage.getItem("pendingUser")
-    if (pendingUser) {
-      setShowEmailReminder(true)
-      // Clear the pending user data after showing reminder
-      localStorage.removeItem("pendingUser")
+    if (typeof window !== 'undefined') {
+      const pendingUser = localStorage.getItem("pendingUser")
+      if (pendingUser) {
+        setShowEmailReminder(true)
+        // Clear the pending user data after showing reminder
+        localStorage.removeItem("pendingUser")
+      }
     }
   }, [])
 
@@ -82,12 +84,12 @@ export default function LoginPage() {
         }
         
         // Store token if provided by backend
-        if (responseData.data?.token) {
+        if (responseData.data?.token && typeof window !== 'undefined') {
           localStorage.setItem("token", responseData.data.token)
         }
         
         // Store user data if provided
-        if (responseData.data?.user) {
+        if (responseData.data?.user && typeof window !== 'undefined') {
           localStorage.setItem("user", JSON.stringify(responseData.data.user))
         }
         
