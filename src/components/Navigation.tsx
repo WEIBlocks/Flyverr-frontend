@@ -3,21 +3,20 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, User, HelpCircle, BookOpen, ShoppingBag, Home, Sun, Moon, Monitor, LogOut, Settings } from 'lucide-react'
+import { Menu, X, User, HelpCircle, BookOpen, ShoppingBag, Home, Sun, Moon, Monitor, LogOut, Settings, LayoutDashboard, Package, Key } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
-
-type Theme = 'light' | 'dark' | 'device'
+import { useTheme } from '@/contexts/ThemeContext'
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [theme, setTheme] = useState<Theme>('device')
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const pathname = usePathname()
   const themeDropdownRef = useRef<HTMLDivElement>(null)
   const profileDropdownRef = useRef<HTMLDivElement>(null)
   const { user, isAuthenticated, logout } = useAuth()
+  const { theme, setTheme, getThemeIcon } = useTheme()
 
   const navigationItems = [
     { name: 'Home', href: '/', icon: Home },
@@ -32,27 +31,6 @@ const Navigation = () => {
     }
     return pathname.startsWith(href)
   }
-
-  // Theme management
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme
-    if (savedTheme) {
-      setTheme(savedTheme)
-    }
-  }, [])
-
-  useEffect(() => {
-    const root = document.documentElement
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    
-    if (theme === 'device') {
-      root.classList.toggle('dark', systemTheme === 'dark')
-    } else {
-      root.classList.toggle('dark', theme === 'dark')
-    }
-    
-    localStorage.setItem('theme', theme)
-  }, [theme])
 
   // Body scroll lock when mobile menu is open
   useEffect(() => {
@@ -88,22 +66,9 @@ const Navigation = () => {
     }
   }, [isThemeMenuOpen, isProfileMenuOpen])
 
-  const handleThemeChange = (newTheme: Theme) => {
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
     setTheme(newTheme)
     setIsThemeMenuOpen(false)
-  }
-
-  const getThemeIcon = () => {
-    switch (theme) {
-      case 'light':
-        return <Sun className="w-4 h-4" />
-      case 'dark':
-        return <Moon className="w-4 h-4" />
-      case 'device':
-        return <Monitor className="w-4 h-4" />
-      default:
-        return <Monitor className="w-4 h-4" />
-    }
   }
 
   return (
@@ -204,15 +169,15 @@ const Navigation = () => {
                     <span>Dark</span>
                   </button>
                   <button
-                    onClick={() => handleThemeChange('device')}
+                    onClick={() => handleThemeChange('system')}
                     className={`w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 ${
-                      theme === 'device'
+                      theme === 'system'
                         ? 'text-flyverr-primary bg-flyverr-primary/10'
                         : 'text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                   >
                     <Monitor className="w-4 h-4" />
-                    <span>Device</span>
+                    <span>System</span>
                   </button>
                 </div>
               )}
@@ -265,6 +230,14 @@ const Navigation = () => {
                       <Settings className="w-4 h-4" />
                       <span>Profile</span>
                     </button>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      <span>Dashboard</span>
+                    </Link>
                     <button
                       onClick={() => {
                         setIsProfileMenuOpen(false)
@@ -320,15 +293,15 @@ const Navigation = () => {
                     <span>Dark</span>
                   </button>
                   <button
-                    onClick={() => handleThemeChange('device')}
+                    onClick={() => handleThemeChange('system')}
                     className={`w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 ${
-                      theme === 'device'
+                      theme === 'system'
                         ? 'text-flyverr-primary bg-flyverr-primary/10'
                         : 'text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                   >
                     <Monitor className="w-4 h-4" />
-                    <span>Device</span>
+                    <span>System</span>
                   </button>
                 </div>
               )}
@@ -447,6 +420,15 @@ const Navigation = () => {
                         <Settings className="w-5 h-5 mr-3" />
                         Profile
                       </Button>
+                      <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-800"
+                        >
+                          <LayoutDashboard className="w-5 h-5 mr-3" />
+                          Dashboard
+                        </Button>
+                      </Link>
                       <Button 
                         variant="ghost" 
                         className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"

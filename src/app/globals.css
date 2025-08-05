@@ -56,12 +56,14 @@
 
     /* Flyverr Custom Colors - Dark Mode */
     --flyverr-primary: #4F46E5;
-    --flyverr-secondary: #34D399;
+    --flyverr-secondary: #4F46E5;
     --flyverr-accent: #FBBF24;
     --flyverr-neutral: #1F2937;
     --flyverr-text: #F9FAFB;
   }
 }
+
+
 
 @layer base {
   * {
@@ -71,6 +73,17 @@
     @apply bg-background text-foreground;
   }
 }
+  
+
+/* hidden control button of number input field  */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
 
 @layer utilities {
   .line-clamp-2 {
@@ -78,6 +91,22 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  /* Modal Animation */
+  .slide-down-big-in {
+    animation: slide-down-big-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+
+  @keyframes slide-down-big-in {
+    0% {
+      transform: translateY(-10%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
   /* Flyverr Color Utilities */
@@ -135,5 +164,13 @@
   
   .hover\:text-flyverr-secondary:hover {
     color: var(--flyverr-secondary);
+  }
+  
+  .ring-flyverr-primary {
+    --tw-ring-color: var(--flyverr-primary);
+  }
+  
+  .ring-flyverr-secondary {
+    --tw-ring-color: var(--flyverr-secondary);
   }
 }

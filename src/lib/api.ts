@@ -1,4 +1,5 @@
 import axios from "axios";
+import { storage } from "./utils";
 
 /**
  * Axios instance for all API requests.
@@ -17,7 +18,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Attach token from localStorage
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const token = storage.getToken();
     if (token && config.headers) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }

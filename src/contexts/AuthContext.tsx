@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { login as loginApi, signup as signupApi } from '@/lib/api'
 import { useRouter } from 'next/navigation'
+import { storage } from '@/lib/utils'
 
 interface User {
   id: string
@@ -58,12 +59,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuth = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const userData = localStorage.getItem('user')
+      const token = storage.getToken()
+      const userData = storage.getUser()
       
       if (token && userData) {
-        const parsedUser = JSON.parse(userData)
-        setUser(parsedUser)
+        setUser(userData)
       }
     } catch (error) {
       console.error('Error checking auth:', error)
@@ -93,9 +93,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Store token and user data
-      localStorage.setItem('token', session.accessToken)
-      localStorage.setItem('refreshToken', session.refreshToken)
-      localStorage.setItem('user', JSON.stringify(userData))
+      storage.setToken(session.accessToken)
+      storage.setRefreshToken(session.refreshToken)
+      storage.setUser(userData)
       
       setUser(userData)
       router.push('/')
@@ -127,9 +127,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Store token and user data
-      localStorage.setItem('token', session.accessToken)
-      localStorage.setItem('refreshToken', session.refreshToken)
-      localStorage.setItem('user', JSON.stringify(userData))
+      storage.setToken(session.accessToken)
+      storage.setRefreshToken(session.refreshToken)
+      storage.setUser(userData)
       
       setUser(userData)
       router.push('/')
@@ -143,9 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     // Clear local storage
-    localStorage.removeItem('token')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('user')
+    storage.clearAuth()
     
     // Clear user state
     setUser(null)

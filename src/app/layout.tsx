@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "react-hot-toast";
-import Navigation from "@/components/Navigation";
-import { AuthProvider } from "@/contexts/AuthContext";
+import ConditionalNavigation from "@/components/ConditionalNavigation";
+import Providers from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,6 +19,8 @@ export const metadata: Metadata = {
   description: "Flyverr is a digital marketplace for creators to sell limited digital products, with resale options and performance tracking.",
 };
 
+const inter = Inter({ subsets: ['latin'] })
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,34 +32,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        <AuthProvider>
-          <Navigation />
+        <Providers>
+          <ConditionalNavigation />
           {children}
-          <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-            },
-            success: {
-              duration: 3000,
-              iconTheme: {
-                primary: '#4ade80',
-                secondary: '#fff',
-              },
-            },
-            error: {
-              duration: 5000,
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
-              },
-            },
-          }}
-        />
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );
