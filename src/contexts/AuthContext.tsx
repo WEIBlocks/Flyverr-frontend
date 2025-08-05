@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await loginApi({ email, password })
       
       // Handle the specific API response structure
-      const responseData = response.data
+      const responseData: any = response.data
       
       if (!responseData.success) {
         throw new Error(responseData.message || 'Login failed')
@@ -113,7 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await signupApi(data)
       
       // Handle the specific API response structure
-      const responseData = response.data
+      const responseData: any = response.data
       
       if (!responseData.success) {
         throw new Error(responseData.message || 'Signup failed')
