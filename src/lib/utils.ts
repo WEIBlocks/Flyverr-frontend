@@ -149,15 +149,15 @@ export class LocalStorageHelper {
         keys.forEach(key => {
           const value = this.get(key)
           if (value !== null) {
-            result[key as keyof T] = value
+            (result as any)[key] = value
           }
         })
         return result
       }
-      return {}
+      return {} as Partial<T>
     } catch (error) {
       console.error('Error getting multiple items from localStorage:', error)
-      return {}
+      return {} as Partial<T>
     }
   }
 

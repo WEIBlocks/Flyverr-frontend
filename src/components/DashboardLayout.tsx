@@ -147,21 +147,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Bottom Section - Profile & Actions */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
           {/* User Profile */}
-          <div className="flex items-center mb-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 cursor-pointer">
-            <div className="w-10 h-10 bg-flyverr-primary rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold">
-                {user?.profile?.first_name?.charAt(0) || 'U'}
-              </span>
+          <Link href="/dashboard/profile">
+            <div className="flex items-center mb-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200">
+              <div className="w-10 h-10 bg-flyverr-primary rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold">
+                  {user?.profile?.first_name?.charAt(0) || 'U'}
+                </span>
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  {user?.profile?.first_name} {user?.profile?.last_name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {user?.email}
+                </p>
+              </div>
             </div>
-            <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {user?.profile?.first_name} {user?.profile?.last_name}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {user?.email}
-              </p>
-            </div>
-          </div>
+          </Link>
 
           {/* Action Buttons */}
           <div className="space-y-2">
