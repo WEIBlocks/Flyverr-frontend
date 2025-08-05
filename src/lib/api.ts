@@ -7,7 +7,7 @@ import { storage } from "./utils";
  */
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "https://flyverr-api-production.up.railway.app/api", // Updated to match your backend
-  withCredentials: true, // Send cookies if needed
+  // withCredentials: true, // Send cookies if needed
   timeout: 10000, // 10 seconds timeout
 });
 
