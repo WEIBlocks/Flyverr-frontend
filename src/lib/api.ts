@@ -5,7 +5,7 @@ import axios from "axios";
  * Configured with base URL, credentials, and timeout.
  */
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api", // Updated to match your backend
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://flyverr-api-production.up.railway.app/api", // Updated to match your backend
   withCredentials: true, // Send cookies if needed
   timeout: 10000, // 10 seconds timeout
 });
@@ -16,7 +16,7 @@ const api = axios.create({
  */
 api.interceptors.request.use(
   (config) => {
-    // Example: Attach token from localStorage (customize as needed)
+    // Attach token from localStorage
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (token && config.headers) {
       config.headers["Authorization"] = `Bearer ${token}`;

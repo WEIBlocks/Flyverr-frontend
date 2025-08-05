@@ -20,17 +20,17 @@ import {
   Star
 } from "lucide-react"
 import React from "react"
-import { signup } from "@/lib/api"
-import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/AuthContext"
+import { ProtectedRoute } from "@/components/ProtectedRoute"
 import toast from "react-hot-toast"
+import Link from "next/link"
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
   const [isSocialLoading, setIsSocialLoading] = React.useState(false)
   const [agreedToTerms, setAgreedToTerms] = React.useState(false)
   const [passwordStrength, setPasswordStrength] = React.useState(0)
-  const router = useRouter()
+  const { signup, isLoading } = useAuth()
 
   // Password strength checker
   const checkPasswordStrength = (password: string) => {
@@ -55,8 +55,6 @@ export default function SignupPage() {
       toast.error("Please agree to the Terms of Service and Privacy Policy")
       return
     }
-    
-    setIsLoading(true)
 
     const formData = new FormData(e.currentTarget)
     const signupData = {
@@ -68,48 +66,11 @@ export default function SignupPage() {
     }
 
     try {
-      const response = await signup(signupData)
-      
-      const responseData = response.data as {
-        success: boolean
-        message: string
-        data: {
-          user: {
-            id: string
-            email: string
-            emailVerified: boolean
-          }
-        }
-      }
-      
-      if (responseData.success) {
-        toast.success(
-          "Account created successfully! Please check your email to verify your account.",
-          {
-            duration: 6000,
-            icon: '📧',
-          }
-        )
-        
-        if (responseData.data?.user && typeof window !== 'undefined') {
-          localStorage.setItem("pendingUser", JSON.stringify(responseData.data.user))
-        }
-        
-        setTimeout(() => {
-          router.push("/login")
-        }, 2000)
-      } else {
-        toast.error(responseData.message || "Signup failed. Please try again.")
-      }
-    } catch (err: unknown) {
-      console.error("Signup error:", err)
-      const errorMessage = err && typeof err === 'object' && 'response' in err 
-        ? (err.response as { data?: { message?: string } })?.data?.message 
-        : "Signup failed. Please try again."
-      
-      toast.error(errorMessage || "Signup failed. Please try again.")
-    } finally {
-      setIsLoading(false)
+      await signup(signupData)
+      toast.success("Account created successfully! Welcome to Flyverr!")
+    } catch (error: any) {
+      console.error("Signup error:", error)
+      toast.error(error.message || "Signup failed. Please try again.")
     }
   }
 
@@ -120,7 +81,8 @@ export default function SignupPage() {
   }
 
   return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-2 md:py-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -269,7 +231,7 @@ export default function SignupPage() {
               </div>
 
               {/* Social Login Buttons */}
-              <div className="space-y-2 mb-3">
+              {/* <div className="space-y-2 mb-3">
                 <Button
                   type="button"
                   variant="outline"
@@ -306,7 +268,7 @@ export default function SignupPage() {
                 <div className="relative flex justify-center text-xs">
                   <span className="px-2 bg-white text-gray-500">or continue with email</span>
                 </div>
-              </div>
+              </div> */}
 
               <form onSubmit={handleSubmit} className="space-y-2">
                 <div className="grid grid-cols-2 gap-3">
@@ -484,9 +446,9 @@ export default function SignupPage() {
               <div className="text-center mt-4">
                 <p className="text-xs text-gray-600">
                   Already have an account?{' '}
-                  <a href="/login" className="text-blue-600 hover:underline font-medium">
+                  <Link href="/login" className="text-blue-600 hover:underline font-medium">
                     Sign in here
-                  </a>
+                  </Link>
                 </p>
               </div>
 
@@ -507,5 +469,6 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   )
 }

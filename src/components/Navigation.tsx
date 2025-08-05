@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, User, HelpCircle, BookOpen, ShoppingBag, Home, Sun, Moon, Monitor } from 'lucide-react'
+import { Menu, X, User, HelpCircle, BookOpen, ShoppingBag, Home, Sun, Moon, Monitor, LogOut, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/contexts/AuthContext'
 
 type Theme = 'light' | 'dark' | 'device'
 
@@ -12,8 +13,11 @@ const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [theme, setTheme] = useState<Theme>('device')
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false)
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const pathname = usePathname()
   const themeDropdownRef = useRef<HTMLDivElement>(null)
+  const profileDropdownRef = useRef<HTMLDivElement>(null)
+  const { user, isAuthenticated, logout } = useAuth()
 
   const navigationItems = [
     { name: 'Home', href: '/', icon: Home },
@@ -64,22 +68,25 @@ const Navigation = () => {
     }
   }, [isMobileMenuOpen])
 
-  // Click outside to close theme dropdown
+  // Click outside to close dropdowns
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target as Node)) {
         setIsThemeMenuOpen(false)
       }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false)
+      }
     }
 
-    if (isThemeMenuOpen) {
+    if (isThemeMenuOpen || isProfileMenuOpen) {
       document.addEventListener('click', handleClickOutside)
     }
 
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
-  }, [isThemeMenuOpen])
+  }, [isThemeMenuOpen, isProfileMenuOpen])
 
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme)
@@ -212,17 +219,66 @@ const Navigation = () => {
             </div>
 
             {/* Auth Buttons */}
-            <Link href="/login">
-              <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-flyverr-primary">
-                <User className="w-4 h-4 mr-2" />
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
-                Sign Up
-              </Button>
-            </Link>
+            {!isAuthenticated ? (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-flyverr-primary">
+                    <User className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <div className="relative" ref={profileDropdownRef}>
+                                  <Button
+                    variant="ghost"
+                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                    className="text-gray-700 dark:text-gray-300 hover:text-flyverr-primary"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    {user?.profile?.first_name || 'Profile'}
+                  </Button>
+                
+                {/* Profile Dropdown */}
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {user?.profile?.first_name} {user?.profile?.last_name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {user?.email}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false)
+                        // Add profile page navigation here
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      <Settings className="w-4 h-4" />
+                      <span>Profile</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false)
+                        logout()
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -359,17 +415,51 @@ const Navigation = () => {
 
                 {/* Mobile Auth Buttons - Fixed at bottom */}
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800 space-y-3 flex-shrink-0">
-                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <User className="w-5 h-5 mr-3" />
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button className="w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-white py-3 rounded-lg font-medium transition-all duration-200 shadow-lg">
-                      Sign Up
-                    </Button>
-                  </Link>
+                  {!isAuthenticated ? (
+                    <>
+                      <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-800">
+                          <User className="w-5 h-5 mr-3" />
+                          Sign In
+                        </Button>
+                      </Link>
+                      <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Button className="w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-white py-3 rounded-lg font-medium transition-all duration-200 shadow-lg">
+                          Sign Up
+                        </Button>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {user?.profile?.first_name} {user?.profile?.last_name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-800"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Settings className="w-5 h-5 mr-3" />
+                        Profile
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false)
+                          logout()
+                        }}
+                      >
+                        <LogOut className="w-5 h-5 mr-3" />
+                        Logout
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

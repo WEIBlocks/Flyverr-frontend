@@ -20,16 +20,16 @@ import {
   CreditCard
 } from "lucide-react"
 import React from "react"
-import { login } from "@/lib/api"
-import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/AuthContext"
+import { ProtectedRoute } from "@/components/ProtectedRoute"
 import toast from "react-hot-toast"
+import Link from "next/link"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
   const [showEmailReminder, setShowEmailReminder] = React.useState(false)
   const [isSocialLoading, setIsSocialLoading] = React.useState(false)
-  const router = useRouter()
+  const { login, isLoading } = useAuth()
 
   // Check if user just signed up
   React.useEffect(() => {
@@ -45,72 +45,17 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const loginData = {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-    }
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
 
     try {
-      const response = await login(loginData)
-      
-      // Handle the API response structure
-      const responseData = response.data as {
-        success: boolean
-        message: string
-        data?: {
-          token?: string
-          user?: {
-            id: string
-            email: string
-            emailVerified: boolean
-          }
-        }
-      }
-      
-      if (responseData.success) {
-        // Check if email is verified
-        if (responseData.data?.user && !responseData.data.user.emailVerified) {
-          toast.error(
-            "Please verify your email address before logging in. Check your inbox for the verification link.",
-            {
-              duration: 8000, // Longer duration for important message
-              icon: '📧',
-            }
-          )
-          return
-        }
-        
-        // Store token if provided by backend
-        if (responseData.data?.token && typeof window !== 'undefined') {
-          localStorage.setItem("token", responseData.data.token)
-        }
-        
-        // Store user data if provided
-        if (responseData.data?.user && typeof window !== 'undefined') {
-          localStorage.setItem("user", JSON.stringify(responseData.data.user))
-        }
-        
-        // Show success toast
-        toast.success("Login successful! Welcome back!")
-        
-        // Redirect to dashboard or home page
-        router.push("/")
-      } else {
-        toast.error(responseData.message || "Login failed. Please check your credentials.")
-      }
-    } catch (err: unknown) {
-      console.error("Login error:", err)
-      const errorMessage = err && typeof err === 'object' && 'response' in err 
-        ? (err.response as { data?: { message?: string } })?.data?.message 
-        : "Login failed. Please check your credentials."
-      
-      // Show error toast
-      toast.error(errorMessage || "Login failed. Please check your credentials.")
-    } finally {
-      setIsLoading(false)
+      await login(email, password)
+      toast.success("Login successful! Welcome back!")
+    } catch (error: any) {
+      console.error("Login error:", error)
+      toast.error(error.message || "Login failed. Please check your credentials.")
     }
   }
 
@@ -121,7 +66,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-2 md:py-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -241,7 +187,7 @@ export default function LoginPage() {
               )}
 
               {/* Social Login Buttons */}
-              <div className="space-y-2 mb-3">
+              {/* <div className="space-y-2 mb-3">
                 <Button
                   type="button"
                   variant="outline"
@@ -269,16 +215,16 @@ export default function LoginPage() {
                   </svg>
                   Continue with LinkedIn
                 </Button>
-              </div>
+              </div> */}
 
-              <div className="relative mb-3">
+              {/* <div className="relative mb-3">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-xs">
                   <span className="px-2 bg-white text-gray-500">or continue with email</span>
                 </div>
-              </div>
+              </div> */}
 
               <form onSubmit={handleSubmit} className="space-y-2">
                 <div>
@@ -327,7 +273,7 @@ export default function LoginPage() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <a href="/forgot-password" className="text-xs text-blue-600 hover:underline">Forgot password?</a>
+                  <Link href="/forgot-password" className="text-xs text-blue-600 hover:underline">Forgot password?</Link>
                 </div>
 
                 <Button 
@@ -352,9 +298,9 @@ export default function LoginPage() {
               <div className="text-center mt-4">
                 <p className="text-xs text-gray-600">
                   Don&apos;t have an account?{' '}
-                  <a href="/signup" className="text-blue-600 hover:underline font-medium">
+                  <Link href="/signup" className="text-blue-600 hover:underline font-medium">
                     Sign up here
-                  </a>
+                  </Link>
                 </p>
               </div>
 
@@ -375,5 +321,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   )
 }
