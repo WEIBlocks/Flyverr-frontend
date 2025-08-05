@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Search, Star, TrendingUp, Flame, Crown, Gift, ShoppingCart, Eye, ChevronLeft, ChevronRight, Loader2, Image as ImageIcon, Filter, Sparkles, Users, Zap } from 'lucide-react'
+import { Search, Star, TrendingUp, Flame, Crown, Gift, ChevronLeft, ChevronRight, Filter, Sparkles, Users, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 // Types
@@ -202,9 +202,9 @@ const categories = [
   { id: 'all', name: 'All Products', icon: Sparkles },
   { id: 'sponsored', name: 'Sponsored', icon: Crown },
   { id: 'trending', name: 'Trending', icon: TrendingUp },
-  { id: 'recommended', name: 'We Think You\'ll Like', icon: Gift },
+  { id: 'recommended', name: 'We Think You&apos;ll Like', icon: Gift },
   { id: 'most-profitable', name: 'Most Profitable', icon: Zap },
-  { id: 'influencer-fave', name: 'Influencer\'s Fave', icon: Users },
+  { id: 'influencer-fave', name: 'Influencer&apos;s Fave', icon: Users },
   { id: 'hot-deals', name: 'Hot Deals', icon: Flame }
 ]
 
@@ -239,7 +239,7 @@ const ProductCardSkeleton = () => (
 
 export default function MarketplacePage() {
   const router = useRouter()
-  const [products, setProducts] = useState<Product[]>(mockProducts)
+  const [products] = useState<Product[]>(mockProducts)
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(mockProducts)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -437,7 +437,11 @@ export default function MarketplacePage() {
                       {/* Error State */}
                       {imageState.error && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700">
-                          <ImageIcon className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 dark:text-gray-500 mb-2" />
+                          <div className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 dark:text-gray-500 mb-2 flex items-center justify-center">
+                            <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                          </div>
                           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Image unavailable</p>
                         </div>
                       )}

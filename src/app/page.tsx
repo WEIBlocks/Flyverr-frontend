@@ -3,9 +3,11 @@ import { AnimatedHero } from '@/components/AnimatedHero';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ArrowRight, TrendingUp, Users, Star, Zap, Shield, Globe, Sparkles, Download, DollarSign, Flame, Heart } from 'lucide-react';
+import { ArrowRight, TrendingUp, Star, Sparkles, Download, DollarSign, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
+import Image from 'next/image';
+
 
 export default function Home() {
   const router = useRouter();
@@ -345,7 +347,7 @@ export default function Home() {
               <div className="space-y-3">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">Investment Protection</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Optional insurance protects your resale investment. Get refunded if you can't resell within 30 days.
+                  Optional insurance protects your resale investment. Get refunded if you can&apos;t resell within 30 days.
                 </p>
               </div>
 
@@ -370,9 +372,11 @@ export default function Home() {
             <div className="relative">
               {/* Main Image */}
               <div className="relative">
-                <img 
+                <Image 
                   src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=600&fit=crop" 
                   alt="Digital Marketplace"
+                  width={500}
+                  height={600}
                   className="w-full h-auto rounded-2xl shadow-lg"
                 />
                 
@@ -446,10 +450,11 @@ export default function Home() {
             <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
               {/* Product Image */}
               <div className="relative h-56 bg-blue-500 overflow-hidden">
-                <img 
+                <Image 
                   src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop" 
                   alt="Web Development Course"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black/20"></div>
                 
@@ -532,10 +537,11 @@ export default function Home() {
             <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
               {/* Product Image */}
               <div className="relative h-56 bg-pink-500 overflow-hidden">
-                <img 
+                <Image 
                   src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop" 
                   alt="UI/UX Design System"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black/20"></div>
                 
@@ -619,10 +625,11 @@ export default function Home() {
             <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
               {/* Product Image */}
               <div className="relative h-56 bg-emerald-500 overflow-hidden">
-                <img 
+                <Image 
                   src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop" 
                   alt="Digital Marketing Guide"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black/20"></div>
                 
@@ -759,12 +766,12 @@ export default function Home() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Quick Links</h3>
               <ul className="space-y-2">
-                <li><a href="/" className="text-gray-400 hover:text-white transition-colors">Homepage</a></li>
-                <li><a href="/marketplace" className="text-gray-400 hover:text-white transition-colors">Marketplace</a></li>
-                <li><a href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-                <li><a href="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ / Help Center</a></li>
-                <li><a href="/login" className="text-gray-400 hover:text-white transition-colors">Sign In</a></li>
-                <li><a href="/signup" className="text-gray-400 hover:text-white transition-colors">Sign Up</a></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Homepage</Link></li>
+                <li><Link href="/marketplace" className="text-gray-400 hover:text-white transition-colors">Marketplace</Link></li>
+                <li><Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link></li>
+                <li><Link href="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ / Help Center</Link></li>
+                <li><Link href="/login" className="text-gray-400 hover:text-white transition-colors">Sign In</Link></li>
+                <li><Link href="/signup" className="text-gray-400 hover:text-white transition-colors">Sign Up</Link></li>
               </ul>
             </div>
 
@@ -772,11 +779,11 @@ export default function Home() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">For Creators</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Start Creating</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Creator Guidelines</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Royalty System</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Creator Dashboard</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Success Stories</a></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Start Creating</Link></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Creator Guidelines</Link></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Royalty System</Link></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Creator Dashboard</Link></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Success Stories</Link></li>
               </ul>
             </div>
 
@@ -784,11 +791,11 @@ export default function Home() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">For Investors</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Investment Guide</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Resale Insurance</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Portfolio Tracking</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Market Analytics</a></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">How It Works</Link></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Investment Guide</Link></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Resale Insurance</Link></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Portfolio Tracking</Link></li>
+                <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Market Analytics</Link></li>
               </ul>
             </div>
           </div>
@@ -803,10 +810,10 @@ export default function Home() {
 
               {/* Legal Links */}
               <div className="flex space-x-6 text-sm">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Support</a>
+                <Link href="/" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
+                <Link href="/" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link>
+                <Link href="/" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</Link>
+                <Link href="/" className="text-gray-400 hover:text-white transition-colors">Support</Link>
               </div>
             </div>
 

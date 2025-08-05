@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
-import { Search, ChevronDown, ChevronUp, HelpCircle } from 'lucide-react'
+import { Search, ChevronDown, HelpCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
@@ -38,7 +38,7 @@ const faqData: FAQItem[] = [
   {
     id: '4',
     question: 'Do I need a license to fly a drone?',
-    answer: 'Drone licensing requirements vary by country and drone weight. In most countries, drones under 250g don\'t require a license for recreational use, but commercial operations typically require certification. Check your local aviation authority for specific requirements.',
+    answer: 'Drone licensing requirements vary by country and drone weight. In most countries, drones under 250g don&apos;t require a license for recreational use, but commercial operations typically require certification. Check your local aviation authority for specific requirements.',
     category: 'Operations'
   },
   {
@@ -58,7 +58,7 @@ const faqData: FAQItem[] = [
   {
     id: '7',
     question: 'How do I sell my drone on Flyverr?',
-    answer: 'To sell your drone, create a seller account, verify your identity, and list your product with detailed descriptions, photos, and pricing. Our team will review your listing before it goes live. You\'ll earn royalties on successful sales.',
+    answer: 'To sell your drone, create a seller account, verify your identity, and list your product with detailed descriptions, photos, and pricing. Our team will review your listing before it goes live. You&apos;ll earn royalties on successful sales.',
     category: 'Marketplace'
   },
   {
@@ -77,13 +77,13 @@ const faqData: FAQItem[] = [
   // Technical Support
   {
     id: '10',
-    question: 'My drone won\'t connect to the controller. What should I do?',
-    answer: 'First, ensure both devices are fully charged and within range. Try rebooting both the drone and controller. Check for firmware updates and ensure you\'re following the correct pairing procedure for your specific model.',
+    question: 'My drone won&apos;t connect to the controller. What should I do?',
+    answer: 'First, ensure both devices are fully charged and within range. Try rebooting both the drone and controller. Check for firmware updates and ensure you&apos;re following the correct pairing procedure for your specific model.',
     category: 'Technical'
   },
   {
     id: '11',
-    question: 'How do I update my drone\'s firmware?',
+    question: 'How do I update my drone&apos;s firmware?',
     answer: 'Download the official app for your drone model, connect your drone to your device via USB or WiFi, and follow the in-app instructions. Always ensure your drone is fully charged before updating firmware.',
     category: 'Technical'
   },
@@ -130,7 +130,7 @@ const faqData: FAQItem[] = [
   {
     id: '18',
     question: 'Do I need insurance for my drone?',
-    answer: 'While not always legally required, drone insurance is highly recommended. It covers damage to your drone, liability for property damage or injury, and legal expenses. Many homeowners policies don\'t cover drones.',
+    answer: 'While not always legally required, drone insurance is highly recommended. It covers damage to your drone, liability for property damage or injury, and legal expenses. Many homeowners policies don&apos;t cover drones.',
     category: 'Legal'
   },
 
@@ -272,7 +272,7 @@ export default function FAQPage() {
               No questions found
             </h3>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-xs sm:max-w-sm md:max-w-md mx-auto transition-all duration-300 px-4">
-              Try adjusting your search terms to find what you're looking for.
+              Try adjusting your search terms to find what you&apos;re looking for.
             </p>
           </div>
         )}
@@ -288,7 +288,7 @@ export default function FAQPage() {
                 Still have questions?
               </h3>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-blue-100 mb-6 sm:mb-8 lg:mb-10 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto transition-all duration-300">
-                Can't find what you're looking for? Our support team is here to help you 24/7.
+                Can&apos;t find what you&apos;re looking for? Our support team is here to help you 24/7.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 <Button className="bg-white text-blue-600 hover:bg-gray-100 rounded-full px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-semibold transition-all duration-300 hover:shadow-lg">

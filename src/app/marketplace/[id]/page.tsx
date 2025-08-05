@@ -253,7 +253,7 @@ export default function ProductDetailPage() {
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-flyverr-text dark:text-white mb-2">
                     {product.title}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-300 text-lg">
@@ -294,11 +294,11 @@ export default function ProductDetailPage() {
                       />
                     ))}
                   </div>
-                  <span className="text-gray-900 dark:text-white font-medium">
+                  <span className="text-flyverr-text dark:text-white font-medium">
                     {product.rating} ({product.reviews} reviews)
                   </span>
                 </div>
-                <Badge className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300">
+                <Badge className="bg-flyverr-secondary/20 dark:bg-flyverr-secondary/30 text-flyverr-secondary dark:text-flyverr-secondary">
                   {product.category}
                 </Badge>
               </div>
@@ -306,13 +306,13 @@ export default function ProductDetailPage() {
               {/* Special Badges */}
               <div className="flex flex-wrap gap-2 mb-6">
                 {product.isSponsored && (
-                  <Badge className="bg-purple-500 text-white">
+                  <Badge className="bg-flyverr-accent text-white">
                     <Crown className="h-3 w-3 mr-1" />
                     Sponsored
                   </Badge>
                 )}
                 {product.isTrending && (
-                  <Badge className="bg-blue-500 text-white">
+                  <Badge className="bg-flyverr-primary text-white">
                     <TrendingUp className="h-3 w-3 mr-1" />
                     Trending
                   </Badge>
@@ -324,7 +324,7 @@ export default function ProductDetailPage() {
                   </Badge>
                 )}
                 {product.isMostProfitable && (
-                  <Badge className="bg-green-500 text-white">
+                  <Badge className="bg-flyverr-secondary text-white">
                     <Zap className="h-3 w-3 mr-1" />
                     Most Profitable
                   </Badge>
@@ -332,7 +332,7 @@ export default function ProductDetailPage() {
                 {product.isInfluencerFave && (
                   <Badge className="bg-pink-500 text-white">
                     <Users className="h-3 w-3 mr-1" />
-                    Influencer's Fave
+                    Influencer&apos;s Fave
                   </Badge>
                 )}
               </div>
@@ -355,10 +355,10 @@ export default function ProductDetailPage() {
                     Remaining: {product.remainingLicenses} of {product.totalLicenses} licenses
                   </span>
                   <div className="w-24 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                    <div 
-                      className="bg-blue-600 h-2 rounded-full"
-                      style={{ width: `${(product.remainingLicenses / product.totalLicenses) * 100}%` }}
-                    ></div>
+                                      <div 
+                    className="bg-flyverr-primary h-2 rounded-full"
+                    style={{ width: `${(product.remainingLicenses / product.totalLicenses) * 100}%` }}
+                  ></div>
                   </div>
               </div>
             </div>
@@ -376,7 +376,7 @@ export default function ProductDetailPage() {
                       onClick={() => setSelectedTab(tab.id as any)}
                       className={`pb-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                         selectedTab === tab.id
-                          ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                          ? 'border-flyverr-primary text-flyverr-primary dark:text-flyverr-primary'
                           : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                       }`}
                     >
@@ -391,7 +391,7 @@ export default function ProductDetailPage() {
                 {selectedTab === 'description' && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">About this product</h3>
+                      <h3 className="text-lg font-semibold text-flyverr-text dark:text-white mb-3">About this product</h3>
                       <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                         {product.longDescription}
                       </p>
@@ -399,11 +399,11 @@ export default function ProductDetailPage() {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-3">What you'll get</h4>
+                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">What you&apos;ll get</h4>
                         <ul className="space-y-2">
                           {product.features.map((feature, index) => (
                             <li key={index} className="flex items-center text-gray-600 dark:text-gray-300">
-                              <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                              <div className="w-2 h-2 bg-flyverr-secondary rounded-full mr-3"></div>
                               {feature}
                             </li>
                           ))}
@@ -411,11 +411,11 @@ export default function ProductDetailPage() {
           </div>
 
             <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Requirements</h4>
+                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">Requirements</h4>
                         <ul className="space-y-2">
                           {product.requirements.map((req, index) => (
                             <li key={index} className="flex items-center text-gray-600 dark:text-gray-300">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                              <div className="w-2 h-2 bg-flyverr-primary rounded-full mr-3"></div>
                               {req}
                             </li>
                           ))}
@@ -441,13 +441,13 @@ export default function ProductDetailPage() {
                           <Image
                             src={review.avatar}
                             alt={review.user}
-                            width={48}
+                             width={48}
                             height={48}
                             className="rounded-full"
                           />
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-semibold text-gray-900 dark:text-white">{review.user}</h4>
+                              <h4 className="font-semibold text-flyverr-text dark:text-white">{review.user}</h4>
                               <span className="text-sm text-gray-500 dark:text-gray-400">{review.date}</span>
                             </div>
                             <div className="flex items-center mb-2">
@@ -486,7 +486,7 @@ export default function ProductDetailPage() {
                         className="rounded-full"
                       />
                       <div>
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{product.creator.name}</h3>
+                        <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">{product.creator.name}</h3>
                         <div className="flex items-center gap-4 mt-2">
                           <div className="flex items-center">
                             <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
@@ -499,7 +499,7 @@ export default function ProductDetailPage() {
               </div>
 
                     <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                      <h4 className="font-semibold text-gray-900 dark:text-white mb-2">About the creator</h4>
+                      <h4 className="font-semibold text-flyverr-text dark:text-white mb-2">About the creator</h4>
                       <p className="text-gray-600 dark:text-gray-300">
                         {product.creator.name} is a professional web developer and instructor with over 10 years of experience. 
                         They specialize in modern web technologies and have helped thousands of students learn web development.
@@ -516,78 +516,81 @@ export default function ProductDetailPage() {
             <div className="sticky top-8">
               <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
                 <CardContent className="p-6">
-                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+                  <div className="text-3xl font-bold text-flyverr-text dark:text-white mb-6">
                     ${product.price}
               </div>
 
                   {/* License Info */}
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
+                  <div className="bg-flyverr-primary/10 dark:bg-flyverr-primary/20 rounded-lg p-4 mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-900 dark:text-white">Available Licenses</span>
+                      <span className="text-sm font-medium text-flyverr-text dark:text-white">Available Licenses</span>
                       <span className="text-sm text-gray-600 dark:text-gray-400">
                         {product.remainingLicenses} of {product.totalLicenses}
                       </span>
               </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
                         style={{ width: `${(product.remainingLicenses / product.totalLicenses) * 100}%` }}
                       ></div>
               </div>
             </div>
 
                   {/* Purchase Buttons */}
-                  <div className="space-y-3 mb-6">
-                  <Button
-                      className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white py-3 text-lg font-semibold"
+                  <div className="space-y-4 mb-6">
+                    {/* Primary Action - Buy to Use */}
+                    <Button
+                      className="w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-white py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
                       onClick={handleBuyToUse}
                     >
-                      <Download className="h-5 w-5 mr-2" />
+                      <Download className="h-6 w-6 mr-3" />
                       Buy to Use
-                  </Button>
+                    </Button>
                     
-                  <Button
+                    {/* Secondary Action - Buy to Resell */}
+                    <Button
                       variant="outline"
-                      className="w-full border-2 border-green-500 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 py-3 text-lg font-semibold"
+                      className="w-full bg-white dark:bg-gray-800 border-2 border-flyverr-secondary text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white dark:hover:bg-flyverr-secondary dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
                       onClick={handleBuyToResell}
                     >
-                      <TrendingUp className="h-5 w-5 mr-2" />
+                      <TrendingUp className="h-6 w-6 mr-3" />
                       Buy to Resell
-                  </Button>
+                    </Button>
                     
+                    {/* Tertiary Action - Buy with Insurance */}
                     <Button 
                       variant="outline"
-                      className="w-full border-2 border-purple-500 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 py-3 text-lg font-semibold"
+                      className="w-full bg-white dark:bg-gray-800 border-2 border-flyverr-accent text-flyverr-accent hover:bg-flyverr-accent hover:text-white dark:hover:bg-flyverr-accent dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
                       onClick={handleBuyWithInsurance}
                     >
-                      <Shield className="h-5 w-5 mr-2" />
+                      <Shield className="h-6 w-6 mr-3" />
                       Buy with Insurance
-                </Button>
-              </div>
+                    </Button>
+                  </div>
 
                   {/* Product Details */}
                   <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex justify-between">
                       <span>File Size:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{product.fileSize}</span>
+                      <span className="font-medium text-flyverr-text dark:text-white">{product.fileSize}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Last Updated:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{product.lastUpdated}</span>
+                      <span className="font-medium text-flyverr-text dark:text-white">{product.lastUpdated}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Category:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{product.category}</span>
+                      <span className="font-medium text-flyverr-text dark:text-white">{product.category}</span>
               </div>
             </div>
 
                   {/* Guarantee */}
-                  <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <div className="mt-6 p-4 bg-flyverr-secondary/10 dark:bg-flyverr-secondary/20 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <Shield className="h-5 w-5 text-green-600 dark:text-green-400" />
-                      <span className="font-semibold text-green-800 dark:text-green-300">30-Day Money Back Guarantee</span>
+                      <Shield className="h-5 w-5 text-flyverr-secondary dark:text-flyverr-secondary" />
+                      <span className="font-semibold text-flyverr-secondary dark:text-flyverr-secondary">30-Day Money Back Guarantee</span>
               </div>
-                    <p className="text-sm text-green-700 dark:text-green-400">
+                    <p className="text-sm text-flyverr-secondary/80 dark:text-flyverr-secondary/80">
                       Not satisfied? Get a full refund within 30 days of purchase.
                     </p>
                 </div>
