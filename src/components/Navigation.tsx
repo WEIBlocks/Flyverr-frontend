@@ -19,11 +19,12 @@ const Navigation = () => {
   const { user, isAuthenticated, logout } = useAuth()
   const { theme, setTheme, getThemeIcon } = useTheme()
 
-  const navigationItems = [
+  const navigationItems = isAuthenticated ? [
     { name: 'Home', href: '/', icon: Home },
     { name: 'Marketplace', href: '/marketplace', icon: ShoppingBag },
-    { name: 'Blog', href: '/blog', icon: BookOpen },
     { name: 'FAQ', href: '/faq', icon: HelpCircle },
+  ] : [
+    { name: 'Marketplace', href: '/marketplace', icon: ShoppingBag },
   ]
 
   const isActive = (href: string) => {
@@ -78,7 +79,7 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16 sm:h-18 lg:h-20">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2 group">
+            <Link href={isAuthenticated ? "/" : "/marketplace"} className="flex items-center space-x-2 group">
               <div className="relative">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-flyverr-primary rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <svg 
@@ -207,7 +208,7 @@ const Navigation = () => {
                     className="text-gray-700 dark:text-gray-300 hover:text-flyverr-primary"
                   >
                     <User className="w-4 h-4 mr-2" />
-                    {user?.profile?.first_name || 'Profile'}
+                    {user?.first_name || 'Profile'}
                   </Button>
                 
                 {/* Profile Dropdown */}
@@ -215,7 +216,7 @@ const Navigation = () => {
                   <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                     <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {user?.profile?.first_name} {user?.profile?.last_name}
+                        {user?.first_name} {user?.last_name}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         {user?.email}
@@ -348,7 +349,7 @@ const Navigation = () => {
               <div className="flex flex-col h-full">
                 {/* Mobile Header - Fixed at top */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
-                  <div className="flex items-center space-x-2">
+                  <Link href={isAuthenticated ? "/" : "/marketplace"} className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-flyverr-primary rounded-lg flex items-center justify-center">
                       <svg 
                         className="w-5 h-5 text-white" 
@@ -361,7 +362,7 @@ const Navigation = () => {
                     <span className="text-lg font-bold text-flyverr-primary">
                       Flyverr
                     </span>
-                  </div>
+                  </Link>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -416,7 +417,7 @@ const Navigation = () => {
                     <>
                       <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {user?.profile?.first_name} {user?.profile?.last_name}
+                          {user?.first_name} {user?.last_name}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           {user?.email}

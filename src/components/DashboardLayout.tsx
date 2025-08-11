@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -29,6 +29,9 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useGetCurrentUser } from '@/features/auth/hooks'
+
+
 
 interface NavigationItem {
   name: string
@@ -43,13 +46,24 @@ interface DashboardLayoutProps {
   profileHref?: string
 }
 
+
+
+
 export default function DashboardLayout({ children, navItems, headerTitle, profileHref }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
-  const { user, logout } = useAuth()
+  const {  logout } = useAuth()
   const { theme, setTheme } = useTheme()
+  const { data: user , isLoading: isLoadingUser } = useGetCurrentUser()
+  
+  // Prevent hydration mismatch by only setting state after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
+  console.log(user)
   const handleLogout = () => {
     logout()
   }
@@ -109,18 +123,16 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
  
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      {/* Mobile Overlay */}
+      <div 
+        className={`lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-200 ${mounted && sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => mounted && sidebarOpen && setSidebarOpen(false)}
+      />
 
       {/* Fixed Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-card text-card-foreground shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col border-r border-border
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        fixed inset-y-0 left-0 z-50 w-64 bg-card text-card-foreground shadow-lg transform transition-transform duration-300 ease-in-out flex flex-col border-r border-border
+        ${mounted ? (sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0') : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Top Section - Logo */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-border flex-shrink-0">
@@ -129,14 +141,18 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
               <span className="text-white font-bold text-lg">F</span>
             </div>
             <span className="ml-3 text-xl font-bold">
-              Flyverr
+              <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                Flyverr
+              </span>
             </span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-200"
           >
-            <X className="w-5 h-5" />
+            <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+              <X className="w-5 h-5" />
+            </span>
           </button>
         </div>
 
@@ -160,8 +176,12 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
                     )}
                     
-                    <IconComp className={`w-5 h-5 mr-3 transition-colors duration-200`} />
-                    {item.name}
+                    <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                      <IconComp className={`w-5 h-5 mr-3 transition-colors duration-200`} />
+                    </span>
+                    <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                      {item.name}
+                    </span>
                   </div>
                 </Link>
               )
@@ -176,15 +196,21 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
             <div className="flex items-center mb-4 p-3 rounded-lg bg-muted cursor-pointer hover:bg-accent transition-colors duration-200">
               <div className="w-10 h-10 bg-flyverr-primary rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold">
-                  {user?.profile?.first_name?.charAt(0) || 'U'}
+                  <span className={`transition-opacity duration-200 ${mounted && user ? 'opacity-100' : 'opacity-0'}`}>
+                    {mounted && user ? user.first_name?.charAt(0) || 'U' : 'U'}
+                  </span>
                 </span>
               </div>
               <div className="ml-3 flex-1">
                 <p className="text-sm font-medium">
-                  {user?.profile?.first_name} {user?.profile?.last_name}
+                  <span className={`transition-opacity duration-200 ${mounted && user ? 'opacity-100' : 'opacity-0'}`}>
+                    {mounted && user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'User' : 'Loading...'}
+                  </span>
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {user?.email}
+                  <span className={`transition-opacity duration-200 ${mounted && user ? 'opacity-100' : 'opacity-0'}`}>
+                    {mounted && user ? user.email || 'Loading...' : 'Loading...'}
+                  </span>
                 </p>
               </div>
             </div>
@@ -194,13 +220,21 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
           <div className="space-y-2">
             <Link href="/">
               <Button variant="ghost" className="w-full justify-start hover:bg-accent hover:text-accent-foreground">
-                <Home className="w-4 h-4 mr-3" />
-                Back to Website
+                <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                  <Home className="w-4 h-4 mr-3" />
+                </span>
+                <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                  Back to Website
+                </span>
               </Button>
             </Link>
             <Button variant="ghost" className="w-full justify-start hover:bg-accent hover:text-accent-foreground" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-3" />
-              Sign Out
+              <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                <LogOut className="w-4 h-4 mr-3" />
+              </span>
+              <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                Sign Out
+              </span>
             </Button>
           </div>
         </div>
@@ -213,7 +247,9 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
           <div className="flex items-center justify-between h-16 px-6">
             <div className="flex items-center">
               <h1 className="text-xl font-semibold">
-                {headerTitle ?? 'Dashboard'}
+                <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                  {headerTitle ?? 'Dashboard'}
+                </span>
               </h1>
             </div>
             
@@ -226,54 +262,56 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
                   onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
                   className="flex items-center space-x-2 hover:bg-accent hover:text-accent-foreground"
                 >
-                  {getThemeIcon()}
-                  <span className="text-sm">{getThemeLabel()}</span>
+                  <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                    {getThemeIcon()}
+                  </span>
+                  <span className={`text-sm transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                    {getThemeLabel()}
+                  </span>
                   <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${themeDropdownOpen ? 'rotate-180' : ''}`} />
                 </Button>
 
                 {/* Theme Dropdown Menu */}
-                {themeDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-1 w-32 bg-card text-card-foreground border border-border rounded-md shadow-lg z-50">
-                    <div className="py-1">
-                      <button
-                        onClick={() => {
-                          setTheme('light')
-                          setThemeDropdownOpen(false)
-                        }}
-                        className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                          theme === 'light' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
-                        }`}
-                      >
-                        <Sun className="w-4 h-4" />
-                        <span>Light</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setTheme('dark')
-                          setThemeDropdownOpen(false)
-                        }}
-                        className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                          theme === 'dark' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
-                        }`}
-                      >
-                        <Moon className="w-4 h-4" />
-                        <span>Dark</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setTheme('system')
-                          setThemeDropdownOpen(false)
-                        }}
-                        className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                          theme === 'system' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
-                        }`}
-                      >
-                        <Monitor className="w-4 h-4" />
-                        <span>System</span>
-                      </button>
-                    </div>
+                <div className={`absolute right-0 top-full mt-1 w-32 bg-card text-card-foreground border border-border rounded-md shadow-lg z-50 transition-opacity duration-200 ${mounted && themeDropdownOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        setTheme('light')
+                        setThemeDropdownOpen(false)
+                      }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
+                        theme === 'light' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
+                      }`}
+                    >
+                      <Sun className="w-4 h-4" />
+                      <span>Light</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setTheme('dark')
+                        setThemeDropdownOpen(false)
+                      }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
+                        theme === 'dark' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
+                      }`}
+                    >
+                      <Moon className="w-4 h-4" />
+                      <span>Dark</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setTheme('system')
+                        setThemeDropdownOpen(false)
+                      }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
+                        theme === 'system' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
+                      }`}
+                    >
+                      <Monitor className="w-4 h-4" />
+                      <span>System</span>
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
@@ -286,7 +324,9 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
               onClick={() => setSidebarOpen(true)}
               className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-200"
             >
-              <Menu className="w-5 h-5" />
+              <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                <Menu className="w-5 h-5" />
+              </span>
             </button>
             
             <div className="flex items-center">
@@ -294,7 +334,9 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
                 <span className="text-white font-bold text-sm">F</span>
               </div>
               <span className="ml-2 text-lg font-bold">
-                Flyverr
+                <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                  Flyverr
+                </span>
               </span>
             </div>
 
@@ -307,59 +349,63 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
                   onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
                   className="flex items-center space-x-1 p-2 text-muted-foreground hover:text-foreground"
                 >
-                  {getThemeIcon()}
-                  <span className="text-xs">{getThemeLabel()}</span>
+                  <span className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                    {getThemeIcon()}
+                  </span>
+                  <span className={`text-xs transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                    {getThemeLabel()}
+                  </span>
                   <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${themeDropdownOpen ? 'rotate-180' : ''}`} />
                 </Button>
 
                 {/* Theme Dropdown Menu */}
-                {themeDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-1 w-32 bg-card text-card-foreground border border-border rounded-md shadow-lg z-50">
-                    <div className="py-1">
-                      <button
-                        onClick={() => {
-                          setTheme('light')
-                          setThemeDropdownOpen(false)
-                        }}
-                        className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                          theme === 'light' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
-                        }`}
-                      >
-                        <Sun className="w-4 h-4" />
-                        <span>Light</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setTheme('dark')
-                          setThemeDropdownOpen(false)
-                        }}
-                        className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                          theme === 'dark' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
-                        }`}
-                      >
-                        <Moon className="w-4 h-4" />
-                        <span>Dark</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setTheme('system')
-                          setThemeDropdownOpen(false)
-                        }}
-                        className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                          theme === 'system' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
-                        }`}
-                      >
-                        <Monitor className="w-4 h-4" />
-                        <span>System</span>
-                      </button>
-                    </div>
+                <div className={`absolute right-0 top-full mt-1 w-32 bg-card text-card-foreground border border-border rounded-md shadow-lg z-50 transition-opacity duration-200 ${mounted && themeDropdownOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        setTheme('light')
+                        setThemeDropdownOpen(false)
+                      }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
+                        theme === 'light' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
+                      }`}
+                    >
+                      <Sun className="w-4 h-4" />
+                      <span>Light</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setTheme('dark')
+                        setThemeDropdownOpen(false)
+                      }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
+                        theme === 'dark' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
+                      }`}
+                    >
+                      <Moon className="w-4 h-4" />
+                      <span>Dark</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setTheme('system')
+                        setThemeDropdownOpen(false)
+                      }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
+                        theme === 'system' ? 'text-flyverr-primary bg-flyverr-primary/10' : ''
+                      }`}
+                    >
+                      <Monitor className="w-4 h-4" />
+                      <span>System</span>
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
               
               <div className="w-8 h-8 bg-flyverr-primary rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">
-                  {user?.profile?.first_name?.charAt(0) || 'U'}
+                  <span className={`transition-opacity duration-200 ${mounted && user ? 'opacity-100' : 'opacity-0'}`}>
+                    {mounted && user ? user.first_name?.charAt(0) || 'U' : 'U'}
+                  </span>
                 </span>
               </div>
             </div>
@@ -369,7 +415,16 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
         {/* Page content - Scrollable with header offset */}
         <main className="min-h-screen p-4 sm:p-6 lg:p-8 lg:pt-24 pt-20">
           <div className="max-w-7xl mx-auto">
-            {children}
+            <div className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+              {mounted ? children : (
+                <div className="flex items-center justify-center min-h-[400px]">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
+                    <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </main>
       </div>

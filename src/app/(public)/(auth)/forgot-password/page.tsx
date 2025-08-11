@@ -3,127 +3,230 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
-import { Mail, ArrowLeft, CheckCircle } from "lucide-react"
+import { Mail, ArrowLeft, CheckCircle, Shield, Zap } from "lucide-react"
 import React from "react"
-import { forgotPassword } from "@/lib/api"
 import { useRouter } from "next/navigation"
-import toast from "react-hot-toast"
+import { useForgotPassword } from "@/features/auth/hooks"
+import * as yup from "yup"
+import { useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+
+const schema = yup.object().shape({
+  email: yup.string().email("Invalid email address").required("Email is required"),
+})
+
+type FormData = yup.InferType<typeof schema>
 
 export default function ForgotPasswordPage() {
-  const [isLoading, setIsLoading] = React.useState(false)
   const [emailSent, setEmailSent] = React.useState(false)
-  const [email, setEmail] = React.useState("")
+
+
   const router = useRouter()
+  const { sendResetEmail, isSending } = useForgotPassword()
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm<FormData>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      email: "",
+    },
+  })
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    const formData = new FormData(e.currentTarget)
-    const emailData = {
-      email: formData.get("email") as string,
-    }
-
+  const onSubmit =  async (data: FormData) => {
     try {
-      const response = await forgotPassword(emailData)
-      
-      // Handle the API response structure
-      const responseData = response.data as {
-        success: boolean
-        message: string
-      }
-      
-      if (responseData.success) {
-        setEmailSent(true)
-        setEmail(emailData.email)
-        
-        // Show success toast
-        toast.success(
-          "Password reset email sent successfully! Please check your inbox.",
-          {
-            duration: 6000,
-            icon: '📧',
-          }
-        )
-      } else {
-        toast.error(responseData.message || "Failed to send reset email. Please try again.")
-      }
-    } catch (err: unknown) {
-      console.error("Forgot password error:", err)
-      const errorMessage = err && typeof err === 'object' && 'response' in err 
-        ? (err.response as { data?: { message?: string } })?.data?.message 
-        : "Failed to send reset email. Please try again."
-      
-      // Show error toast
-      toast.error(errorMessage || "Failed to send reset email. Please try again.")
-    } finally {
-      setIsLoading(false)
+      await sendResetEmail(data)
+      setEmailSent(true)
+     
+    } catch (error) {
+      // Error is handled by the hook
+      console.error("Forgot password error:", error)
     }
   }
 
   const handleResendEmail = async () => {
-    if (!email) return
+    if (!getValues("email")) return
     
-    setIsLoading(true)
     try {
-      const response = await forgotPassword({ email })
-      const responseData = response.data as { success: boolean; message: string }
-      
-      if (responseData.success) {
-        toast.success("Reset email sent again! Please check your inbox.", {
-          duration: 6000,
-          icon: '📧',
-        })
-      } else {
-        toast.error(responseData.message || "Failed to resend email.")
-      }
-    } catch (err: unknown) {
-      const errorMessage = err && typeof err === 'object' && 'response' in err 
-        ? (err.response as { data?: { message?: string } })?.data?.message 
-        : "Failed to resend email."
-      toast.error(errorMessage || "Failed to resend email.")
-    } finally {
-      setIsLoading(false)
+      await sendResetEmail({ email: getValues("email") })
+      setEmailSent(true)
+    } catch (error) {
+      console.error("Resend email error:", error)
     }
   }
 
   if (emailSent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-background px-4">
-        <Card className="w-full max-w-md space-y-6">
-          <div className="flex flex-col items-center mb-6">
-            <span className="bg-green-100 rounded-full p-3 mb-2">
-              <CheckCircle className="w-8 h-8 text-green-600" />
-            </span>
-            <h1 className="text-2xl font-bold">Check your email</h1>
-            <p className="text-sm text-muted-foreground mt-2 text-center">
-              We&apos;ve sent a password reset link to <strong>{email}</strong>
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <div className="flex items-center justify-center mb-4">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-3 rounded-full">
+                <CheckCircle className="w-8 h-8 text-white" />
+              </div>
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">
+              Check Your Email
+            </h1>
+            <p className="text-base text-muted-foreground max-w-sm mx-auto">
+              We&apos;ve sent a password reset link to <strong className="text-foreground">{getValues("email")}</strong>
             </p>
           </div>
-          
-          <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-md text-sm">
-            <p className="font-medium mb-2">What to do next:</p>
-            <ul className="space-y-1 text-blue-600">
-              <li>• Check your email inbox (and spam folder)</li>
-              <li>• Click the reset password link in the email</li>
-              <li>• Create a new password</li>
-            </ul>
+
+          {/* Success Card */}
+          <Card className="p-6 bg-card text-card-foreground border border-border shadow-xl">
+            <div className="space-y-4">
+              {/* Instructions */}
+              <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-3 rounded-lg">
+                <p className="font-medium mb-2 text-primary">What to do next:</p>
+                <ul className="space-y-1 text-sm">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                    Check your email inbox (and spam folder)
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                    Click the reset password link in the email
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                    Create a new password
+                  </li>
+                </ul>
+              </div>
+
+              {/* Security Note */}
+              <div className="bg-muted/50 border border-border rounded-lg p-3">
+                <div className="flex items-start space-x-2">
+                  <Shield className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-xs font-medium text-foreground">Security Reminder</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      The reset link will expire in 1 hour for your security.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-3 pt-2">
+                <Button 
+                  onClick={handleResendEmail}
+                  disabled={isSending}
+                  variant="outline" 
+                  className="w-full"
+                >
+                  {isSending ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                      Sending...
+                    </div>
+                  ) : (
+                    "Resend email"
+                  )}
+                </Button>
+                
+                <Button 
+                  onClick={() => router.push("/login")}
+                  variant="ghost" 
+                  className="w-full"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to login
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center mb-4">
+            <div className="bg-flyverr-primary p-3 rounded-full">
+              <Zap className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold bg-flyverr-primary bg-clip-text text-transparent mb-2">
+            Forgot Your Password?
+          </h1>
+          <p className="text-base text-muted-foreground max-w-sm mx-auto">
+            No worries! Enter your email address and we&apos;ll send you a reset link.
+          </p>
+        </div>
+
+        {/* Main Form Card */}
+        <Card className="p-6 bg-card text-card-foreground border border-border shadow-xl">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <Label htmlFor="email" className="text-sm font-medium text-foreground">Email Address</Label>
+              <div className="relative mt-2">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <Mail className="w-5 h-5" />
+                </span>
+                <Input 
+                  {...register("email")}
+                  type="email" 
+                  autoComplete="email" 
+                  placeholder="Enter your email address" 
+                  className={`pl-10 ${
+                    errors.email ? 'border-red-500' : ''
+                  }`}
+                />
+              </div>
+              {errors.email && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-primary-foreground" 
+              disabled={isSending}
+            >
+              {isSending ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                  Sending reset link...
+                </div>
+              ) : (
+                "Send Reset Link"
+              )}
+            </Button>
+          </form>
+
+          {/* Security Note */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <div className="bg-muted/50 border border-border rounded-lg p-3">
+              <div className="flex items-start space-x-2">
+                <Shield className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-xs font-medium text-foreground">Your data is secure</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    We use industry-standard encryption and never share your personal information.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-3">
-            <Button 
-              onClick={handleResendEmail}
-              disabled={isLoading}
-              variant="outline" 
-              className="w-full"
-            >
-              {isLoading ? "Sending..." : "Resend email"}
-            </Button>
-            
+          {/* Back to Login */}
+          <div className="text-center mt-4">
             <Button 
               onClick={() => router.push("/login")}
               variant="ghost" 
-              className="w-full"
+              className="text-sm text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to login
@@ -131,57 +234,6 @@ export default function ForgotPasswordPage() {
           </div>
         </Card>
       </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-background px-4">
-      <Card className="w-full max-w-md space-y-6">
-        <div className="flex flex-col items-center mb-6">
-          <span className="bg-primary/10 rounded-full p-3 mb-2">
-            <Mail className="w-8 h-8 text-primary" />
-          </span>
-          <h1 className="text-2xl font-bold">Forgot your password?</h1>
-          <p className="text-sm text-muted-foreground mt-2 text-center">
-            No worries! Enter your email address and we&apos;ll send you a reset link.
-          </p>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="email">Email address</Label>
-            <div className="relative mt-2">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                <Mail className="w-5 h-5" />
-              </span>
-              <Input 
-                id="email" 
-                name="email"
-                type="email" 
-                autoComplete="email" 
-                required 
-                placeholder="Enter your email address" 
-                className="pl-10" 
-              />
-            </div>
-          </div>
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Sending reset link..." : "Send reset link"}
-          </Button>
-        </form>
-
-        <div className="text-center">
-          <Button 
-            onClick={() => router.push("/login")}
-            variant="ghost" 
-            className="text-sm"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to login
-          </Button>
-        </div>
-      </Card>
     </div>
   )
 } 

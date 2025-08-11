@@ -1,100 +1,181 @@
-"use client"
+"use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar, 
-  Edit, 
-  Save, 
-  X, 
+import {
+  User,
+  Save,
   Camera,
   Shield,
-  CreditCard,
-  Settings,
-  Globe,
-  Linkedin,
-  Twitter,
-  Github
+  Loader2,
 } from "lucide-react";
-import { useAuth } from '@/contexts/AuthContext';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
-import DashboardLayout from '@/components/DashboardLayout';
+import { useEditCurrentUser, useGetCurrentUser } from "@/features/auth/hooks";
+import { useForm } from "react-hook-form";
+import { isPlainObject } from "@/lib/utils";
+import type { EditUserData } from "@/features/auth/auth.types";
 
 export default function ProfilePage() {
-  const { user } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isEditingAvatar, setIsEditingAvatar] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const { data: user, isLoading, error, refetch } = useGetCurrentUser();
+  const { updateProfile: updateUser, isUpdating } = useEditCurrentUser();
 
-  // Sample user data - in real app this would come from context/API
-  const [userData, setUserData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    bio: "Digital product creator and entrepreneur with 5+ years of experience in web development and design. Passionate about creating high-quality digital products that help businesses grow.",
-    location: "San Francisco, CA",
-    website: "https://johndoe.dev",
-    linkedin: "https://linkedin.com/in/johndoe",
-    twitter: "https://twitter.com/johndoe",
-    github: "https://github.com/johndoe",
-    joinDate: "2023-01-15",
-    memberSince: "1 year, 3 months",
-    totalProducts: 12,
-    totalSales: 156,
-    totalRevenue: 2847.50,
-    rating: 4.8,
-    reviews: 23,
-    verified: true,
-    premium: true
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm<EditUserData>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      username: "",
+      bio: "",
+    },
+    mode: "onChange",
   });
 
-  const [editData, setEditData] = useState(userData);
+  // Watch form values for real-time updates
+  const watchedValues = watch();
 
-  const handleSave = () => {
-    setUserData(editData);
-    setIsEditing(false);
-    // Here you would typically make an API call to update the user data
-    console.log("Saving user data:", editData);
-  };
+  // Update form values when user data changes
+  useEffect(() => {
+    if (user && isPlainObject(user)) {
+      setValue("firstName", user.first_name || "");
+      setValue("lastName", user.last_name || "");
+      setValue("username", user.username || "");
+      setValue("bio", user.bio || "");
+    }
+  }, [user, setValue]);
 
-  const handleCancel = () => {
-    setEditData(userData);
-    setIsEditing(false);
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setEditData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setEditData(prev => ({
-          ...prev,
-          avatar: e.target?.result as string
-        }));
+  const onSubmit = async (data: EditUserData) => {
+    try {
+      // Clear any previous submission errors
+      setSubmissionError(null);
+      
+      // Create submission data excluding email (since it's read-only)
+      const submissionData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
+        bio: data.bio,
       };
-      reader.readAsDataURL(file);
+      
+      console.log("Saving user data:", submissionData);
+
+      await updateUser(submissionData, {
+        onSuccess: () => {
+          // Clear any submission errors on success
+          setSubmissionError(null);
+          // Set success state
+          setIsSuccess(true);
+          // Optionally refetch user data after update
+          refetch();
+          
+          // Clear success state after a few seconds
+          setTimeout(() => setIsSuccess(false), 3000);
+        },
+        onError: (error) => {
+          // Keep form open on error so user can fix and retry
+          console.error("Failed to update profile:", error);
+          setSubmissionError("Failed to update profile. Please check your input and try again.");
+        }
+      });
+    } catch (error) {
+      // If updateUser throws an error, keep form open
+      console.error("Failed to update profile:", error);
+      setSubmissionError("Failed to update profile. Please check your input and try again.");
     }
   };
 
-  return (
+  const handleImageError = () => {
+    setImageError(true);
+  };
 
+  // Default avatar fallback
+  const getAvatarSrc = () => {
+    if (imageError || !user?.avatar_url) {
+      return `https://ui-avatars.com/api/?name=${user?.first_name || ""}+${
+        user?.last_name || ""
+      }&background=6366f1&color=fff&size=150`;
+    }
+    return user.avatar_url;
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin text-flyverr-primary mx-auto mb-4" />
+            <p className="text-gray-600 dark:text-gray-400">
+              Loading profile...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <User className="w-8 h-8 text-red-600 dark:text-red-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              Failed to load profile
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              {error.message ||
+                "Something went wrong while loading your profile"}
+            </p>
+            <Button
+              onClick={() => refetch()}
+              className="bg-flyverr-primary hover:bg-flyverr-primary/90"
+            >
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No user data
+  if (!user) {
+  return (
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <User className="w-8 h-8 text-gray-600 dark:text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              No user data found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Please log in again to access your profile
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
         <div className="p-6 space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -107,33 +188,7 @@ export default function ProfilePage() {
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              {!isEditing ? (
-                <Button 
-                  onClick={() => setIsEditing(true)}
-                  className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Profile
-                </Button>
-              ) : (
-                <div className="flex space-x-2">
-                  <Button 
-                    onClick={handleCancel}
-                    variant="outline"
-                    className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
-                    <X className="w-4 h-4 mr-2" />
-                    Cancel
-                  </Button>
-                  <Button 
-                    onClick={handleSave}
-                    className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                  >
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Changes
-                  </Button>
-                </div>
-              )}
+              {/* Removed Edit Profile Button */}
             </div>
           </div>
 
@@ -147,71 +202,49 @@ export default function ProfilePage() {
                     <div className="relative inline-block mb-4">
                       <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg">
                         <img 
-                          src={editData.avatar} 
-                          alt="Profile" 
+                      src={getAvatarSrc()}
+                      alt={`${user?.first_name} ${user?.last_name}`}
                           className="w-full h-full object-cover"
+                      onError={handleImageError}
+                      onLoad={() => setImageError(false)}
                         />
                       </div>
-                      {isEditing && (
-                        <label className="absolute bottom-0 right-0 bg-flyverr-primary text-white p-2 rounded-full cursor-pointer hover:bg-flyverr-primary/90 transition-colors shadow-lg">
-                          <Camera className="w-4 h-4" />
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleAvatarChange}
-                          />
-                        </label>
-                      )}
+                      {/* Removed Edit Avatar Label */}
                     </div>
 
                     {/* User Info */}
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                      {editData.firstName} {editData.lastName}
+                  {watchedValues.firstName} {watchedValues.lastName}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 mb-3">
-                      {editData.email}
-                    </p>
+                <p className="text-gray-600 dark:text-gray-400 mb-1">
+                  @{watchedValues.username}
+                </p>
+                <p className="text-gray-600 dark:text-gray-400 mb-3">
+                  {user?.email}
+                </p>
 
                     {/* Badges */}
                     <div className="flex justify-center space-x-2 mb-4">
-                      {editData.verified && (
                         <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800">
                           <Shield className="w-3 h-3 mr-1" />
-                          Verified
+                    {user.status}
                         </Badge>
-                      )}
-                      {editData.premium && (
-                        <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800">
-                          <CreditCard className="w-3 h-3 mr-1" />
-                          Premium
+                  <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                    <User className="w-3 h-3 mr-1" />
+                    {user.role}
                         </Badge>
-                      )}
-                    </div>
-
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div className="bg-white dark:bg-gray-800/50 rounded-lg p-3">
-                        <div className="text-lg font-bold text-gray-900 dark:text-white">
-                          {editData.totalProducts}
-                        </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">
-                          Products
-                        </div>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800/50 rounded-lg p-3">
-                        <div className="text-lg font-bold text-gray-900 dark:text-white">
-                          {editData.totalSales}
-                        </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">
-                          Sales
-                        </div>
-                      </div>
                     </div>
 
                     {/* Member Since */}
                     <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                      Member since {editData.memberSince}
+                  Member since{" "}
+                  {user.created_at
+                    ? new Date(user.created_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "N/A"}
                     </div>
                   </div>
                 </CardContent>
@@ -220,6 +253,38 @@ export default function ProfilePage() {
 
             {/* Main Profile Form */}
             <div className="lg:col-span-2 space-y-6">
+          {/* Success Message Display */}
+          {isSuccess && (
+            <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">✓</span>
+                  </div>
+                  <p className="text-green-700 dark:text-green-300 text-sm font-medium">
+                    Profile updated successfully!
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* Submission Error Display */}
+          {submissionError && (
+            <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">!</span>
+                  </div>
+                  <p className="text-red-700 dark:text-red-300 text-sm font-medium">
+                    {submissionError}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
               {/* Personal Information */}
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg">
                 <CardHeader>
@@ -234,60 +299,68 @@ export default function ProfilePage() {
                         First Name
                       </Label>
                       <Input
-                        value={editData.firstName}
-                        onChange={(e) => handleInputChange("firstName", e.target.value)}
-                        disabled={!isEditing}
+                    {...register("firstName", { 
+                      required: "First name is required" 
+                    })}
+                        disabled={false}
                         className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
                       />
+                  {errors.firstName && (
+                    <p className="text-red-500 text-xs">
+                      {errors.firstName.message}
+                    </p>
+                  )}
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         Last Name
                       </Label>
                       <Input
-                        value={editData.lastName}
-                        onChange={(e) => handleInputChange("lastName", e.target.value)}
-                        disabled={!isEditing}
+                    {...register("lastName", { 
+                      required: "Last name is required" 
+                    })}
+                        disabled={false}
                         className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
                       />
+                  {errors.lastName && (
+                    <p className="text-red-500 text-xs">
+                      {errors.lastName.message}
+                    </p>
+                  )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Email Address
+                  Username
                     </Label>
                     <Input
-                      type="email"
-                      value={editData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
-                      disabled={!isEditing}
+                  {...register("username", { 
+                    required: "Username is required" 
+                  })}
+                      disabled={false}
                       className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
                     />
+                {errors.username && (
+                  <p className="text-red-500 text-xs">
+                    {errors.username.message}
+                  </p>
+                )}
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Phone Number
+                  Email Address
                     </Label>
                     <Input
-                      value={editData.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
-                      disabled={!isEditing}
-                      className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Location
-                    </Label>
-                    <Input
-                      value={editData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
-                      disabled={!isEditing}
-                      className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
-                    />
+                  type="email"
+                  value={user?.email || ""}
+                  readOnly
+                  className="bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Email cannot be changed
+                </p>
                   </div>
 
                   <div className="space-y-2">
@@ -295,113 +368,84 @@ export default function ProfilePage() {
                       Bio
                     </Label>
                     <Textarea
-                      value={editData.bio}
-                      onChange={(e) => handleInputChange("bio", e.target.value)}
-                      disabled={!isEditing}
+                  {...register("bio")}
+                      disabled={false}
                       rows={4}
+                  placeholder="Tell us about yourself..."
                       className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 resize-none"
                     />
+                {errors.bio && (
+                  <p className="text-red-500 text-xs">{errors.bio.message}</p>
+                )}
                   </div>
                 </CardContent>
+                
+                {/* Save Button */}
+                <div className="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <Button
+                    onClick={handleSubmit(onSubmit)}
+                    disabled={isUpdating}
+                    className={`w-full text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                      submissionError 
+                        ? 'bg-red-500 hover:bg-red-600' 
+                        : 'bg-flyverr-primary hover:bg-flyverr-primary/90'
+                    }`}
+                  >
+                    {isUpdating ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4 mr-2" />
+                    )}
+                    {isUpdating ? "Saving..." : submissionError ? "Retry Save" : "Save Changes"}
+                  </Button>
+                </div>
               </Card>
 
-              {/* Social Links */}
+          {/* Account Information */}
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Social Links
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Website
-                    </Label>
-                    <Input
-                      value={editData.website}
-                      onChange={(e) => handleInputChange("website", e.target.value)}
-                      disabled={!isEditing}
-                      className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        LinkedIn
-                      </Label>
-                      <Input
-                        value={editData.linkedin}
-                        onChange={(e) => handleInputChange("linkedin", e.target.value)}
-                        disabled={!isEditing}
-                        className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Twitter
-                      </Label>
-                      <Input
-                        value={editData.twitter}
-                        onChange={(e) => handleInputChange("twitter", e.target.value)}
-                        disabled={!isEditing}
-                        className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        GitHub
-                      </Label>
-                      <Input
-                        value={editData.github}
-                        onChange={(e) => handleInputChange("github", e.target.value)}
-                        disabled={!isEditing}
-                        className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Account Statistics */}
-              <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Account Statistics
+                Account Information
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        ${editData.totalRevenue.toLocaleString()}
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Account Status
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Total Revenue
+                  <div className="text-lg font-bold text-gray-900 dark:text-white">
+                    {user.status}
                       </div>
                     </div>
                     <div className="text-center p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {editData.rating}
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Email Verified
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Average Rating
-                      </div>
-                    </div>
-                    <div className="text-center p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {editData.reviews}
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Reviews
+                  <div className="text-lg font-bold text-gray-900 dark:text-white">
+                    {user.email_verified ? "Yes" : "No"}
                       </div>
                     </div>
                     <div className="text-center p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {editData.memberSince.split(',')[0]}
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Role
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-lg font-bold text-gray-900 dark:text-white">
+                    {user.role}
+                      </div>
+                    </div>
+                    <div className="text-center p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                         Member Since
+                      </div>
+                  <div className="text-lg font-bold text-gray-900 dark:text-white">
+                    {user.created_at
+                      ? new Date(user.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : "N/A"}
                       </div>
                     </div>
                   </div>
@@ -410,6 +454,5 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-    
   );
 } 

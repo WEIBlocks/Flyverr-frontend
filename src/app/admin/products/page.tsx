@@ -177,7 +177,7 @@ export default function AdminAllProductsPage() {
             <AdminTableHeaderCell>Performance</AdminTableHeaderCell>
             <AdminTableHeaderCell>Metrics</AdminTableHeaderCell>
             <AdminTableHeaderCell align="center">Actions</AdminTableHeaderCell>
-          </tr>
+                </tr>
         </AdminTableHeader>
         <AdminTableBody>
           {products.map((product) => (

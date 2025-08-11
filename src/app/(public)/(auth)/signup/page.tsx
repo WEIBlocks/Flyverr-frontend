@@ -1,237 +1,291 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { 
-  UserPlus, 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  AtSign, 
-  User, 
-  Globe, 
-  Shield, 
+"use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  UserPlus,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AtSign,
+  User,
+  Globe,
+  Shield,
   Zap,
   CheckCircle,
   ArrowRight,
-  Star
-} from "lucide-react"
-import React from "react"
-import { useAuth } from "@/contexts/AuthContext"
-import { ProtectedRoute } from "@/components/ProtectedRoute"
-import toast from "react-hot-toast"
-import Link from "next/link"
+  Star,
+} from "lucide-react";
+import React from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRegister } from "@/features/auth/hooks";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { SignupData } from "@/features/auth/auth.types";
+
+const schema = yup.object().shape({
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
+  username: yup.string().required("Username is required"),
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: yup.string().required("Password is required"),
+});
 
 export default function SignupPage() {
-  const [showPassword, setShowPassword] = React.useState(false)
-  const [isSocialLoading, setIsSocialLoading] = React.useState(false)
-  const [agreedToTerms, setAgreedToTerms] = React.useState(false)
-  const [passwordStrength, setPasswordStrength] = React.useState(0)
-  const { signup, isLoading } = useAuth()
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [isSocialLoading, setIsSocialLoading] = React.useState(false);
+  const [agreedToTerms, setAgreedToTerms] = React.useState(false);
+  const [passwordStrength, setPasswordStrength] = React.useState(0);
+  const { register: registerForm, isRegistering } = useRegister();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    getValues
+    
+  } = useForm<SignupData>({
+    resolver: yupResolver(schema),
+  });
 
   // Password strength checker
   const checkPasswordStrength = (password: string) => {
-    let strength = 0
-    if (password.length >= 8) strength += 1
-    if (/[a-z]/.test(password)) strength += 1
-    if (/[A-Z]/.test(password)) strength += 1
-    if (/[0-9]/.test(password)) strength += 1
-    if (/[^A-Za-z0-9]/.test(password)) strength += 1
-    return strength
-  }
+    let strength = 0;
+    if (password.length >= 8) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    return strength;
+  };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const strength = checkPasswordStrength(e.target.value)
-    setPasswordStrength(strength)
-  }
+ 
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    
-    if (!agreedToTerms) {
-      toast.error("Please agree to the Terms of Service and Privacy Policy")
-      return
-    }
+  const onSubmit = (data: SignupData) => {
+    registerForm(data);
+  };
 
-    const formData = new FormData(e.currentTarget)
-    const signupData = {
-      firstName: formData.get("firstName") as string,
-      lastName: formData.get("lastName") as string,
-      username: formData.get("username") as string,
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-    }
-
-    try {
-      await signup(signupData)
-      toast.success("Account created successfully! Welcome to Flyverr!")
-    } catch (error: any) {
-      console.error("Signup error:", error)
-      toast.error(error.message || "Signup failed. Please try again.")
-    }
-  }
-
-  const handleSocialLogin = async (provider: 'google' | 'linkedin') => {
-    setIsSocialLoading(true)
-    toast.error(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login coming soon!`)
-    setIsSocialLoading(false)
-  }
+  const handleSocialLogin = async (provider: "google" | "linkedin") => {
+    setIsSocialLoading(true);
+    toast.error(
+      `${
+        provider.charAt(0).toUpperCase() + provider.slice(1)
+      } login coming soon!`
+    );
+    setIsSocialLoading(false);
+  };
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 py-2 md:py-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-4">
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-2 md:py-4">
+          <div className="max-w-6xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-4">
               <div className="flex items-center justify-center mb-3">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-full">
+                <div className="bg-flyverr-primary p-3 rounded-full">
                   <Zap className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl font-bold text-flyverr-primary mb-2">
                 Join Our Digital Marketplace
               </h1>
-              <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Start selling your digital products to customers worldwide. 
-                <span className="font-semibold text-blue-600"> It's completely free to get started!</span>
+              <p className="text-base text-muted-foreground max-w-2xl mx-auto">
+                Start selling your digital products to customers worldwide.
+                <span className="font-semibold text-blue-600">
+                  {" "}
+                  It's completely free to get started!
+                </span>
               </p>
             </div>
 
-                        <div className="grid lg:grid-cols-2 gap-3 lg:gap-4 items-start">
+            <div className="grid lg:grid-cols-2 gap-3 lg:gap-4 items-start">
               {/* Left Column - Benefits */}
               <div className="space-y-3">
-                <Card className="p-4 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-                  <h2 className="text-lg font-bold mb-2 text-gray-800">Why Choose Our Platform?</h2>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-2">
-                    <div className="bg-green-100 p-1.5 rounded-full">
-                      <CheckCircle className="w-4 h-4 text-green-600" />
+                <Card className="p-4 bg-card text-card-foreground border border-border shadow-xl">
+                  <h2 className="text-lg font-bold mb-2 text-foreground">
+                    Why Choose Our Platform?
+                  </h2>
+                  <div className="space-y-3">
+                    <div className="flex items-start space-x-2">
+                      <div className="p-1.5 rounded-full bg-primary/10 dark:bg-primary/20">
+                        <CheckCircle className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm text-foreground">
+                          Zero Setup Fees
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Start selling immediately with no upfront costs
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-sm text-gray-800">Zero Setup Fees</h3>
-                      <p className="text-xs text-gray-600">Start selling immediately with no upfront costs</p>
+                    <div className="flex items-start space-x-2">
+                      <div className="p-1.5 rounded-full bg-primary/10 dark:bg-primary/20">
+                        <Globe className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm text-foreground">
+                          Global Reach
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Access customers from around the world
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <div className="p-1.5 rounded-full bg-primary/10 dark:bg-primary/20">
+                        <Shield className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm text-foreground">
+                          Secure Payments
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Bank-level security for all transactions
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <div className="p-1.5 rounded-full bg-primary/10 dark:bg-primary/20">
+                        <Zap className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm text-foreground">
+                          Instant Delivery
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Automated digital product delivery
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-2">
-                    <div className="bg-blue-100 p-1.5 rounded-full">
-                      <Globe className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm text-gray-800">Global Reach</h3>
-                      <p className="text-xs text-gray-600">Access customers from around the world</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <div className="bg-purple-100 p-1.5 rounded-full">
-                      <Shield className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm text-gray-800">Secure Payments</h3>
-                      <p className="text-xs text-gray-600">Bank-level security for all transactions</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <div className="bg-orange-100 p-1.5 rounded-full">
-                      <Zap className="w-4 h-4 text-orange-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm text-gray-800">Instant Delivery</h3>
-                      <p className="text-xs text-gray-600">Automated digital product delivery</p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+                </Card>
 
-              {/* Trust Signals */}
-              <div className="text-center space-y-3">
-                <div className="flex items-center justify-center space-x-1 text-yellow-500">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-current" />
-                  ))}
-                  <span className="text-gray-600 ml-2 text-sm font-medium">4.9/5 from 10,000+ sellers</span>
+                {/* Trust Signals */}
+                <div className="text-center space-y-3">
+                  <div className="flex items-center justify-center space-x-1 text-yellow-500">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-current" />
+                    ))}
+                    <span className="text-muted-foreground ml-2 text-sm font-medium">
+                      4.9/5 from 10,000+ sellers
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Trusted by creators worldwide • 24/7 Support • 99.9% Uptime
+                  </p>
                 </div>
-                <p className="text-xs text-gray-500">
-                  Trusted by creators worldwide • 24/7 Support • 99.9% Uptime
-                </p>
+
+                {/* Client Reviews */}
+                <Card className="p-4 bg-card text-card-foreground border border-border shadow-xl">
+                  <h3 className="text-lg font-bold mb-3 text-gray-800">
+                    What Our Creators Say
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg border-l-4 border-blue-500">
+                      <div className="flex items-start space-x-2">
+                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                          S
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-1 mb-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className="w-3 h-3 fill-yellow-400"
+                              />
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-700 mb-1">
+                            "Made over $50K in my first year! The platform is
+                            incredibly easy to use and the support team is
+                            amazing."
+                          </p>
+                          <p className="text-xs font-medium text-gray-600">
+                            Sarah Chen • Digital Artist
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg border-l-4 border-green-500">
+                      <div className="flex items-start space-x-2">
+                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                          M
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-1 mb-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className="w-3 h-3 fill-yellow-400"
+                              />
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-700 mb-1">
+                            "Perfect for selling my templates. Zero fees and
+                            instant payments. Highly recommend!"
+                          </p>
+                          <p className="text-xs font-medium text-gray-600">
+                            Mike Rodriguez • Template Creator
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-lg border-l-4 border-purple-500">
+                      <div className="flex items-start space-x-2">
+                        <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                          A
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-1 mb-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className="w-3 h-3 fill-yellow-400"
+                              />
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-700 mb-1">
+                            "From $0 to $15K monthly revenue. The global reach
+                            is incredible!"
+                          </p>
+                          <p className="text-xs font-medium text-gray-600">
+                            Alex Thompson • Course Creator
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
               </div>
 
-              {/* Client Reviews */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-                <h3 className="text-lg font-bold mb-3 text-gray-800">What Our Creators Say</h3>
-                <div className="space-y-3">
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg border-l-4 border-blue-500">
-                    <div className="flex items-start space-x-2">
-                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                        S
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-1 mb-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-3 h-3 fill-yellow-400" />
-                          ))}
-                        </div>
-                        <p className="text-xs text-gray-700 mb-1">
-                          "Made over $50K in my first year! The platform is incredibly easy to use and the support team is amazing."
-                        </p>
-                        <p className="text-xs font-medium text-gray-600">Sarah Chen • Digital Artist</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg border-l-4 border-green-500">
-                    <div className="flex items-start space-x-2">
-                      <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                        M
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-1 mb-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-3 h-3 fill-yellow-400" />
-                          ))}
-                        </div>
-                        <p className="text-xs text-gray-700 mb-1">
-                          "Perfect for selling my templates. Zero fees and instant payments. Highly recommend!"
-                        </p>
-                        <p className="text-xs font-medium text-gray-600">Mike Rodriguez • Template Creator</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-lg border-l-4 border-purple-500">
-                    <div className="flex items-start space-x-2">
-                      <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                        A
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-1 mb-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-3 h-3 fill-yellow-400" />
-                          ))}
-                        </div>
-                        <p className="text-xs text-gray-700 mb-1">
-                          "From $0 to $15K monthly revenue. The global reach is incredible!"
-                        </p>
-                        <p className="text-xs font-medium text-gray-600">Alex Thompson • Course Creator</p>
-                      </div>
-                    </div>
-                  </div>
+              {/* Right Column - Signup Form */}
+              <Card className="p-5 bg-card text-card-foreground border border-border shadow-2xl">
+                <div className="text-center mb-3">
+                  <h2 className="text-lg font-bold text-foreground mb-1">
+                    Create Your Account
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    Join thousands of successful digital creators
+                  </p>
                 </div>
-              </Card>
-            </div>
 
-                          {/* Right Column - Signup Form */}
-            <Card className="p-5 bg-white/90 backdrop-blur-sm border-0 shadow-2xl">
-              <div className="text-center mb-3">
-                <h2 className="text-lg font-bold text-gray-800 mb-1">Create Your Account</h2>
-                <p className="text-xs text-gray-600">Join thousands of successful digital creators</p>
-              </div>
-
-              {/* Social Login Buttons */}
-              {/* <div className="space-y-2 mb-3">
+                {/* Social Login Buttons */}
+                {/* <div className="space-y-2 mb-3">
                 <Button
                   type="button"
                   variant="outline"
@@ -261,214 +315,283 @@ export default function SignupPage() {
                 </Button>
               </div>
 
-              <div className="relative mb-3">
+                <div className="relative mb-3">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+                    <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-2 bg-white text-gray-500">or continue with email</span>
+                    <span className="px-2 bg-card text-muted-foreground">or continue with email</span>
                 </div>
               </div> */}
 
-              <form onSubmit={handleSubmit} className="space-y-2">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                                          <Label htmlFor="firstName" className="text-xs font-medium text-gray-700">First Name</Label>
-                    <div className="relative mt-1">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        <User className="w-4 h-4" />
-                      </span>
-                                          <Input 
-                      id="firstName" 
-                      name="firstName"
-                      type="text" 
-                      autoComplete="given-name" 
-                      required 
-                      placeholder="First name" 
-                      className="pl-10 h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500" 
-                    />
-                    </div>
-                  </div>
-                  <div>
-                                          <Label htmlFor="lastName" className="text-xs font-medium text-gray-700">Last Name</Label>
-                    <div className="relative mt-1">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        <User className="w-4 h-4" />
-                      </span>
-                                          <Input 
-                      id="lastName" 
-                      name="lastName"
-                      type="text" 
-                      autoComplete="family-name" 
-                      required 
-                      placeholder="Last name" 
-                      className="pl-10 h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500" 
-                    />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                                      <Label htmlFor="username" className="text-xs font-medium text-gray-700">Username</Label>
-                  <div className="relative mt-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                      <AtSign className="w-4 h-4" />
-                    </span>
-                    <Input 
-                      id="username" 
-                      name="username"
-                      type="text" 
-                      autoComplete="username" 
-                      required 
-                      placeholder="Choose a username" 
-                      className="pl-10 h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500" 
-                    />
-                  </div>
-                                      <p className="text-xs text-gray-500 mt-0.5">This will be your public profile name</p>
-                </div>
-
-                <div>
-                                      <Label htmlFor="email" className="text-xs font-medium text-gray-700">Email Address</Label>
-                  <div className="relative mt-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                      <Mail className="w-4 h-4" />
-                    </span>
-                    <Input 
-                      id="email" 
-                      name="email"
-                      type="email" 
-                      autoComplete="email" 
-                      required 
-                      placeholder="you@example.com" 
-                      className="pl-10 h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500" 
-                    />
-                  </div>
-                </div>
-
-                <div>
-                                      <Label htmlFor="password" className="text-xs font-medium text-gray-700">Password</Label>
-                  <div className="relative mt-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                      <Lock className="w-4 h-4" />
-                    </span>
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="new-password"
-                      required
-                      placeholder="Create a strong password"
-                      className="pl-10 pr-10 h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      onChange={handlePasswordChange}
-                    />
-                    <button
-                      type="button"
-                      tabIndex={-1}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
-                      onClick={() => setShowPassword((v) => !v)}
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                  
-                  {/* Password Strength Indicator */}
-                  {passwordStrength > 0 && (
-                    <div className="mt-1">
-                      <div className="flex space-x-1">
-                        {[...Array(5)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`h-1 flex-1 rounded-full ${
-                              i < passwordStrength 
-                                ? passwordStrength <= 2 
-                                  ? 'bg-red-500' 
-                                  : passwordStrength <= 3 
-                                    ? 'bg-yellow-500' 
-                                    : 'bg-green-500'
-                                : 'bg-gray-200'
-                            }`}
-                          />
-                        ))}
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label
+                        htmlFor="firstName"
+                        className="text-xs font-medium text-muted-foreground"
+                      >
+                        First Name
+                      </Label>
+                      <div className="relative mt-1">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          <User className="w-4 h-4" />
+                        </span>
+                        <Input
+                          id="firstName"
+                          // name="firstName"
+                          {...register("firstName")}
+                          type="text"
+                          autoComplete="given-name"
+                          required
+                          placeholder="First name"
+                          className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
+                        />
                       </div>
-                      <p className={`text-xs mt-0.5 ${
-                        passwordStrength <= 2 ? 'text-red-600' : 
-                        passwordStrength <= 3 ? 'text-yellow-600' : 'text-green-600'
-                      }`}>
-                        {passwordStrength <= 2 ? 'Weak' : 
-                         passwordStrength <= 3 ? 'Fair' : 'Strong'} password
-                      </p>
                     </div>
-                  )}
-                </div>
-
-                {/* Terms and Conditions */}
-                <div className="flex items-start space-x-2">
-                  <Checkbox
-                    id="terms"
-                    checked={agreedToTerms}
-                    onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
-                    className="mt-0.5"
-                  />
-                  <div className="text-xs">
-                    <label htmlFor="terms" className="text-gray-700 cursor-pointer">
-                      I agree to the{' '}
-                      <a href="/terms" className="text-blue-600 hover:underline font-medium">
-                        Terms of Service
-                      </a>{' '}
-                      and{' '}
-                      <a href="/privacy" className="text-blue-600 hover:underline font-medium">
-                        Privacy Policy
-                      </a>
-                    </label>
+                    <div>
+                      <Label
+                        htmlFor="lastName"
+                        className="text-xs font-medium text-muted-foreground"
+                      >
+                        Last Name
+                      </Label>
+                      <div className="relative mt-1">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          <User className="w-4 h-4" />
+                        </span>
+                        <Input
+                          id="lastName"
+                          // name="lastName"
+                          {...register("lastName")}
+                          type="text"
+                          autoComplete="family-name"
+                          required
+                          placeholder="Last name"
+                          className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                                  <Button 
-                    type="submit" 
-                    className="w-full h-10 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold" 
-                    disabled={isLoading || !agreedToTerms}
-                  >
-                  {isLoading ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Creating your account...
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      Get Started
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </div>
-                  )}
-                </Button>
-              </form>
-
-              <div className="text-center mt-4">
-                <p className="text-xs text-gray-600">
-                  Already have an account?{' '}
-                  <Link href="/login" className="text-blue-600 hover:underline font-medium">
-                    Sign in here
-                  </Link>
-                </p>
-              </div>
-
-              {/* Security Note */}
-              <div className="mt-3 p-2 bg-blue-50 rounded-lg">
-                <div className="flex items-start space-x-2">
-                  <Shield className="w-4 h-4 text-blue-600 mt-0.5" />
                   <div>
-                    <p className="text-xs text-blue-800 font-medium">Your data is secure</p>
-                    <p className="text-xs text-blue-700 mt-0.5">
-                      We use industry-standard encryption and never share your personal information.
+                    <Label
+                      htmlFor="username"
+                      className="text-xs font-medium text-muted-foreground"
+                    >
+                      Username
+                    </Label>
+                    <div className="relative mt-1">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <AtSign className="w-4 h-4" />
+                      </span>
+                      <Input
+                        id="username"
+                        // name="username"
+                        {...register("username")}
+                        type="text"
+                        autoComplete="username"
+                        required
+                        placeholder="Choose a username"
+                        className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      This will be your public profile name
                     </p>
                   </div>
+
+                  <div>
+                    <Label
+                      htmlFor="email"
+                      className="text-xs font-medium text-muted-foreground"
+                    >
+                      Email Address
+                    </Label>
+                    <div className="relative mt-1">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <Mail className="w-4 h-4" />
+                      </span>
+                      <Input
+                        id="email"
+                        // name="email"
+                        {...register("email")}
+                        type="email"
+                        autoComplete="email"
+                        required
+                        placeholder="you@example.com"
+                        className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label
+                      htmlFor="password"
+                      className="text-xs font-medium text-muted-foreground"
+                    >
+                      Password
+                    </Label>
+                    <div className="relative mt-1">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <Lock className="w-4 h-4" />
+                      </span>
+                      <Input
+                        id="password"
+                        // name="password"
+                        {...register("password")}
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        required
+                        placeholder="Create a strong password"
+                        className="pl-10 pr-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
+                     
+                      />
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                        onClick={() => setShowPassword((v) => !v)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                      {errors.password && (
+                      <p className="text-xs text-red-500">
+                        {errors.password.message}
+                      </p>
+                    )}
+                    </div>
+
+                    {/* Password Strength Indicator */}
+                    {watch("password") && (
+                      <div className="mt-1">
+                        <div className="flex space-x-1">
+                          {[...Array(5)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`h-1 flex-1 rounded-full ${
+                                i < checkPasswordStrength(watch("password"))
+                                  ? checkPasswordStrength(watch("password")) <= 2
+                                    ? "bg-red-500"
+                                    : checkPasswordStrength(watch("password")) <= 3
+                                    ? "bg-yellow-500"
+                                    : "bg-green-500"
+                                  : "bg-gray-200"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <p
+                          className={`text-xs mt-0.5 ${
+                            checkPasswordStrength(watch("password")) <= 2
+                              ? "text-red-600"
+                              : checkPasswordStrength(watch("password")) <= 3
+                              ? "text-yellow-600"
+                              : "text-green-600"
+                          }`}
+                        >
+                          {checkPasswordStrength(watch("password")) <= 2
+                            ? "Weak"
+                            : checkPasswordStrength(watch("password")) <= 3
+                            ? "Fair"
+                            : "Strong"}{" "}
+                          password
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Terms and Conditions */}
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="terms"
+                      checked={agreedToTerms}
+                      onCheckedChange={(checked) =>
+                        setAgreedToTerms(checked as boolean)
+                      }
+                      className="mt-0.5"
+                    />
+                    <div className="text-xs">
+                      <label
+                        htmlFor="terms"
+                        className="text-foreground cursor-pointer"
+                      >
+                        I agree to the{" "}
+                        <a
+                          href="/terms"
+                          className="text-primary hover:underline font-medium"
+                        >
+                          Terms of Service
+                        </a>{" "}
+                        and{" "}
+                        <a
+                          href="/privacy"
+                          className="text-primary hover:underline font-medium"
+                        >
+                          Privacy Policy
+                        </a>
+                      </label>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full h-10 bg-flyverr-primary hover:bg-flyverr-primary/80 text-white font-semibold"
+                    disabled={isRegistering || !agreedToTerms}
+                  >
+                    {isRegistering ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Creating your account...
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center">
+                        Get Started
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </div>
+                    )}
+                  </Button>
+                </form>
+
+                <div className="text-center mt-4">
+                  <p className="text-xs text-muted-foreground">
+                    Already have an account?{" "}
+                    <Link
+                      href="/login"
+                      className="text-primary hover:underline font-medium"
+                    >
+                      Sign in here
+                    </Link>
+                  </p>
                 </div>
-              </div>
-            </Card>
+
+                {/* Security Note */}
+                <div className="mt-3 p-2 bg-primary/10 rounded-lg">
+                  <div className="flex items-start space-x-2">
+                    <Shield className="w-4 h-4 text-primary mt-0.5" />
+                    <div>
+                      <p className="text-xs text-primary font-medium">
+                        Your data is secure
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        We use industry-standard encryption and never share your
+                        personal information.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </ProtectedRoute>
-  )
+  );
 }

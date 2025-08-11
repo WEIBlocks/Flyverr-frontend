@@ -25,9 +25,10 @@ import {
 import { useAuth } from '@/contexts/AuthContext'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/DashboardLayout'
+import { useGetCurrentUser } from '@/features/auth/hooks'
 
 export default function DashboardPage() {
-  const { user } = useAuth()
+const { data: user } = useGetCurrentUser()
 
   const stats = [
     {
@@ -205,7 +206,7 @@ export default function DashboardPage() {
               Dashboard
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Welcome back, {user?.profile?.first_name}! Here's what's happening with your digital products.
+              Welcome back, {user?.first_name}! Here's what's happening with your digital products.
             </p>
           </div>
 

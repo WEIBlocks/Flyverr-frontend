@@ -1,55 +1,44 @@
 "use client"
 
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
+import { storage } from '@/lib/utils'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
   requireAuth?: boolean
+  // When the route is guest-only (requireAuth=false) and user is authenticated,
+  // redirect them here. Defaults to user dashboard.
   redirectTo?: string
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
   requireAuth = false, 
-  redirectTo = '/' 
+  redirectTo = '/user/dashboard',
 }) => {
-  const { isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
 
+  // Auth is determined by presence of access token.
+  const token = storage.getToken()
+  const isAuthenticated = Boolean(token)
+
   useEffect(() => {
-    if (!isLoading) {
-      if (requireAuth && !isAuthenticated) {
-        // User needs to be authenticated but isn't
-        router.push('/login')
-      } else if (!requireAuth && isAuthenticated) {
-        // User is authenticated but shouldn't be on this page (e.g., login/signup)
-        router.push(redirectTo)
-      }
+    // Protected route: must be authenticated
+    if (requireAuth && !isAuthenticated) {
+      router.replace('/login')
+      return
     }
-  }, [isAuthenticated, isLoading, requireAuth, redirectTo, router])
 
-  // Show loading state while checking authentication
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">Loading...</p>
-        </div>
-      </div>
-    )
-  }
+    // Guest-only route (e.g., login/signup): redirect authenticated users
+    if (!requireAuth && isAuthenticated) {
+      router.replace(redirectTo)
+    }
+  }, [requireAuth, isAuthenticated, redirectTo, router])
 
-  // Don't render children if redirecting
-  if (requireAuth && !isAuthenticated) {
-    return null
-  }
-
-  if (!requireAuth && isAuthenticated) {
-    return null
-  }
+  // Prevent flashing content while redirecting
+  if (requireAuth && !isAuthenticated) return null
+  if (!requireAuth && isAuthenticated) return null
 
   return <>{children}</>
 } 

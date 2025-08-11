@@ -6,14 +6,13 @@ import { storage } from "./utils";
  * Configured with base URL, credentials, and timeout.
  */
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://flyverr-api-production.up.railway.app/api", // Updated to match your backend
-  // withCredentials: true, // Send cookies if needed
-  timeout: 10000, // 10 seconds timeout
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://flyverr-api-production.up.railway.app/api",
+
 });
 
 /**
  * Request interceptor: Attach auth token if available.
- * You can customize this to use cookies, localStorage, or any auth provider.
+ * Automatically adds Authorization header to all requests.
  */
 api.interceptors.request.use(
   (config) => {
@@ -28,29 +27,35 @@ api.interceptors.request.use(
 );
 
 /**
- * Response interceptor: Handle global errors and responses.
- * You can add logging, error notifications, or global redirects here.
+ * Response interceptor: Handle global error responses.
+ * Clears auth data on unauthorized responses.
  */
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Just return the response - no automatic token storage
+    return response;
+  },
   (error) => {
-    // Example: Handle 401 Unauthorized globally
-    if (error.response && error.response.status === 401) {
-      // Optionally, redirect to login or clear auth state
-      // window.location.href = "/login";
+    // Handle 401 Unauthorized globally
+    if (error.response?.status === 401) {
+      // Clear stored auth data on unauthorized
+      storage.clearAuth();
+      
+      // Optionally redirect to login (uncomment if needed)
+      // if (typeof window !== 'undefined') {
+      //   window.location.href = "/login";
+      // }
     }
-    // Optionally, handle other status codes or log errors
+    
+    // Handle token expiration (if you have refresh token logic)
+    if (error.response?.status === 403 && error.response?.data?.message?.includes('expired')) {
+      // Could implement refresh token logic here
+      storage.clearAuth();
+    }
+    
     return Promise.reject(error);
   }
 );
-
-/**
- * Generic API request helper for custom requests.
- * @param config AxiosRequestConfig
- */
-export const apiRequest = (config: Parameters<typeof api.request>[0]) => {
-  return api.request(config);
-};
 
 /**
  * Login API helper
@@ -83,10 +88,6 @@ export const forgotPassword = (data: { email: string }) =>
  * @param data { password, token }
  */
 export const resetPassword = (data: { password: string; token: string }) => {
-  // console.log("🔍 API Helper - Reset Password Data:", {
-  //   password: data.password ? "***" : "undefined",
-  //   token: data.token ? data.token.substring(0, 20) + "..." : "undefined"
-  // });
   return api.post("/auth/reset-password", data);
 };
 

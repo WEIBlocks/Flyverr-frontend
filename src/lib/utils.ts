@@ -5,6 +5,45 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/**
+ * Check if a value is an object
+ * @param value - The value to check
+ * @returns true if the value is an object, false otherwise
+ */
+export function isObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && 
+         typeof value === 'object' && 
+         !Array.isArray(value) && 
+         !(value instanceof Date) && 
+         !(value instanceof RegExp) && 
+         !(value instanceof Map) && 
+         !(value instanceof Set) && 
+         !(value instanceof WeakMap) && 
+         !(value instanceof WeakSet)
+}
+
+/**
+ * Check if a value is a plain object (not a class instance)
+ * @param value - The value to check
+ * @returns true if the value is a plain object, false otherwise
+ */
+export function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (!isObject(value)) return false
+  
+  // Check if it's a plain object by looking at the constructor
+  const prototype = Object.getPrototypeOf(value)
+  return prototype === Object.prototype || prototype === null
+}
+
+/**
+ * Check if a value is an empty object
+ * @param value - The value to check
+ * @returns true if the value is an empty object, false otherwise
+ */
+export function isEmptyObject(value: unknown): boolean {
+  return isObject(value) && Object.keys(value).length === 0
+}
+
 // LocalStorage Helper Functions
 export class LocalStorageHelper {
   /**

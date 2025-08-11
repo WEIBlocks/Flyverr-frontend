@@ -163,7 +163,7 @@ export default function AdminUsersPage() {
             <AdminTableHeaderCell>Activity</AdminTableHeaderCell>
             <AdminTableHeaderCell>Performance</AdminTableHeaderCell>
             <AdminTableHeaderCell align="center">Actions</AdminTableHeaderCell>
-          </tr>
+                </tr>
         </AdminTableHeader>
         <AdminTableBody>
           {users.map((user) => (

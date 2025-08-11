@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Search, Star, TrendingUp, Flame, Crown, Gift, ChevronLeft, ChevronRight, Filter, Sparkles, Users, Zap } from 'lucide-react'
+import { Search, Star, TrendingUp, Flame, Crown, Gift, ChevronLeft, ChevronRight, Filter, Sparkles, Users, Zap, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AuthContext'
 
 // Types
 interface Product {
@@ -202,9 +203,7 @@ const categories = [
   { id: 'all', name: 'All Products', icon: Sparkles },
   { id: 'sponsored', name: 'Sponsored', icon: Crown },
   { id: 'trending', name: 'Trending', icon: TrendingUp },
-  { id: 'recommended', name: 'We Think You&apos;ll Like', icon: Gift },
-  { id: 'most-profitable', name: 'Most Profitable', icon: Zap },
-  { id: 'influencer-fave', name: 'Influencer&apos;s Fave', icon: Users },
+  { id: 'recommended', name: 'We Think You\'ll Like', icon: Gift },
   { id: 'hot-deals', name: 'Hot Deals', icon: Flame }
 ]
 
@@ -239,6 +238,7 @@ const ProductCardSkeleton = () => (
 
 export default function MarketplacePage() {
   const router = useRouter()
+  const { isAuthenticated } = useAuth()
   const [products] = useState<Product[]>(mockProducts)
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(mockProducts)
   const [searchTerm, setSearchTerm] = useState('')
@@ -352,6 +352,46 @@ export default function MarketplacePage() {
             Discover limited digital products that appreciate in value
           </p>
         </div>
+
+        {/* Welcome Message for Non-Authenticated Users */}
+        {!isAuthenticated && (
+          <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+            <div className="bg-gradient-to-r from-flyverr-primary/10 to-flyverr-secondary/10 border border-flyverr-primary/20 rounded-xl p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-flyverr-text dark:text-white mb-2">
+                    Welcome to Flyverr! 🚀
+                  </h2>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4">
+                    You're currently browsing our marketplace as a guest. Sign up or sign in to access exclusive features, 
+                    create your own digital products, and start your resale journey!
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      onClick={() => router.push('/signup')}
+                      className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      Get Started Free
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => router.push('/login')}
+                      className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 px-6 py-2 rounded-lg font-medium transition-all duration-200"
+                    >
+                      Sign In
+                    </Button>
+                  </div>
+                </div>
+                <div className="hidden sm:block">
+                  <div className="w-24 h-24 bg-flyverr-primary/20 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-12 h-12 text-flyverr-primary" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Search and Filter Section */}
         <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12">
@@ -594,6 +634,39 @@ export default function MarketplacePage() {
             })
           )}
         </div>
+
+        {/* Call-to-Action for Non-Authenticated Users */}
+        {!isAuthenticated && (
+          <div className="mb-8 sm:mb-10 lg:mb-12">
+            <div className="bg-gradient-to-r from-flyverr-primary/5 to-flyverr-secondary/5 border border-flyverr-primary/10 rounded-xl p-6 sm:p-8 text-center">
+              <div className="max-w-2xl mx-auto">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-flyverr-text dark:text-white mb-3">
+                  Ready to Start Your Digital Journey?
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-6">
+                  Join thousands of creators and buyers who are already profiting from digital product resales. 
+                  Create your account today and unlock exclusive marketplace features!
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button 
+                    onClick={() => router.push('/signup')}
+                    className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Create Free Account
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => router.push('/login')}
+                    className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 px-8 py-3 rounded-lg font-medium transition-all duration-200"
+                  >
+                    Sign In to Existing Account
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (
