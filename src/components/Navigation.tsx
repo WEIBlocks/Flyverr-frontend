@@ -439,6 +439,14 @@ const Navigation = () => {
                           Dashboard
                         </Button>
                       </Link>
+                      {/* admin dashboard */}
+                      <Link href="/admin/"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Admin Dashboard</span>
+                    </Link>
                       <Button 
                         variant="ghost" 
                         className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"

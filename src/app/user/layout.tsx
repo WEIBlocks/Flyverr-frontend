@@ -25,7 +25,7 @@ export default function UserLayout({
   children: React.ReactNode;
 }>) {
   const navItems = [
-    { name: 'Dashboard', href: '/user/dashboard', iconName: 'dashboard' },
+    { name: 'Dashboard', href: '/user/dashboard', iconName: 'overview' },
     { name: 'My Products', href: '/user/products', iconName: 'products' },
     { name: 'My Licenses', href: '/user/licenses', iconName: 'licenses' },
   ]

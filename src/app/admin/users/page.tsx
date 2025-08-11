@@ -11,7 +11,7 @@ import {
   AdminTableCell, 
   AdminTableHeaderCell 
 } from "@/components/ui/admin-table"
-import { User, Mail, Calendar, Shield, Crown, Ban, Edit, MoreVertical } from "lucide-react"
+import { User, Mail, Calendar, Shield, Crown, Ban, Edit, MoreVertical, Users, Activity, UserCheck, UserX } from "lucide-react"
 
 export default function AdminUsersPage() {
   const users = [
@@ -115,7 +115,7 @@ export default function AdminUsersPage() {
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.length}</p>
             </div>
             <div className="p-3 bg-blue-500/10 rounded-lg">
-              <User className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function AdminUsersPage() {
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter(u => u.status === 'active').length}</p>
             </div>
             <div className="p-3 bg-green-500/10 rounded-lg">
-              <Shield className="w-6 h-6 text-green-600 dark:text-green-400" />
+              <UserCheck className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function AdminUsersPage() {
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter(u => u.status === 'suspended').length}</p>
             </div>
             <div className="p-3 bg-red-500/10 rounded-lg">
-              <Ban className="w-6 h-6 text-red-600 dark:text-red-400" />
+              <UserX className="w-6 h-6 text-red-600 dark:text-red-400" />
             </div>
           </div>
         </div>
@@ -224,10 +224,10 @@ export default function AdminUsersPage() {
                     <Edit className="w-3 h-3" />
                   </Button>
                   <Button size="sm" variant="outline" className="hover:bg-green-50 dark:hover:bg-green-900/20">
-                    <Shield className="w-3 h-3" />
+                    <UserCheck className="w-3 h-3" />
                   </Button>
                   <Button size="sm" variant="outline" className="hover:bg-red-50 dark:hover:bg-red-900/20">
-                    <Ban className="w-3 h-3" />
+                    <UserX className="w-3 h-3" />
                   </Button>
                   <Button size="sm" variant="ghost" className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                     <MoreVertical className="w-3 h-3" />

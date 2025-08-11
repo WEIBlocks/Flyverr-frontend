@@ -11,7 +11,7 @@ import {
   AdminTableCell, 
   AdminTableHeaderCell 
 } from "@/components/ui/admin-table"
-import { Package, User, DollarSign, TrendingUp, Eye, Edit, MoreVertical, Star, ShoppingCart } from "lucide-react"
+import { Package, User, DollarSign, TrendingUp, Eye, Edit, MoreVertical, Star, ShoppingCart, BarChart3, Activity, Target, TrendingDown } from "lucide-react"
 
 export default function AdminAllProductsPage() {
   const products = [
@@ -140,7 +140,7 @@ export default function AdminAllProductsPage() {
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{products.filter(p => p.status === 'active').length}</p>
             </div>
             <div className="p-3 bg-green-500/10 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
+              <Target className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function AdminAllProductsPage() {
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{products.reduce((sum, p) => sum + p.sales, 0)}</p>
             </div>
             <div className="p-3 bg-purple-500/10 rounded-lg">
-              <ShoppingCart className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function AdminAllProductsPage() {
               <p className="text-2xl font-bold text-gray-900 dark:text-white">${products.reduce((sum, p) => sum + p.revenue, 0).toLocaleString()}</p>
             </div>
             <div className="p-3 bg-orange-500/10 rounded-lg">
-              <DollarSign className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+              <TrendingUp className="w-6 h-6 text-orange-600 dark:text-orange-400" />
             </div>
           </div>
         </div>
@@ -242,7 +242,7 @@ export default function AdminAllProductsPage() {
                     <Edit className="w-3 h-3" />
                   </Button>
                   <Button size="sm" variant="outline" className="hover:bg-yellow-50 dark:hover:bg-yellow-900/20">
-                    <TrendingUp className="w-3 h-3" />
+                    <BarChart3 className="w-3 h-3" />
                   </Button>
                   <Button size="sm" variant="ghost" className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                     <MoreVertical className="w-3 h-3" />

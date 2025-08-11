@@ -11,7 +11,7 @@ import {
   AdminTableCell, 
   AdminTableHeaderCell 
 } from "@/components/ui/admin-table"
-import { Package, User, Clock, CheckCircle, XCircle, Eye, AlertCircle, TrendingUp } from "lucide-react"
+import { Package, User, Clock, CheckCircle, XCircle, Eye, AlertCircle, TrendingUp, FileText, Calendar, Zap, Filter } from "lucide-react"
 
 export default function PendingProductsPage() {
   const pendingProducts = [
@@ -123,7 +123,7 @@ export default function PendingProductsPage() {
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingProducts.filter(p => p.submittedAt === "2025-08-04").length}</p>
             </div>
             <div className="p-3 bg-blue-500/10 rounded-lg">
-              <Package className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function PendingProductsPage() {
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{new Set(pendingProducts.map(p => p.category)).size}</p>
             </div>
             <div className="p-3 bg-purple-500/10 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              <Filter className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
         </div>

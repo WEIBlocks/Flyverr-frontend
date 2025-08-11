@@ -17,7 +17,15 @@ import {
   Sun,
   Moon,
   Monitor,
-  ChevronDown
+  ChevronDown,
+  Clock,
+  Users,
+  ShoppingCart,
+  AlertTriangle,
+  Star,
+  BarChart3,
+  Shield,
+  Cog
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -71,24 +79,25 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
   const getIconByName = (iconName?: string) => {
     switch ((iconName || '').toLowerCase()) {
       case 'dashboard':
+      case 'overview':
         return LayoutDashboard
       case 'pending':
-        return Settings
+        return Clock
       case 'resales':
-        return Key
+        return ShoppingCart
       case 'stale':
-        return Key
+        return AlertTriangle
       case 'reviews':
-        return Settings
+        return Star
       case 'products':
         return Package
-
+      case 'licenses':
       case 'licences':
         return Key
       case 'settings':
-        return Settings
+        return Cog
       case 'users':
-        return User // fallback to User icon if Users icon isn't imported
+        return Users
       case 'profile':
         return User
       case 'home':
