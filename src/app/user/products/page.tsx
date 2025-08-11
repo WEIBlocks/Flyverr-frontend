@@ -133,8 +133,7 @@ export default function MyProductsPage() {
   };
 
   return (
-    <ProtectedRoute requireAuth={true}>
-      <DashboardLayout>
+
         
         <div className="p-6 space-y-6">
           {/* Header */}
@@ -618,7 +617,6 @@ export default function MyProductsPage() {
             </Modal>
           )}
         </div>
-      </DashboardLayout>
-    </ProtectedRoute>
+
   );
 } 

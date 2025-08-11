@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { Menu, X, User, HelpCircle, BookOpen, ShoppingBag, Home, Sun, Moon, Monitor, LogOut, Settings, LayoutDashboard, Package, Key } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { Menu, X, User, HelpCircle, BookOpen, ShoppingBag, Home, Sun, Moon, Monitor, LogOut, Settings, LayoutDashboard, Package, Key, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -13,6 +13,7 @@ const Navigation = () => {
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
   const themeDropdownRef = useRef<HTMLDivElement>(null)
   const profileDropdownRef = useRef<HTMLDivElement>(null)
   const { user, isAuthenticated, logout } = useAuth()
@@ -224,6 +225,7 @@ const Navigation = () => {
                       onClick={() => {
                         setIsProfileMenuOpen(false)
                         // Add profile page navigation here
+                        router.push('/user/profile')
                       }}
                       className="w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
@@ -231,12 +233,20 @@ const Navigation = () => {
                       <span>Profile</span>
                     </button>
                     <Link
-                      href="/dashboard"
+                      href="/user/dashboard"
                       onClick={() => setIsProfileMenuOpen(false)}
                       className="w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       <LayoutDashboard className="w-4 h-4" />
                       <span>Dashboard</span>
+                    </Link>
+                    {/* admin dashboard */}
+                    <Link href="/admin/"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors duration-200 text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Admin Dashboard</span>
                     </Link>
                     <button
                       onClick={() => {
@@ -420,7 +430,7 @@ const Navigation = () => {
                         <Settings className="w-5 h-5 mr-3" />
                         Profile
                       </Button>
-                      <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link href="/user/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                         <Button 
                           variant="ghost" 
                           className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-flyverr-primary hover:bg-gray-50 dark:hover:bg-gray-800"

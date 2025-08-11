@@ -94,8 +94,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <ProtectedRoute requireAuth={true}>
-      <DashboardLayout>
+
         <div className="p-6 space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -411,7 +410,6 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-      </DashboardLayout>
-    </ProtectedRoute>
+    
   );
 } 

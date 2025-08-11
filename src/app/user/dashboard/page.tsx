@@ -197,8 +197,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <ProtectedRoute requireAuth={true}>
-      <DashboardLayout>
+
         <div >
           {/* Header */}
           <div className="mb-8">
@@ -434,7 +433,6 @@ export default function DashboardPage() {
             </Card>
           </div>
         </div>
-      </DashboardLayout>
-    </ProtectedRoute>
+  
   )
 } 

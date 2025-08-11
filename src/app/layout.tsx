@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import ConditionalNavigation from "@/components/ConditionalNavigation";
+
 import Providers from "@/components/Providers";
 
 const geistSans = Geist({
@@ -33,7 +33,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <Providers>
-          <ConditionalNavigation />
+          {/* <ConditionalNavigation /> */}
           {children}
         </Providers>
       </body>
