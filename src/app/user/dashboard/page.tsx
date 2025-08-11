@@ -218,7 +218,7 @@ export default function DashboardPage() {
               {stats.map((stat, index) => {
                 const Icon = stat.icon
                 return (
-                  <Card key={index} className="border-0 shadow-lg">
+                  <Card key={index} className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
@@ -229,13 +229,13 @@ export default function DashboardPage() {
                             {stat.value}
                           </p>
                           <p className={`text-sm font-medium ${
-                            stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                            stat.changeType === 'positive' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                           }`}>
                             {stat.change}
                           </p>
                         </div>
-                        <div className={`p-3 rounded-full ${stat.color} bg-opacity-10`}>
-                          <Icon className={`w-6 h-6 ${stat.color}`} />
+                        <div className={`p-3 rounded-full ${stat.color} dark:bg-opacity-20 bg-opacity-10`}>
+                          <Icon className={`w-6 h-6 ${stat.color} dark:text-opacity-80`} />
                         </div>
                       </div>
                     </CardContent>
@@ -256,7 +256,7 @@ export default function DashboardPage() {
                 <span>View All</span>
               </Button>
             </div>
-            <Card className="border-0 shadow-lg">
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -304,7 +304,7 @@ export default function DashboardPage() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                             {listing.originalPrice}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 dark:text-green-400">
                             {listing.resalePrice}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -350,7 +350,7 @@ export default function DashboardPage() {
                 </Button>
               </div>
             </div>
-            <Card className="border-0 shadow-lg">
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -400,8 +400,8 @@ export default function DashboardPage() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`text-sm font-medium ${
                               transaction.amount.startsWith('-') 
-                                ? 'text-red-600' 
-                                : 'text-green-600'
+                                ? 'text-red-600 dark:text-red-400' 
+                                : 'text-green-600 dark:text-green-400'
                             }`}>
                               {transaction.amount}
                             </span>
