@@ -48,5 +48,5 @@ export type EditUserData = {
     lastName: string;
     username: string;
     email?: string;
-    bio?: string;
+    bio?: string | null;
 }

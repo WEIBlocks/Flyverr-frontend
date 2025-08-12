@@ -35,7 +35,8 @@ export function useLogin() {
       setIsAuthenticated(true)
 
       // Update React Query cache
-      queryClient.setQueryData(['auth', 'user'], user)
+      queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
+
 
       // Show success message
       toast.success('Login successful! Welcome back!')

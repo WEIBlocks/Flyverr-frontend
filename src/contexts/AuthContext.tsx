@@ -9,6 +9,7 @@ interface AuthContextType {
   user: UserProfile | null
   isAuthenticated: boolean
   isLoading: boolean
+  mounted: boolean
   logout: () => void
   checkAuth: () => Promise<void>
   setIsAuthenticated: (isAuthenticated: boolean) => void
@@ -28,12 +29,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
+
+  // Set mounted state to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Check if user is authenticated on mount
   useEffect(() => {
-    checkAuth()
-  }, [])
+    if (mounted) {
+      checkAuth()
+    }
+  }, [mounted])
 
   const checkAuth = async () => {
     try {
@@ -71,6 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     isAuthenticated,
     isLoading,
+    mounted,
     logout,
     checkAuth,
     setIsAuthenticated,

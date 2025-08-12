@@ -9,10 +9,16 @@ export function useEditCurrentUser() {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
-    mutationFn: async (data: EditUserData) => await editUser(data),
+    mutationFn: async (data: EditUserData) => {
+      // Ensure we're on the client side
+      if (typeof window === 'undefined') {
+        throw new Error('Cannot update profile on server side')
+      }
+      return await editUser(data)
+    },
     onSuccess: (response) => {
       const responseData: any = response.data
-
+      console.log("responseData", responseData);  
       if (!responseData?.success) {
         throw new Error(responseData?.message || 'Failed to update profile')
       }
@@ -33,23 +39,10 @@ export function useEditCurrentUser() {
     },
   })
 
-  const updateProfile = async (data: EditUserData, callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }) => {
-    try {
-      const result = await mutation.mutateAsync(data)
-      if (callbacks?.onSuccess) {
-        callbacks.onSuccess()
-      }
-      return result
-    } catch (error) {
-      if (callbacks?.onError) {
-        callbacks.onError(error)
-      }
-      throw error
-    }
-  }
+ 
 
   return {
-    updateProfile,
+    updateProfile:mutation.mutateAsync,
     isUpdating: mutation.isPending,
     isSuccess: mutation.isSuccess,
     isError: mutation.isError,

@@ -9,15 +9,18 @@ interface ThemeContextType {
   setTheme: (theme: Theme) => void
   toggleTheme: () => void
   getThemeIcon: () => React.ReactNode
+  mounted: boolean
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('light')
+  const [mounted, setMounted] = useState(false)
 
-  // Initialize theme from localStorage
+  // Initialize theme from localStorage only after mount to prevent hydration mismatch
   useEffect(() => {
+    setMounted(true)
     const savedTheme = localStorage.getItem('flyverr-theme') as Theme
     if (savedTheme) {
       setThemeState(savedTheme)
@@ -30,6 +33,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Apply theme to document
   useEffect(() => {
+    if (!mounted) return // Don't apply theme until mounted
+    
     const root = document.documentElement
     const actualTheme = theme === 'system' 
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
@@ -37,11 +42,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     
     root.classList.remove('light', 'dark')
     root.classList.add(actualTheme)
-  }, [theme])
+  }, [theme, mounted])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
-    localStorage.setItem('flyverr-theme', newTheme)
+    if (mounted) {
+      localStorage.setItem('flyverr-theme', newTheme)
+    }
   }
 
   const toggleTheme = () => {
@@ -50,6 +57,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   const getThemeIcon = () => {
+    if (!mounted) return '💻' // Default icon until mounted
+    
     const actualTheme = theme === 'system' 
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
       : theme
@@ -65,7 +74,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, getThemeIcon }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, getThemeIcon, mounted }}>
       {children}
     </ThemeContext.Provider>
   )

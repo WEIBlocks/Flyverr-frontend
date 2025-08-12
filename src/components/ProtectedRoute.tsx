@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { storage } from '@/lib/utils'
 
@@ -18,12 +18,20 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   redirectTo = '/user/dashboard',
 }) => {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  // Set mounted state to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Auth is determined by presence of access token.
-  const token = storage.getToken()
+  const token = mounted ? storage.getToken() : null
   const isAuthenticated = Boolean(token)
 
   useEffect(() => {
+    if (!mounted) return
+
     // Protected route: must be authenticated
     if (requireAuth && !isAuthenticated) {
       router.replace('/login')
@@ -34,9 +42,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     if (!requireAuth && isAuthenticated) {
       router.replace(redirectTo)
     }
-  }, [requireAuth, isAuthenticated, redirectTo, router])
+  }, [requireAuth, isAuthenticated, redirectTo, router, mounted])
 
   // Prevent flashing content while redirecting
+  if (!mounted) return null
   if (requireAuth && !isAuthenticated) return null
   if (!requireAuth && isAuthenticated) return null
 

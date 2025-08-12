@@ -24,7 +24,7 @@ export function useRegister() {
       // Just update the cache and redirect
       const user = responseData.data?.user
       if (user) {
-        queryClient.setQueryData(['auth', 'user'], user)
+        queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
         setIsAuthenticated(true)
         toast.success('Account created successfully!')
         
