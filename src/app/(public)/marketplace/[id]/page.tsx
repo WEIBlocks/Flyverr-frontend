@@ -7,41 +7,11 @@ import { ArrowLeft, Star, Heart, Share2, ChevronLeft, ChevronRight, Image as Ima
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useGetMarketplaceProductDetail } from '@/features/marketplace/hooks/useGetMarketplaceProductDetail'
+import { useGetAvailableLicenses } from '@/features/marketplace/hooks/useGetAvailableLicenses'
+import type { AvailableLicensesResponse, ProductDetail } from '@/features/marketplace/marketplace.types'
 
 // Types
-interface Product {
-  id: string
-  title: string
-  description: string
-  longDescription: string
-  images: string[]
-  creator: {
-    name: string
-    avatar: string
-    rating: number
-    products: number
-    followers: number
-  }
-  price: number
-  resaleStage: 'newboom' | 'blossom' | 'evergreen' | 'exit'
-  remainingLicenses: number
-  totalLicenses: number
-  category: string
-  rating: number
-  reviews: number
-  isSponsored?: boolean
-  isTrending?: boolean
-  isRecommended?: boolean
-  isMostProfitable?: boolean
-  isInfluencerFave?: boolean
-  isHotDeal?: boolean
-  features: string[]
-  requirements: string[]
-  fileSize: string
-  lastUpdated: string
-  tags: string[]
-}
-
 interface Review {
   id: string
   user: string
@@ -52,65 +22,7 @@ interface Review {
   helpful: number
 }
 
-// Mock data
-const mockProduct: Product = {
-    id: '1',
-  title: 'Complete Web Development Masterclass',
-  description: 'Learn full-stack web development from scratch. Includes React, Node.js, and database design.',
-  longDescription: `This comprehensive masterclass covers everything you need to become a full-stack web developer. From HTML/CSS fundamentals to advanced React patterns, Node.js backend development, and database design.
-
-What you'll learn:
-• Modern JavaScript (ES6+) and TypeScript
-• React.js with Hooks and Context API
-• Node.js and Express.js backend development
-• Database design with MongoDB and PostgreSQL
-• RESTful API development
-• Authentication and authorization
-• Deployment and DevOps basics
-• Real-world project building
-
-Perfect for beginners and intermediate developers looking to advance their skills.`,
-    images: [
-    'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=600&fit=crop'
-  ],
-  creator: {
-    name: 'CodeMaster Pro',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-    rating: 4.8,
-    products: 15,
-    followers: 2500
-  },
-  price: 299.99,
-  resaleStage: 'newboom',
-  remainingLicenses: 50,
-  totalLicenses: 100,
-  category: 'Courses',
-  rating: 4.8,
-  reviews: 127,
-    isSponsored: true,
-    isTrending: true,
-    features: [
-    '25+ hours of video content',
-    'Lifetime access to updates',
-    'Certificate of completion',
-    'Source code included',
-    'Community support',
-    'Mobile-friendly learning'
-  ],
-  requirements: [
-    'Basic computer knowledge',
-    'No programming experience required',
-    'Windows, Mac, or Linux computer',
-    'Internet connection'
-  ],
-  fileSize: '2.5 GB',
-  lastUpdated: '2024-01-15',
-  tags: ['Web Development', 'React', 'Node.js', 'JavaScript', 'Full Stack']
-}
-
+// Mock reviews (you can replace this with real API data later)
 const mockReviews: Review[] = [
   {
     id: '1',
@@ -156,30 +68,73 @@ export default function ProductDetailPage() {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [selectedTab, setSelectedTab] = useState<'description' | 'reviews' | 'creator'>('description')
 
-  const product = mockProduct // In real app, fetch by ID
-  const stage = resaleStages[product.resaleStage]
+  // Get product ID from params
+  const productId = params.id as string
+  
+  // Fetch product data using the hook
+  const { data: product, isLoading, error } = useGetMarketplaceProductDetail(productId)
+  
+  // Fetch real-time license information
+  const { data: licenseData } = useGetAvailableLicenses(productId) as { data: AvailableLicensesResponse }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading product details...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Product Not Found</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">{error instanceof Error ? error.message : 'The product you are looking for does not exist.'}</p>
+          <Button onClick={() => router.push('/marketplace')} className="bg-flyverr-primary hover:bg-flyverr-primary/90">
+            Back to Marketplace
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const stage = resaleStages[product.current_stage]
+  const images = product.images_urls && product.images_urls.length > 0 ? product.images_urls : [product.thumbnail_url]
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % product.images.length)
+    setCurrentImageIndex((prev) => (prev + 1) % images.length)
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length)
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
   }
 
   const handleBuyToUse = () => {
     // Handle buy to use logic
-    console.log('Buy to Use clicked')
+    console.log('Buy to Use clicked for product:', product.id)
+    // You can implement the actual purchase logic here
+    // For example, redirect to a checkout page or open a payment modal
   }
 
   const handleBuyToResell = () => {
     // Handle buy to resell logic
-    console.log('Buy to Resell clicked')
+    console.log('Buy to Resell clicked for product:', product.id)
+    // You can implement the actual resell purchase logic here
+    // This might involve different pricing or terms
   }
 
   const handleBuyWithInsurance = () => {
     // Handle buy with insurance logic
-    console.log('Buy with Insurance clicked')
+    console.log('Buy with Insurance clicked for product:', product.id)
+    // You can implement the actual insurance purchase logic here
+    // This might involve additional fees or different terms
   }
 
   return (
@@ -202,37 +157,37 @@ export default function ProductDetailPage() {
             <div className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden mb-8">
               <div className="relative aspect-video">
                 <Image
-                src={product.images[currentImageIndex]}
-                alt={product.title}
+                  src={images[currentImageIndex]}
+                  alt={product.title}
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 66vw"
                   priority
-              />
+                />
               
-              {/* Image Navigation */}
-              {product.images.length > 1 && (
-                <>
-                  <Button
-                    size="sm"
-                    variant="ghost"
+                {/* Image Navigation */}
+                {images.length > 1 && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full w-10 h-10 p-0"
-                    onClick={prevImage}
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
+                      onClick={prevImage}
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full w-10 h-10 p-0"
-                    onClick={nextImage}
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </Button>
+                      onClick={nextImage}
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </Button>
                     
                     {/* Image Dots */}
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                      {product.images.map((_, index) => (
+                      {images.map((_, index) => (
                         <div
                           key={index}
                           className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer ${
@@ -244,8 +199,8 @@ export default function ProductDetailPage() {
                         />
                       ))}
                     </div>
-                </>
-              )}
+                  </>
+                )}
               </div>
             </div>
 
@@ -257,7 +212,7 @@ export default function ProductDetailPage() {
                     {product.title}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-300 text-lg">
-                    by {product.creator.name}
+                    by {product.creator_id}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -287,7 +242,7 @@ export default function ProductDetailPage() {
                       <Star
                         key={i}
                         className={`h-5 w-5 ${
-                          i < Math.floor(product.rating)
+                          i < 4 // You can replace this with actual rating when available
                             ? 'text-yellow-400 fill-current' 
                             : 'text-gray-300 dark:text-gray-600'
                         }`}
@@ -295,44 +250,26 @@ export default function ProductDetailPage() {
                     ))}
                   </div>
                   <span className="text-flyverr-text dark:text-white font-medium">
-                    {product.rating} ({product.reviews} reviews)
+                    4.0 (0 reviews)
                   </span>
                 </div>
                 <Badge className="bg-flyverr-secondary/20 dark:bg-flyverr-secondary/30 text-flyverr-secondary dark:text-flyverr-secondary">
-                  {product.category}
+                  Digital Product
                 </Badge>
               </div>
 
               {/* Special Badges */}
               <div className="flex flex-wrap gap-2 mb-6">
-                {product.isSponsored && (
+                {product.featured && (
                   <Badge className="bg-flyverr-accent text-white">
                     <Crown className="h-3 w-3 mr-1" />
-                    Sponsored
+                    Featured
                   </Badge>
                 )}
-                {product.isTrending && (
-                  <Badge className="bg-flyverr-primary text-white">
-                    <TrendingUp className="h-3 w-3 mr-1" />
-                    Trending
-                  </Badge>
-                )}
-                {product.isHotDeal && (
-                  <Badge className="bg-red-500 text-white">
-                    <Flame className="h-3 w-3 mr-1" />
-                    Hot Deal
-                  </Badge>
-                )}
-                {product.isMostProfitable && (
-                  <Badge className="bg-flyverr-secondary text-white">
-                    <Zap className="h-3 w-3 mr-1" />
-                    Most Profitable
-                  </Badge>
-                )}
-                {product.isInfluencerFave && (
-                  <Badge className="bg-pink-500 text-white">
-                    <Users className="h-3 w-3 mr-1" />
-                    Influencer&apos;s Fave
+                {product.status === 'approved' && (
+                  <Badge className="bg-green-500 text-white">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Approved
                   </Badge>
                 )}
               </div>
@@ -341,7 +278,7 @@ export default function ProductDetailPage() {
               <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <Badge className={`${stage.color} text-white text-sm`}>
-                    Stage {Object.keys(resaleStages).indexOf(product.resaleStage) + 1}: {stage.name}
+                    Stage {Object.keys(resaleStages).indexOf(product.current_stage) + 1}: {stage.name}
                   </Badge>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Earning Potential: {stage.earningPotential}
@@ -351,27 +288,34 @@ export default function ProductDetailPage() {
                   {stage.description}
                 </p>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Remaining: {product.remainingLicenses} of {product.totalLicenses} licenses
-                  </span>
-                  <div className="w-24 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                      <div 
-                    className="bg-flyverr-primary h-2 rounded-full"
-                    style={{ width: `${(product.remainingLicenses / product.totalLicenses) * 100}%` }}
-                  ></div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 dark:text-gray-400">
+                        Remaining: {licenseData?.data?.product?.remaining_licenses ?? product.remaining_licenses} of {product.total_licenses} licenses
+                    </span>
+                    {licenseData && (
+                      <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                        Live
+                      </Badge>
+                    )}
                   </div>
+                  <div className="w-24 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div 
+                      className="bg-flyverr-primary h-2 rounded-full"
+                      style={{ width: `${((licenseData?.data?.product?.remaining_licenses ?? product.remaining_licenses) / product.total_licenses) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
               </div>
-            </div>
 
               {/* Tabs */}
               <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
                 <div className="flex space-x-8">
                   {[
                     { id: 'description', label: 'Description' },
-                    { id: 'reviews', label: `Reviews (${product.reviews})` },
+                    { id: 'reviews', label: 'Reviews (0)' },
                     { id: 'creator', label: 'Creator' }
                   ].map((tab) => (
-                  <button
+                    <button
                       key={tab.id}
                       onClick={() => setSelectedTab(tab.id as any)}
                       className={`pb-2 px-1 border-b-2 font-medium text-sm transition-colors ${
@@ -381,8 +325,8 @@ export default function ProductDetailPage() {
                       }`}
                     >
                       {tab.label}
-                  </button>
-                ))}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -392,31 +336,37 @@ export default function ProductDetailPage() {
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-lg font-semibold text-flyverr-text dark:text-white mb-3">About this product</h3>
-                      <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                        {product.longDescription}
+                      <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        {product.description}
                       </p>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">What you&apos;ll get</h4>
+                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">Product Details</h4>
                         <ul className="space-y-2">
-                          {product.features.map((feature, index) => (
-                            <li key={index} className="flex items-center text-gray-600 dark:text-gray-300">
-                              <div className="w-2 h-2 bg-flyverr-secondary rounded-full mr-3"></div>
-                              {feature}
-                            </li>
-                          ))}
+                          <li className="flex items-center text-gray-600 dark:text-gray-300">
+                            <div className="w-2 h-2 bg-flyverr-secondary rounded-full mr-3"></div>
+                            File Type: {product.file_type.toUpperCase()}
+                          </li>
+                          <li className="flex items-center text-gray-600 dark:text-gray-300">
+                            <div className="w-2 h-2 bg-flyverr-secondary rounded-full mr-3"></div>
+                            File Size: {product.file_size_formatted}
+                          </li>
+                          <li className="flex items-center text-gray-600 dark:text-gray-300">
+                            <div className="w-2 h-2 bg-flyverr-secondary rounded-full mr-3"></div>
+                            Status: {product.status}
+                          </li>
                         </ul>
-          </div>
+                      </div>
 
-            <div>
-                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">Requirements</h4>
+                      <div>
+                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">Stage Pricing</h4>
                         <ul className="space-y-2">
-                          {product.requirements.map((req, index) => (
-                            <li key={index} className="flex items-center text-gray-600 dark:text-gray-300">
-                              <div className="w-2 h-2 bg-flyverr-primary rounded-full mr-3"></div>
-                              {req}
+                          {Object.entries(product.stage_pricing).map(([stage, price]) => (
+                            <li key={stage} className="flex items-center justify-between text-gray-600 dark:text-gray-300">
+                              <span className="capitalize">{stage}:</span>
+                              <span className="font-medium">${price}</span>
                             </li>
                           ))}
                         </ul>
@@ -424,11 +374,15 @@ export default function ProductDetailPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      {product.tags.map((tag, index) => (
-                        <Badge key={index} variant="outline" className="text-gray-600 dark:text-gray-400">
-                          {tag}
-                        </Badge>
-                      ))}
+                      <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
+                        {product.current_stage}
+                      </Badge>
+                      <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
+                        Round {product.current_round}
+                      </Badge>
+                      <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
+                        {product.availability_percentage}% Available
+                      </Badge>
                     </div>
                   </div>
                 )}
@@ -441,7 +395,7 @@ export default function ProductDetailPage() {
                           <Image
                             src={review.avatar}
                             alt={review.user}
-                             width={48}
+                            width={48}
                             height={48}
                             className="rounded-full"
                           />
@@ -451,16 +405,16 @@ export default function ProductDetailPage() {
                               <span className="text-sm text-gray-500 dark:text-gray-400">{review.date}</span>
                             </div>
                             <div className="flex items-center mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
                                   className={`h-4 w-4 ${
                                     i < review.rating
-                          ? 'text-yellow-400 fill-current'
+                                      ? 'text-yellow-400 fill-current'
                                       : 'text-gray-300 dark:text-gray-600'
-                      }`}
-                    />
-                  ))}
+                                  }`}
+                                />
+                              ))}
                             </div>
                             <p className="text-gray-600 dark:text-gray-300">{review.comment}</p>
                             <div className="mt-3">
@@ -472,44 +426,35 @@ export default function ProductDetailPage() {
                         </div>
                       </div>
                     ))}
-                </div>
+                  </div>
                 )}
 
                 {selectedTab === 'creator' && (
                   <div className="space-y-6">
                     <div className="flex items-center gap-4">
-                      <Image
-                        src={product.creator.avatar}
-                        alt={product.creator.name}
-                        width={80}
-                        height={80}
-                        className="rounded-full"
-                      />
+                      <div className="w-20 h-20 bg-flyverr-primary/20 rounded-full flex items-center justify-center">
+                        <Users className="h-10 w-10 text-flyverr-primary" />
+                      </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">{product.creator.name}</h3>
+                        <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">Creator ID: {product.creator_id}</h3>
                         <div className="flex items-center gap-4 mt-2">
-                          <div className="flex items-center">
-                            <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
-                            <span className="text-gray-600 dark:text-gray-400">{product.creator.rating}</span>
-                          </div>
-                          <span className="text-gray-600 dark:text-gray-400">{product.creator.products} products</span>
-                          <span className="text-gray-600 dark:text-gray-400">{product.creator.followers} followers</span>
+                          <span className="text-gray-600 dark:text-gray-400">Digital Creator</span>
                         </div>
                       </div>
-              </div>
+                    </div>
 
                     <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
                       <h4 className="font-semibold text-flyverr-text dark:text-white mb-2">About the creator</h4>
                       <p className="text-gray-600 dark:text-gray-300">
-                        {product.creator.name} is a professional web developer and instructor with over 10 years of experience. 
-                        They specialize in modern web technologies and have helped thousands of students learn web development.
+                        This creator has developed digital products available on our marketplace. 
+                        Their products go through our approval process to ensure quality and compliance.
                       </p>
                     </div>
                   </div>
                 )}
               </div>
             </div>
-            </div>
+          </div>
 
           {/* Right Column - Purchase Options */}
           <div className="lg:col-span-1">
@@ -517,24 +462,24 @@ export default function ProductDetailPage() {
               <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="text-3xl font-bold text-flyverr-text dark:text-white mb-6">
-                    ${product.price}
-              </div>
+                    ${product.current_price}
+                  </div>
 
                   {/* License Info */}
                   <div className="bg-flyverr-primary/10 dark:bg-flyverr-primary/20 rounded-lg p-4 mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-flyverr-text dark:text-white">Available Licenses</span>
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {product.remainingLicenses} of {product.totalLicenses}
+                        {licenseData?.data?.product?.remaining_licenses ?? product.remaining_licenses} of {product.total_licenses}
                       </span>
-              </div>
+                    </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
                         className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${(product.remainingLicenses / product.totalLicenses) * 100}%` }}
+                        style={{ width: `${((licenseData?.data?.product?.remaining_licenses ?? product.remaining_licenses) / product.total_licenses) * 100}%` }}
                       ></div>
-              </div>
-            </div>
+                    </div>
+                  </div>
 
                   {/* Purchase Buttons */}
                   <div className="space-y-4 mb-6">
@@ -572,28 +517,32 @@ export default function ProductDetailPage() {
                   <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex justify-between">
                       <span>File Size:</span>
-                      <span className="font-medium text-flyverr-text dark:text-white">{product.fileSize}</span>
+                      <span className="font-medium text-flyverr-text dark:text-white">{product.file_size_formatted}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Last Updated:</span>
-                      <span className="font-medium text-flyverr-text dark:text-white">{product.lastUpdated}</span>
+                      <span className="font-medium text-flyverr-text dark:text-white">
+                        {new Date(product.updated_at).toLocaleDateString()}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Category:</span>
-                      <span className="font-medium text-flyverr-text dark:text-white">{product.category}</span>
-              </div>
-            </div>
+                      <span className="font-medium text-flyverr-text dark:text-white">
+                        {product.category_id || 'Digital Product'}
+                      </span>
+                    </div>
+                  </div>
 
                   {/* Guarantee */}
                   <div className="mt-6 p-4 bg-flyverr-secondary/10 dark:bg-flyverr-secondary/20 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <Shield className="h-5 w-5 text-flyverr-secondary dark:text-flyverr-secondary" />
                       <span className="font-semibold text-flyverr-secondary dark:text-flyverr-secondary">30-Day Money Back Guarantee</span>
-              </div>
+                    </div>
                     <p className="text-sm text-flyverr-secondary/80 dark:text-flyverr-secondary/80">
                       Not satisfied? Get a full refund within 30 days of purchase.
                     </p>
-                </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>

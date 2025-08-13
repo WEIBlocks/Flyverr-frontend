@@ -1,219 +1,55 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Image from 'next/image'
-import { Search, Star, TrendingUp, Flame, Crown, Gift, ChevronLeft, ChevronRight, Filter, Sparkles, Users, Zap, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { useAuth } from '@/contexts/AuthContext'
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import {
+  Search,
+  Star,
+  TrendingUp,
+  Flame,
+  Crown,
+  Gift,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Sparkles,
+  Users,
+  Zap,
+  ArrowRight,
+  X,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
+import { useGetMarketplaceProducts } from "@/features/marketplace/hooks/useGetMarketplaceProducts";
+import {
+  resaleStages,
+  type MarketplaceFilters,
+  type MarketplaceProduct,
+} from "@/features/marketplace/marketplace.types";
+import Modal from "@/components/Modal";
+import { formatErrorMessage, getValidationErrors, isValidationError } from "@/lib/errorUtils";
 
 // Types
-interface Product {
-  id: string
-  title: string
-  description: string
-  images: string[]
-  creator: string
-  price: number
-  resaleStage: 'newboom' | 'blossom' | 'evergreen' | 'exit'
-  remainingLicenses: number
-  totalLicenses: number
-  category: string
-  rating: number
-  reviews: number
-  isSponsored?: boolean
-  isTrending?: boolean
-  isRecommended?: boolean
-  isMostProfitable?: boolean
-  isInfluencerFave?: boolean
-  isHotDeal?: boolean
-}
-
 interface ImageState {
-  loading: boolean
-  error: boolean
-  loaded: boolean
+  loading: boolean;
+  error: boolean;
+  loaded: boolean;
 }
 
-// Mock data for digital products
-const mockProducts: Product[] = [
-  {
-    id: '1',
-    title: 'Complete Web Development Masterclass',
-    description: 'Learn full-stack web development from scratch. Includes React, Node.js, and database design.',
-    images: [
-      'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop'
-    ],
-    creator: 'CodeMaster Pro',
-    price: 299.99,
-    resaleStage: 'newboom',
-    remainingLicenses: 50,
-    totalLicenses: 100,
-    category: 'Courses',
-    rating: 4.8,
-    reviews: 127,
-    isSponsored: true,
-    isTrending: true
-  },
-  {
-    id: '2',
-    title: 'Premium UI/UX Design System',
-    description: 'Complete design system with 200+ components, icons, and templates for modern applications.',
-    images: [
-      'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1558655146-d09347e92766?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop'
-    ],
-    creator: 'DesignStudio',
-    price: 149.99,
-    resaleStage: 'blossom',
-    remainingLicenses: 25,
-    totalLicenses: 75,
-    category: 'Templates',
-    rating: 4.9,
-    reviews: 89,
-    isMostProfitable: true,
-    isHotDeal: true
-  },
-  {
-    id: '3',
-    title: 'Digital Marketing Strategy Guide',
-    description: 'Comprehensive digital marketing playbook with proven strategies and case studies.',
-    images: [
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop'
-    ],
-    creator: 'MarketingGuru',
-    price: 199.99,
-    resaleStage: 'evergreen',
-    remainingLicenses: 15,
-    totalLicenses: 60,
-    category: 'eBooks',
-    rating: 4.7,
-    reviews: 156,
-    isRecommended: true,
-    isInfluencerFave: true
-  },
-  {
-    id: '4',
-    title: 'Advanced JavaScript Patterns',
-    description: 'Deep dive into JavaScript design patterns, best practices, and advanced concepts.',
-    images: [
-      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=300&fit=crop'
-    ],
-    creator: 'JSExpert',
-    price: 89.99,
-    resaleStage: 'exit',
-    remainingLicenses: 5,
-    totalLicenses: 50,
-    category: 'Courses',
-    rating: 4.6,
-    reviews: 234,
-    isTrending: true
-  },
-  {
-    id: '5',
-    title: 'Complete E-commerce Template Pack',
-    description: 'Ready-to-use e-commerce templates with payment integration and admin dashboard.',
-    images: [
-      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop'
-    ],
-    creator: 'TemplateHub',
-    price: 399.99,
-    resaleStage: 'newboom',
-    remainingLicenses: 30,
-    totalLicenses: 80,
-    category: 'Templates',
-    rating: 4.9,
-    reviews: 78,
-    isSponsored: true,
-    isMostProfitable: true
-  },
-  {
-    id: '6',
-    title: 'AI and Machine Learning Fundamentals',
-    description: 'Comprehensive guide to AI/ML concepts with practical examples and projects.',
-    images: [
-      'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
-    ],
-    creator: 'AI Academy',
-    price: 249.99,
-    resaleStage: 'blossom',
-    remainingLicenses: 20,
-    totalLicenses: 70,
-    category: 'Courses',
-    rating: 4.8,
-    reviews: 445,
-    isRecommended: true,
-    isHotDeal: true
-  },
-  {
-    id: '7',
-    title: 'Premium Stock Photo Collection',
-    description: 'High-quality stock photos for commercial use. 1000+ images across various categories.',
-    images: [
-      'https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400&h=300&fit=crop'
-    ],
-    creator: 'PhotoPro',
-    price: 179.99,
-    resaleStage: 'evergreen',
-    remainingLicenses: 10,
-    totalLicenses: 55,
-    category: 'Assets',
-    rating: 4.7,
-    reviews: 67,
-    isInfluencerFave: true
-  },
-  {
-    id: '8',
-    title: 'Complete Business Plan Template',
-    description: 'Professional business plan template with financial models and market analysis tools.',
-    images: [
-      'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop'
-    ],
-    creator: 'BusinessTools',
-    price: 129.99,
-    resaleStage: 'exit',
-    remainingLicenses: 8,
-    totalLicenses: 45,
-    category: 'Templates',
-    rating: 4.5,
-    reviews: 123,
-    isTrending: true
-  }
-]
-
+// Updated categories based on new requirements
 const categories = [
-  { id: 'all', name: 'All Products', icon: Sparkles },
-  { id: 'sponsored', name: 'Sponsored', icon: Crown },
-  { id: 'trending', name: 'Trending', icon: TrendingUp },
-  { id: 'recommended', name: 'We Think You\'ll Like', icon: Gift },
-  { id: 'hot-deals', name: 'Hot Deals', icon: Flame }
-]
+  { id: "all", name: "All Products", icon: Sparkles },
+  { id: "sponsored", name: "Sponsored", icon: Crown },
+  { id: "trending", name: "Trending", icon: TrendingUp },
+  { id: "recommended", name: "We Think You'll Like", icon: Gift },
+  { id: "hot-deals", name: "Hot Deals", icon: Flame },
+];
 
-// Resale Stage Configuration
-const resaleStages = {
-  newboom: { name: 'Newboom', color: 'bg-flyverr-secondary', description: 'Never resold' },
-  blossom: { name: 'Blossom', color: 'bg-flyverr-primary', description: '1st resale cycle' },
-  evergreen: { name: 'Evergreen', color: 'bg-flyverr-accent', description: '2nd resale cycle' },
-  exit: { name: 'Exit', color: 'bg-orange-500', description: '3rd resale cycle' }
-}
+
 
 // Skeleton Loading Component
 const ProductCardSkeleton = () => (
@@ -234,111 +70,473 @@ const ProductCardSkeleton = () => (
       </div>
     </CardContent>
   </Card>
-)
+);
+
+// Filter Modal Component
+const FilterModal = ({
+  isOpen,
+  onClose,
+  selectedCategory,
+  onCategoryChange,
+  selectedStage,
+  onStageChange,
+  showFeatured,
+  onFeaturedChange,
+  priceRange,
+  onPriceRangeChange,
+  sortBy,
+  onSortByChange,
+  sortOrder,
+  onSortOrderChange,
+  onApply,
+  onClearAll,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+  selectedStage: string | undefined;
+  onStageChange: (stage: string | undefined) => void;
+  showFeatured: boolean | undefined;
+  onFeaturedChange: (featured: boolean | undefined) => void;
+  priceRange: { min: number; max: number };
+  onPriceRangeChange: (range: { min: number; max: number }) => void;
+  sortBy: "created_at" | "price" | "title" | "remaining_licenses";
+  onSortByChange: (
+    sortBy: "created_at" | "price" | "title" | "remaining_licenses"
+  ) => void;
+  sortOrder: "asc" | "desc";
+  onSortOrderChange: (sortOrder: "asc" | "desc") => void;
+  onApply: () => void;
+  onClearAll: () => void;
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <Modal size="lg">
+      <div className="bg-white dark:bg-gray-800 rounded-xl w-full overflow-y-auto">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Filters
+            </h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Categories */}
+          <div>
+            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+              Categories
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              {categories.map((category) => {
+                const Icon = category.icon;
+                return (
+                  <Button
+                    key={category.id}
+                    variant={
+                      selectedCategory === category.id ? "default" : "outline"
+                    }
+                    size="sm"
+                    onClick={() => onCategoryChange(category.id)}
+                    className={`justify-start ${
+                      selectedCategory === category.id
+                        ? "bg-flyverr-primary text-white hover:bg-flyverr-primary/90"
+                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-flyverr-primary/5"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    {category.name}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Resale Stages */}
+          <div>
+            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+              Resale Stages
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              {resaleStages.map((stage) => {
+                const Icon = stage.icon;
+                return (
+                  <Button
+                    key={stage.id}
+                    variant={selectedStage === stage.id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() =>
+                      onStageChange(
+                        selectedStage === stage.id ? undefined : stage.id
+                      )
+                    }
+                    className={`justify-start ${
+                      selectedStage === stage.id
+                        ? "bg-flyverr-primary text-white hover:bg-flyverr-primary/90"
+                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-flyverr-primary/5"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    {stage.name}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Featured Filter */}
+          <div>
+            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+              Featured Products
+            </h4>
+            <div className="space-y-2">
+              {[
+                { value: undefined, label: "All Products" },
+                { value: true, label: "Featured Only" },
+                { value: false, label: "Non-Featured Only" },
+              ].map((option) => (
+                <Button
+                  key={String(option.value)}
+                  variant={
+                    showFeatured === option.value ? "default" : "outline"
+                  }
+                  size="sm"
+                  onClick={() => onFeaturedChange(option.value)}
+                  className={`justify-start w-full ${
+                    showFeatured === option.value
+                      ? "bg-flyverr-primary text-white hover:bg-flyverr-primary/90"
+                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-flyverr-primary/5"
+                  }`}
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Price Range */}
+          <div>
+            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+              Price Range
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  Min Price
+                </label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={priceRange.min || ""}
+                  onChange={(e) =>
+                    onPriceRangeChange({
+                      ...priceRange,
+                      min: Number(e.target.value) || 0,
+                    })
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  Max Price
+                </label>
+                <Input
+                  type="number"
+                  placeholder="1000"
+                  value={priceRange.max || ""}
+                  onChange={(e) =>
+                    onPriceRangeChange({
+                      ...priceRange,
+                      max: Number(e.target.value) || 0,
+                    })
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Sort Options */}
+          <div>
+            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+              Sort By
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  Sort Field
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) =>
+                    onSortByChange(
+                      e.target.value as
+                        | "created_at"
+                        | "price"
+                        | "title"
+                        | "remaining_licenses"
+                    )
+                  }
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                >
+                  <option value="created_at">Date Created</option>
+                  <option value="price">Price</option>
+                  <option value="title">Title</option>
+                  <option value="remaining_licenses">Available Licenses</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  Order
+                </label>
+                <select
+                  value={sortOrder}
+                  onChange={(e) =>
+                    onSortOrderChange(e.target.value as "asc" | "desc")
+                  }
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                >
+                  <option value="desc">Descending</option>
+                  <option value="asc">Ascending</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex gap-3">
+          <Button
+            variant="outline"
+            onClick={onClearAll}
+            className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500"
+          >
+            Clear All
+          </Button>
+          <Button
+            onClick={onApply}
+            className="flex-1 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-medium"
+          >
+            Apply Filters
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
 
 export default function MarketplacePage() {
-  const router = useRouter()
-  const { isAuthenticated } = useAuth()
-  const [products] = useState<Product[]>(mockProducts)
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(mockProducts)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({})
-  const [imageStates, setImageStates] = useState<{ [key: string]: ImageState }>({})
-  const [isLoading, setIsLoading] = useState(true)
-  const productsPerPage = 8
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
-  // Simulate loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-    return () => clearTimeout(timer)
-  }, [])
+  // State for filters and pagination
+  const [filters, setFilters] = useState<MarketplaceFilters>({
+    limit: 20,
+    offset: 0,
+    sortBy: "created_at",
+    sortOrder: "desc",
+  });
+  
+  // Pending filters state (only applied when Apply button is clicked)
+  const [pendingFilters, setPendingFilters] = useState({
+    searchTerm: "",
+    selectedCategory: "all",
+    selectedStage: undefined as string | undefined,
+    showFeatured: undefined as boolean | undefined,
+    priceRange: { min: 0, max: 0 },
+    sortBy: "created_at" as "created_at" | "price" | "title" | "remaining_licenses",
+    sortOrder: "desc" as "asc" | "desc",
+  });
+  
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter products based on search and category
-  useEffect(() => {
-    let filtered = products
+  // Filter modal state
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(product =>
-        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+  // Image state management
+  const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>(
+    {}
+  );
+  const [imageStates, setImageStates] = useState<{ [key: string]: ImageState }>(
+    {}
+  );
+
+  // Fetch products using the hook
+  const {
+    data: marketplaceData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetMarketplaceProducts(filters);
+
+  const products = marketplaceData?.data?.products || [];
+  const pagination = marketplaceData?.data?.pagination;
+  const totalProducts = pagination?.total || 0;
+  const hasMore = pagination?.hasMore || false;
+
+  // Apply filters function - called when Apply button is clicked
+  const applyFilters = () => {
+    const newFilters: MarketplaceFilters = {
+      limit: 20,
+      offset: 0,
+      sortBy: pendingFilters.sortBy,
+      sortOrder: pendingFilters.sortOrder,
+    };
+
+    if (pendingFilters.searchTerm) {
+      newFilters.search = pendingFilters.searchTerm;
     }
 
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      switch (selectedCategory) {
-        case 'sponsored':
-          filtered = filtered.filter(product => product.isSponsored)
-          break
-        case 'trending':
-          filtered = filtered.filter(product => product.isTrending)
-          break
-        case 'recommended':
-          filtered = filtered.filter(product => product.isRecommended)
-          break
-        case 'most-profitable':
-          filtered = filtered.filter(product => product.isMostProfitable)
-          break
-        case 'influencer-fave':
-          filtered = filtered.filter(product => product.isInfluencerFave)
-          break
-        case 'hot-deals':
-          filtered = filtered.filter(product => product.isHotDeal)
-          break
+    if (pendingFilters.selectedCategory !== "all") {
+      if (pendingFilters.selectedCategory === "sponsored") {
+        newFilters.featured = true;
+      } else if (pendingFilters.selectedCategory === "trending") {
+        newFilters.trending = true;
+      } else if (pendingFilters.selectedCategory === "recommended") {
+        newFilters.recommended = true;
+      } else if (pendingFilters.selectedCategory === "hot-deals") {
+        newFilters.hotDeals = true;
       }
     }
 
-    setFilteredProducts(filtered)
-    setCurrentPage(1) // Reset to first page when filtering
-  }, [searchTerm, selectedCategory, products])
+    if (pendingFilters.selectedStage && pendingFilters.selectedStage !== "all") {
+      newFilters.stage = pendingFilters.selectedStage as any;
+    }
 
-  // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
-  const startIndex = (currentPage - 1) * productsPerPage
-  const endIndex = startIndex + productsPerPage
-  const currentProducts = filteredProducts.slice(startIndex, endIndex)
+    if (pendingFilters.showFeatured !== undefined) {
+      newFilters.featured = pendingFilters.showFeatured;
+    }
+
+    if (pendingFilters.priceRange.min > 0) {
+      newFilters.minPrice = pendingFilters.priceRange.min;
+    }
+
+    if (pendingFilters.priceRange.max > 0) {
+      newFilters.maxPrice = pendingFilters.priceRange.max;
+    }
+
+    setFilters(newFilters);
+    setCurrentPage(1);
+    setIsFilterModalOpen(false);
+  };
+
+
+
+  // Clear all filters function (used by both modal and main clear buttons)
+  const clearAllFilters = () => {
+    const newFilters: MarketplaceFilters = {
+      limit: 20,
+      offset: 0,
+      sortBy: "created_at",
+      sortOrder: "desc",
+    };
+    
+    setFilters(newFilters);
+    setPendingFilters({
+      searchTerm: "",
+      selectedCategory: "all",
+      selectedStage: undefined,
+      showFeatured: undefined,
+      priceRange: { min: 0, max: 0 },
+      sortBy: "created_at",
+      sortOrder: "desc",
+    });
+    setCurrentPage(1);
+  };
+
+  // Clear filters and close modal function
+  const clearFiltersAndCloseModal = () => {
+    clearAllFilters();
+    setIsFilterModalOpen(false);
+  };
+
+
+
+  // Update offset when page changes
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      offset: (currentPage - 1) * (prev.limit || 20),
+    }));
+  }, [currentPage]);
 
   const handleCategoryClick = (categoryId: string) => {
-    setSelectedCategory(categoryId)
-  }
+    // Apply category filter immediately
+    const newFilters: MarketplaceFilters = {
+      limit: 20,
+      offset: 0,
+      sortBy: filters.sortBy || "created_at",
+      sortOrder: filters.sortOrder || "desc",
+    };
+
+    if (categoryId !== "all") {
+      if (categoryId === "sponsored") {
+        newFilters.featured = true;
+      } else if (categoryId === "trending") {
+        newFilters.trending = true;
+      } else if (categoryId === "recommended") {
+        newFilters.recommended = true;
+      } else if (categoryId === "hot-deals") {
+        newFilters.hotDeals = true;
+      }
+    }
+
+    setFilters(newFilters);
+    setPendingFilters(prev => ({ ...prev, selectedCategory: categoryId }));
+    setCurrentPage(1);
+  };
 
   const handleCardClick = (productId: string) => {
-    router.push(`/marketplace/${productId}`)
-  }
+    router.push(`/marketplace/${productId}`);
+  };
 
   const nextImage = (productId: string, totalImages: number) => {
-    setImageIndices(prev => ({
+    setImageIndices((prev) => ({
       ...prev,
-      [productId]: ((prev[productId] || 0) + 1) % totalImages
-    }))
-  }
+      [productId]: ((prev[productId] || 0) + 1) % totalImages,
+    }));
+  };
 
   const prevImage = (productId: string, totalImages: number) => {
-    setImageIndices(prev => ({
+    setImageIndices((prev) => ({
       ...prev,
-      [productId]: prev[productId] === 0 ? totalImages - 1 : (prev[productId] || 0) - 1
-    }))
-  }
+      [productId]:
+        prev[productId] === 0 ? totalImages - 1 : (prev[productId] || 0) - 1,
+    }));
+  };
 
   const handleImageLoad = (productId: string) => {
-    setImageStates(prev => ({
+    setImageStates((prev) => ({
       ...prev,
-      [productId]: { loading: false, error: false, loaded: true }
-    }))
-  }
+      [productId]: { loading: false, error: false, loaded: true },
+    }));
+  };
 
   const handleImageError = (productId: string) => {
-    setImageStates(prev => ({
+    setImageStates((prev) => ({
       ...prev,
-      [productId]: { loading: false, error: true, loaded: false }
-    }))
-  }
+      [productId]: { loading: false, error: true, loaded: false },
+    }));
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(totalProducts / (filters.limit || 20));
+
+
+  const handleTryAgain = () => {
+    refetch();
+  };
+ 
 
   return (
     <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
@@ -363,20 +561,21 @@ export default function MarketplacePage() {
                     Welcome to Flyverr! 🚀
                   </h2>
                   <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4">
-                    You're currently browsing our marketplace as a guest. Sign up or sign in to access exclusive features, 
-                    create your own digital products, and start your resale journey!
+                    You're currently browsing our marketplace as a guest. Sign
+                    up or sign in to access exclusive features, create your own
+                    digital products, and start your resale journey!
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Button 
-                      onClick={() => router.push('/signup')}
+                    <Button
+                      onClick={() => router.push("/signup")}
                       className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
                       Get Started Free
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
-                    <Button 
+                    <Button
                       variant="outline"
-                      onClick={() => router.push('/login')}
+                      onClick={() => router.push("/login")}
                       className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 px-6 py-2 rounded-lg font-medium transition-all duration-200"
                     >
                       Sign In
@@ -399,18 +598,60 @@ export default function MarketplacePage() {
             {/* Search Bar */}
             <div className="relative flex-1">
               <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4 sm:h-5 sm:w-5" />
-            <Input
-              type="text"
+              <Input
+                type="text"
                 placeholder="Search digital products, creators, or categories..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+                value={pendingFilters.searchTerm}
+                onChange={(e) => setPendingFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
                 className="pl-10 sm:pl-12 h-10 sm:h-12 md:h-14 text-sm sm:text-base md:text-lg border-2 border-gray-200 dark:border-gray-700 focus:border-flyverr-primary dark:focus:border-flyverr-primary rounded-lg sm:rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               />
             </div>
-            
+
+            {/* Search Button - Only show when there's search text */}
+            {pendingFilters.searchTerm && (
+              <Button
+                onClick={() => {
+                  setPendingFilters(prev => ({ ...prev, searchTerm: prev.searchTerm }));
+                  applyFilters();
+                }}
+                className="h-10 sm:h-12 md:h-14 px-6 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white rounded-lg sm:rounded-xl font-medium"
+              >
+                <Search className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                <span className="hidden sm:inline">Search</span>
+              </Button>
+            )}
+
+            {/* Clear Filters Button - Only show when filters are active */}
+            {(filters.search || filters.featured || filters.trending || filters.recommended || filters.hotDeals || filters.stage || filters.minPrice || filters.maxPrice) && (
+              <Button
+                variant="outline"
+                onClick={clearAllFilters}
+                className="h-10 sm:h-12 md:h-14 px-4 border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 rounded-lg sm:rounded-xl font-medium transition-all duration-200 hover:shadow-sm"
+              >
+                <X className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                <span className="hidden sm:inline">Clear All</span>
+              </Button>
+            )}
+
             {/* Filter Button */}
             <Button
               variant="outline"
+              onClick={() => {
+                // Reset pending filters to current applied filters when opening modal
+                setPendingFilters({
+                  searchTerm: filters.search || "",
+                  selectedCategory: filters.featured ? "sponsored" : 
+                                   filters.trending ? "trending" : 
+                                   filters.recommended ? "recommended" : 
+                                   filters.hotDeals ? "hot-deals" : "all",
+                  selectedStage: filters.stage,
+                  showFeatured: filters.featured,
+                  priceRange: { min: filters.minPrice || 0, max: filters.maxPrice || 0 },
+                  sortBy: filters.sortBy || "created_at",
+                  sortOrder: filters.sortOrder || "desc",
+                });
+                setIsFilterModalOpen(true);
+              }}
               className="h-10 sm:h-12 md:h-14 px-4 sm:px-6 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary dark:hover:border-flyverr-primary hover:bg-flyverr-primary/5 rounded-lg sm:rounded-xl"
             >
               <Filter className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
@@ -421,218 +662,261 @@ export default function MarketplacePage() {
 
         {/* Category Filters */}
         <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12">
-          <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4">
             {categories.map((category) => {
-              const Icon = category.icon
+              const Icon = category.icon;
               return (
-              <Button
-                key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleCategoryClick(category.id)}
+                <Button
+                  key={category.id}
+                  variant={
+                    (filters.featured && category.id === "sponsored") ||
+                    (filters.trending && category.id === "trending") ||
+                    (filters.recommended && category.id === "recommended") ||
+                    (filters.hotDeals && category.id === "hot-deals") ||
+                    (!filters.featured && !filters.trending && !filters.recommended && !filters.hotDeals && category.id === "all")
+                      ? "default" : "outline"
+                  }
+                  size="sm"
+                  onClick={() => handleCategoryClick(category.id)}
                   className={`px-3 sm:px-4 md:px-6 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-full flex items-center gap-2 ${
-                  selectedCategory === category.id 
-                      ? 'bg-flyverr-primary text-white hover:bg-flyverr-primary/90' 
-                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-flyverr-primary/5 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-flyverr-primary dark:hover:border-flyverr-primary'
-                }`}
-              >
+                    (filters.featured && category.id === "sponsored") ||
+                    (filters.trending && category.id === "trending") ||
+                    (filters.recommended && category.id === "recommended") ||
+                    (filters.hotDeals && category.id === "hot-deals") ||
+                    (!filters.featured && !filters.trending && !filters.recommended && !filters.hotDeals && category.id === "all")
+                      ? "bg-flyverr-primary text-white hover:bg-flyverr-primary/90"
+                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-flyverr-primary/5 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-flyverr-primary dark:hover:border-flyverr-primary"
+                  }`}
+                >
                   <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
-                {category.name}
-              </Button>
-              )
+                  {category.name}
+                </Button>
+              );
             })}
+            
+
           </div>
         </div>
 
         {/* Results Count */}
-        <div className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 md:mb-8">
-          Showing {filteredProducts.length} of {products.length} digital products
-        </div>
+        {!isLoading && (
+          <div className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 md:mb-8">
+            {products.length > 0 
+              ? `Showing ${products.length} of ${totalProducts} digital products`
+              : "No products found"
+            }
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="mb-6 text-center">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+              <div className="flex items-center justify-center mb-2">
+                <div className="w-5 h-5 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mr-2">
+                  <X className="w-3 h-3 text-red-600 dark:text-red-400" />
+                </div>
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {isValidationError(error) ? "Validation Error" : "Error Loading Products"}
+                </h3>
+              </div>
+              <p className="text-red-700 dark:text-red-400 text-sm">
+                {formatErrorMessage(error)}
+              </p>
+              {isValidationError(error) && (
+                <div className="mt-2 text-xs text-red-600 dark:text-red-400">
+                  <p className="font-medium mb-1">Please check the following:</p>
+                  <ul className="text-left list-disc list-inside space-y-1">
+                    {getValidationErrors(error).map((err: string, index: number) => (
+                      <li key={index}>{err}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <Button
+                onClick={handleTryAgain}
+                variant="outline"
+                size="sm"
+                className="mt-3 border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900/30"
+              >
+                Try Again
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-6 sm:mb-8 md:mb-10 lg:mb-12">
-          {isLoading ? (
-            // Show skeleton loading
-            Array.from({ length: 8 }).map((_, index) => (
-              <ProductCardSkeleton key={index} />
-            ))
-          ) : (
-            currentProducts.map((product) => {
-            const currentImageIndex = imageIndices[product.id] || 0
-              const currentImage = product.images && product.images.length > 0 
-                ? product.images[currentImageIndex] 
-                : null
-              const imageState = imageStates[product.id] || { loading: true, error: false, loaded: false }
-              const stage = resaleStages[product.resaleStage]
-            
-                         return (
-               <Card 
-                 key={product.id} 
-                  className="group hover:shadow-xl transition-all duration-300 border-0 bg-white dark:bg-gray-800 overflow-hidden cursor-pointer rounded-lg shadow-md"
-                 onClick={() => handleCardClick(product.id)}
-               >
-                  <div className="relative bg-gray-100 dark:bg-gray-700">
-                    {/* Image Container */}
-                    <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
-                      {/* Error State */}
-                      {imageState.error && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700">
-                          <div className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 dark:text-gray-500 mb-2 flex items-center justify-center">
-                            <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                            </svg>
+          {isLoading
+            ? // Show skeleton loading
+              Array.from({ length: 8 }).map((_, index) => (
+                <ProductCardSkeleton key={index} />
+              ))
+            : products.length > 0
+            ? products.map((product: MarketplaceProduct) => {
+                const currentImageIndex = imageIndices[product.id] || 0;
+                const currentImage = product.thumbnail_url;
+                const imageState = imageStates[product.id] || {
+                  loading: true,
+                  error: false,
+                  loaded: false,
+                };
+                const stage = resaleStages.find(
+                  (s) => s.id === product.current_stage
+                );
+
+                return (
+                  <Card
+                    key={product.id}
+                    className="group hover:shadow-xl transition-all duration-300 border-0 bg-white dark:bg-gray-800 overflow-hidden cursor-pointer rounded-lg shadow-md"
+                    onClick={() => handleCardClick(product.id)}
+                  >
+                    <div className="relative bg-gray-100 dark:bg-gray-700">
+                      {/* Image Container */}
+                      <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
+                        {/* Error State */}
+                        {imageState.error && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700">
+                            <div className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 dark:text-gray-500 mb-2 flex items-center justify-center">
+                              <svg
+                                className="w-full h-full"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                              </svg>
+                            </div>
+                            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                              Image unavailable
+                            </p>
                           </div>
-                          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Image unavailable</p>
+                        )}
+
+                        {/* Next.js Optimized Image */}
+                        {!imageState.error && currentImage && (
+                          <Image
+                            src={currentImage}
+                            alt={product.title}
+                            fill
+                            className="object-cover transition-all duration-300 group-hover:scale-110"
+                            onLoad={() => handleImageLoad(product.id)}
+                            onError={() => handleImageError(product.id)}
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                            priority={false}
+                          />
+                        )}
+                      </div>
+
+                      {/* Resale Stage Badge */}
+                      {stage && (
+                        <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                          <Badge
+                            className={`${stage.color} text-white text-xs px-2 py-1`}
+                          >
+                            Stage{" "}
+                            {resaleStages.findIndex(
+                              (s) => s.id === product.current_stage
+                            ) + 1}
+                            : {stage.name}
+                          </Badge>
                         </div>
                       )}
-                      
-                      {/* Next.js Optimized Image */}
-                      {!imageState.error && currentImage && (
-                        <Image
-                    src={currentImage}
-                    alt={product.title}
-                          fill
-                          className="object-cover transition-all duration-300 group-hover:scale-110"
-                          onLoad={() => handleImageLoad(product.id)}
-                          onError={() => handleImageError(product.id)}
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                          priority={false}
-                        />
-                      )}
-                    </div>
-                  
-                  {/* Image Navigation */}
-                    {product.images && product.images.length > 1 && !imageState.error && currentImage && (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                          className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full w-7 h-7 sm:w-8 sm:h-8 p-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          prevImage(product.id, product.images.length)
-                        }}
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                          className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full w-7 h-7 sm:w-8 sm:h-8 p-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          nextImage(product.id, product.images.length)
-                        }}
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                      
-                      {/* Image Dots */}
-                        <div className="absolute bottom-2 sm:bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5">
-                        {product.images.map((_, index) => (
-                          <div
-                            key={index}
-                              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                              index === currentImageIndex 
-                                  ? 'bg-white shadow-lg' 
-                                  : 'bg-white/60 hover:bg-white/80'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
-                  
-                    {/* Resale Stage Badge */}
-                    <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
-                    <Badge 
-                        className={`${stage.color} text-white text-xs px-2 py-1`}
-                    >
-                        Stage {Object.keys(resaleStages).indexOf(product.resaleStage) + 1}: {stage.name}
-                    </Badge>
-                  </div>
 
-                  {/* Special Badges */}
-                    <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5">
-                    {product.isSponsored && (
-                      <Badge className="bg-flyverr-accent text-flyverr-text text-xs px-2 py-1">
-                        <Crown className="h-3 w-3 mr-1" />
-                          <span className="hidden sm:inline">Sponsored</span>
-                          <span className="sm:hidden">SP</span>
-                      </Badge>
-                    )}
-                    {product.isHotDeal && (
-                      <Badge className="bg-red-500 text-white text-xs px-2 py-1">
-                        <Flame className="h-3 w-3 mr-1" />
-                          <span className="hidden sm:inline">Hot Deal</span>
-                          <span className="sm:hidden">HD</span>
-                      </Badge>
-                    )}
-                    {product.isTrending && (
-                      <Badge className="bg-flyverr-secondary text-flyverr-text text-xs px-2 py-1">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                          <span className="hidden sm:inline">Trending</span>
-                          <span className="sm:hidden">TR</span>
-                      </Badge>
-                    )}
+                      {/* Special Badges */}
+                      <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5">
+                        {product.featured && (
+                          <Badge className="bg-flyverr-accent text-flyverr-text text-xs px-2 py-1">
+                            <Crown className="h-3 w-3 mr-1" />
+                            <span className="hidden sm:inline">Featured</span>
+                            <span className="sm:hidden">FT</span>
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+
+                    <CardContent className="p-4">
+                      {/* Title */}
+                      <div className="mb-3">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base md:text-lg lg:text-xl mb-1 line-clamp-2 group-hover:text-flyverr-primary transition-colors duration-300">
+                          {product.title}
+                        </h3>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+
+                      {/* Remaining Licenses */}
+                      <div className="mb-4">
+                        <div className="flex justify-between items-center text-xs sm:text-sm md:text-base">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Remaining:
+                          </span>
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {product.remaining_licenses} of{" "}
+                            {product.total_licenses}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                          <div
+                            className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
+                            style={{
+                              width: `${
+                                (product.remaining_licenses /
+                                  product.total_licenses) *
+                                100
+                              }%`,
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      {/* Price and Action */}
+                      <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                          <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white">
+                            ${product.current_price}
+                          </div>
+                          {product.original_price !== product.current_price && (
+                            <div className="text-sm text-gray-500 line-through">
+                              ${product.original_price}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            : // No products found message
+              !isLoading && (
+                <div className="col-span-full text-center py-12">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                      <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      No products found
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      {filters.search 
+                        ? `No products match your search "${filters.search}"`
+                        : filters.featured || filters.trending || filters.recommended || filters.hotDeals || filters.stage || filters.minPrice || filters.maxPrice
+                        ? "No products match your current filters. Try adjusting your search criteria."
+                        : "No products are currently available in this category."
+                      }
+                    </p>
+                    <Button
+                      onClick={clearAllFilters}
+                      variant="outline"
+                      className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
+                    >
+                      Clear All Filters
+                    </Button>
                   </div>
                 </div>
-                
-                <CardContent className="p-4">
-                    {/* Title and Creator */}
-                  <div className="mb-3">
-                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base md:text-lg lg:text-xl mb-1 line-clamp-2 group-hover:text-flyverr-primary transition-colors duration-300">
-                      {product.title}
-                    </h3>
-                      <p className="text-xs sm:text-sm md:text-base text-gray-500 dark:text-gray-400 mb-2">by {product.creator}</p>
-                  </div>
-                  
-                    {/* Rating */}
-                    <div className="flex items-center mb-3">
-                      <div className="flex items-center mr-2">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 sm:h-4 sm:w-4 ${
-                              i < Math.floor(product.rating)
-                                ? 'text-yellow-400 fill-current'
-                                : 'text-gray-300 dark:text-gray-600'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400 font-medium">
-                        {product.rating} ({product.reviews})
-                      </span>
-                    </div>
-
-                    {/* Remaining Licenses */}
-                    <div className="mb-4">
-                      <div className="flex justify-between items-center text-xs sm:text-sm md:text-base">
-                        <span className="text-gray-600 dark:text-gray-400">Remaining:</span>
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          {product.remainingLicenses} of {product.totalLicenses}
-                      </span>
-                  </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
-                        <div 
-                          className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${(product.remainingLicenses / product.totalLicenses) * 100}%` }}
-                        ></div>
-                    </div>
-                  </div>
-
-                  {/* Price and Action */}
-                   <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                     <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white">
-                      ${product.price}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-            })
-          )}
+              )}
         </div>
 
         {/* Call-to-Action for Non-Authenticated Users */}
@@ -644,20 +928,21 @@ export default function MarketplacePage() {
                   Ready to Start Your Digital Journey?
                 </h2>
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-6">
-                  Join thousands of creators and buyers who are already profiting from digital product resales. 
-                  Create your account today and unlock exclusive marketplace features!
+                  Join thousands of creators and buyers who are already
+                  profiting from digital product resales. Create your account
+                  today and unlock exclusive marketplace features!
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button 
-                    onClick={() => router.push('/signup')}
+                  <Button
+                    onClick={() => router.push("/signup")}
                     className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     Create Free Account
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
-                    onClick={() => router.push('/login')}
+                    onClick={() => router.push("/login")}
                     className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 px-8 py-3 rounded-lg font-medium transition-all duration-200"
                   >
                     Sign In to Existing Account
@@ -681,7 +966,7 @@ export default function MarketplacePage() {
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden">Prev</span>
             </Button>
-            
+
             {[...Array(totalPages)].map((_, i) => (
               <Button
                 key={i + 1}
@@ -689,19 +974,21 @@ export default function MarketplacePage() {
                 size="sm"
                 onClick={() => setCurrentPage(i + 1)}
                 className={`w-9 h-9 sm:w-10 sm:h-10 text-xs sm:text-sm rounded-lg ${
-                  currentPage === i + 1 
-                    ? 'bg-flyverr-primary hover:bg-flyverr-primary/90' 
-                    : 'hover:border-flyverr-primary hover:bg-flyverr-primary/5'
+                  currentPage === i + 1
+                    ? "bg-flyverr-primary hover:bg-flyverr-primary/90"
+                    : "hover:border-flyverr-primary hover:bg-flyverr-primary/5"
                 }`}
               >
                 {i + 1}
               </Button>
             ))}
-            
+
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages}
               className="text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary hover:bg-flyverr-primary/5"
             >
@@ -711,6 +998,26 @@ export default function MarketplacePage() {
           </div>
         )}
       </div>
+
+      {/* Filter Modal */}
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        selectedCategory={pendingFilters.selectedCategory}
+        onCategoryChange={(category) => setPendingFilters(prev => ({ ...prev, selectedCategory: category }))}
+        selectedStage={pendingFilters.selectedStage}
+        onStageChange={(stage) => setPendingFilters(prev => ({ ...prev, selectedStage: stage }))}
+        showFeatured={pendingFilters.showFeatured}
+        onFeaturedChange={(featured) => setPendingFilters(prev => ({ ...prev, showFeatured: featured }))}
+        priceRange={pendingFilters.priceRange}
+        onPriceRangeChange={(range) => setPendingFilters(prev => ({ ...prev, priceRange: range }))}
+        sortBy={pendingFilters.sortBy}
+        onSortByChange={(sortBy) => setPendingFilters(prev => ({ ...prev, sortBy }))}
+        sortOrder={pendingFilters.sortOrder}
+        onSortOrderChange={(sortOrder) => setPendingFilters(prev => ({ ...prev, sortOrder }))}
+        onApply={applyFilters}
+        onClearAll={clearFiltersAndCloseModal}
+      />
     </div>
-  )
-} 
+  );
+}

@@ -131,7 +131,7 @@ function ProfileContent() {
 
   // Only call hooks when mounted to prevent hydration issues
   const { data: user, isLoading, error, refetch } = useGetCurrentUser();
-  const { updateProfile: updateUser, isUpdating, isSuccess: isUpdateSuccess } = useEditCurrentUser();
+  const { updateProfile: updateUser, isUpdating } = useEditCurrentUser();
 
   // Handle dynamic error messages from API
   const getErrorMessage = (error: any) => {
@@ -191,7 +191,7 @@ function ProfileContent() {
       setValue("username", user.username || "");
       setValue("bio", user.bio || "");
     }
-  }, [user, setValue, isUpdateSuccess]);
+  }, [user, setValue]);
 
   const onSubmit = async (data: EditUserData) => {
     try {
@@ -205,7 +205,6 @@ function ProfileContent() {
         lastName: data.lastName,
         username: data.username,
         bio: data.bio?.trim() || null, // Send null if bio is empty or whitespace
-        // avatar_url: fileInputRef.current?.files?.[0]?.name || null,
       };
 
       console.log("Saving user data:", submissionData);

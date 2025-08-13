@@ -5,6 +5,13 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 
+/**
+ * Public Layout with selective access control:
+ * - Home page (/) - Protected (requires login)
+ * - FAQ page (/faq) - Public (no login required)
+ * - Marketplace page (/marketplace) - Public (no login required)
+ * - Blog page (/blog) - Public (no login required)
+ */
 export default function PublicLayout({
   children,
 }: {
@@ -19,10 +26,19 @@ export default function PublicLayout({
     // Wait for auth to be determined before making decisions
     if (isLoading || !mounted) return;
 
-    // If user is not authenticated and trying to access restricted pages, redirect to marketplace
-    if (!isAuthenticated && (pathname === '/' || pathname === '/blog' || pathname === '/faq')) {
+    // Only protect the home page (/) - require login for access
+    // All other pages in this layout are public (faq, marketplace, blog)
+    if (!isAuthenticated && pathname === '/') {
+      console.log('🔒 Access Control: User not authenticated, redirecting from home page (/) to marketplace');
       router.push('/marketplace');
       return;
+    }
+
+    // Log successful access for debugging
+    if (pathname === '/') {
+      console.log('✅ Access Control: Authenticated user accessing protected home page');
+    } else {
+      console.log('🌐 Access Control: Public page accessed:', pathname);
     }
 
     // Allow rendering if auth check is complete

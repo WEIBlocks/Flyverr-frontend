@@ -50,7 +50,10 @@ const Navigation = () => {
         { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
         { name: "FAQ", href: "/faq", icon: HelpCircle },
       ]
-    : [{ name: "Marketplace", href: "/marketplace", icon: ShoppingBag }];
+    : [
+        { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
+        { name: "FAQ", href: "/faq", icon: HelpCircle },
+      ];
 
   const isActive = (href: string) => {
     if (href === "/") {
