@@ -1,15 +1,24 @@
 import api from "@/lib/api";
-import type { AvailableLicensesResponse, MarketplaceFilters, MarketplaceResponse, ProductDetailResponse } from "../marketplace.types";
+import type {
+  AvailableLicensesResponse,
+  MarketplaceFilters,
+  MarketplaceResponse,
+  ProductDetailResponse,
+} from "../marketplace.types";
 
 export function getMarketplaceProducts(filters: MarketplaceFilters = {}) {
   const params = new URLSearchParams();
-  
+
   if (filters.category) params.append("category", filters.category);
   if (filters.stage) params.append("stage", filters.stage);
-  if (filters.featured !== undefined) params.append("featured", filters.featured.toString());
-  if (filters.trending !== undefined) params.append("trending", filters.trending.toString());
-  if (filters.recommended !== undefined) params.append("recommended", filters.recommended.toString());
-  if (filters.hotDeals !== undefined) params.append("hotDeals", filters.hotDeals.toString());
+  if (filters.featured !== undefined)
+    params.append("featured", filters.featured.toString());
+  if (filters.trending !== undefined)
+    params.append("trending", filters.trending.toString());
+  if (filters.recommended !== undefined)
+    params.append("recommended", filters.recommended.toString());
+  if (filters.hotDeals !== undefined)
+    params.append("hotDeals", filters.hotDeals.toString());
   if (filters.search) params.append("search", filters.search);
   if (filters.limit) params.append("limit", filters.limit.toString());
   if (filters.offset) params.append("offset", filters.offset.toString());
@@ -46,4 +55,8 @@ export function getAvailableLicenses(id: string) {
       console.error(err);
       throw err;
     });
+}
+
+export function trackProductView(id: string) {
+  return api.post(`/marketplace/products/${id}/view`);
 }

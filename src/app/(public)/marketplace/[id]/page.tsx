@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useGetMarketplaceProductDetail } from '@/features/marketplace/hooks/useGetMarketplaceProductDetail'
 import { useGetAvailableLicenses } from '@/features/marketplace/hooks/useGetAvailableLicenses'
 import type { AvailableLicensesResponse, ProductDetail } from '@/features/marketplace/marketplace.types'
+import { useTrackProductView } from '@/features/marketplace/hooks/useTrackProuductView'
 
 // Types
 interface Review {
@@ -64,48 +65,54 @@ const resaleStages = {
 export default function ProductDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const productId = params.id as string
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [selectedTab, setSelectedTab] = useState<'description' | 'reviews' | 'creator'>('description')
 
   // Get product ID from params
-  const productId = params.id as string
   
   // Fetch product data using the hook
   const { data: product, isLoading, error } = useGetMarketplaceProductDetail(productId)
-  
-  // Fetch real-time license information
   const { data: licenseData } = useGetAvailableLicenses(productId) as { data: AvailableLicensesResponse }
+  const { mutate: trackProductView } = useTrackProductView()
+
+  // Track product view when product is loaded
+  useEffect(() => {
+    if (productId && product && !isLoading) {
+      trackProductView(productId)
+    }
+  }, [productId, product, isLoading, trackProductView])
 
   // Show loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading product details...</p>
+    if (isLoading) {
+      return (
+        <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading product details...</p>
+          </div>
         </div>
-      </div>
-    )
-  }
+      )
+    }
 
-  // Show error state
-  if (error || !product) {
-    return (
-      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Product Not Found</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">{error instanceof Error ? error.message : 'The product you are looking for does not exist.'}</p>
-          <Button onClick={() => router.push('/marketplace')} className="bg-flyverr-primary hover:bg-flyverr-primary/90">
-            Back to Marketplace
-          </Button>
-        </div>
-      </div>
-    )
-  }
+         // Show error state
+     if (error || !product) {
+       return (
+         <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
+           <div className="text-center">
+             <div className="text-red-500 text-6xl mb-4">⚠️</div>
+             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Product Not Found</h2>
+             <p className="text-gray-600 dark:text-gray-400 mb-6">{error instanceof Error ? error.message : 'The product you are looking for does not exist.'}</p>
+             <Button onClick={() => router.push('/marketplace')} className="bg-flyverr-primary hover:bg-flyverr-primary/90">
+               Back to Marketplace
+             </Button>
+           </div>
+         </div>
+       )
+     }
 
-  const stage = resaleStages[product.current_stage]
+     const stage = resaleStages[product.current_stage]
   const images = product.images_urls && product.images_urls.length > 0 ? product.images_urls : [product.thumbnail_url]
 
   const nextImage = () => {
@@ -137,6 +144,7 @@ export default function ProductDetailPage() {
     // This might involve additional fees or different terms
   }
 
+ 
   return (
     <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8 lg:py-12 xl:py-16">
