@@ -29,8 +29,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/DashboardLayout'
 import AddProductModal, { NewProduct } from '@/components/AddProductModal'
-import { useGetMyProducts } from '@/features/product/hooks/useGetMyProducts'
-import { UserProduct } from '@/features/product/product.types'
+import { useGetMyProducts } from '@/features/user/product/hooks/useGetMyProducts'
+import { UserProduct } from '@/features/user/product/product.types'
 import { useRouter } from 'next/navigation'
 
 // Skeleton loading components

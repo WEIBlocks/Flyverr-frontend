@@ -3,10 +3,11 @@ import { createPortal } from "react-dom";
 
 interface ModalProps {
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  className?: string;
 }
 
-const Modal = ({ children, size = 'md' }: ModalProps) => {
+const Modal = ({ children, size = 'md', className = '' }: ModalProps) => {
   useEffect(() => {
     // Prevent scrolling on the body while the modal is open
     document.body.style.overflow = "hidden";
@@ -25,7 +26,9 @@ const Modal = ({ children, size = 'md' }: ModalProps) => {
       case 'lg':
         return 'max-w-lg w-full';
       case 'xl':
-        return 'max-w-xl w-full';
+        return 'max-w-4xl w-full';
+      case '2xl':
+        return 'max-w-5xl w-full';
       default:
         return 'max-w-md w-full';
     }
@@ -33,12 +36,10 @@ const Modal = ({ children, size = 'md' }: ModalProps) => {
 
   // Create a portal to render the modal at the root level
   return createPortal(
-    <div className="fixed inset-0 w-full h-screen bg-black/20 dark:bg-black/40 backdrop-blur-sm overflow-y-auto z-50">
-      <div className="w-full min-h-screen p-4 sm:p-5 flex justify-center items-center">
-        <div className={`slide-down-big-in ${getSizeClasses()} mx-auto rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-2xl dark:shadow-black/25`}>
-          <div className="pt-[29px] pr-[30px] pb-[21px] pl-[35px] w-full">
-            {children}
-          </div>
+    <div className="fixed inset-0 w-full h-screen bg-black/50 dark:bg-black/70 backdrop-blur-sm overflow-y-auto z-50">
+      <div className="w-full min-h-screen p-4 sm:p-6 flex justify-center items-start pt-16">
+        <div className={`slide-down-big-in ${getSizeClasses()} mx-auto rounded-2xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-2xl dark:shadow-black/25 ${className}`}>
+          {children}
         </div>
       </div>
     </div>,

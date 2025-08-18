@@ -306,7 +306,7 @@ export default function FAQPage() {
                   return (
                     <Card
                       key={item.id}
-                      className={`transition-all duration-500 ease-in-out hover:shadow-xl border-2 rounded-xl sm:rounded-2xl hover:rounded-2xl sm:hover:rounded-3xl bg-card text-card-foreground shadow-md hover:shadow-2xl ${
+                      className={`transition-all duration-500 ease-in-out  border-2 rounded-xl sm:rounded-2xl hover:rounded-2xl sm:hover:rounded-3xl bg-card text-card-foreground shadow-md hover:shadow-2xl ${
                         isExpanded
                           ? "border-flyverr-primary shadow-xl bg-flyverr-primary/5"
                           : "border-border hover:border-flyverr-primary/60 hover:shadow-xl"

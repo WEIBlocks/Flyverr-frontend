@@ -29,9 +29,9 @@ import {
   Info,
   X
 } from "lucide-react";
-import { useGetProductById } from "@/features/product/hooks/useGetProductById";
-import { useUpdateProduct } from "@/features/product/hooks/useUpdateProduct";
-import { Product } from "@/features/product/product.types";
+import { useGetProductById } from "@/features/user/product/hooks/useGetProductById";
+import { useUpdateProduct } from "@/features/user/product/hooks/useUpdateProduct";
+import { Product } from "@/features/user/product/product.types";
 import { toast } from "react-hot-toast";
 import { ErrorAlert } from "@/components/ui/error-alert";
 

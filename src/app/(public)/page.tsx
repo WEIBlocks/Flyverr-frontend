@@ -1202,8 +1202,8 @@ export default function Home() {
       <AddProductModal
         isOpen={isAddProductModalOpen}
         onClose={() => setIsAddProductModalOpen(false)}
-        onSubmit={handleAddProduct}
-        isLoading={false}
+      
+       
       />
     </main>
   );

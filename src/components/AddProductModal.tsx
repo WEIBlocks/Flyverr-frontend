@@ -11,7 +11,7 @@ import Modal from "@/components/Modal";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useCreateProduct } from "@/features/product/hooks/useCreateProduct";
+import { useCreateProduct } from "@/features/user/product/hooks/useCreateProduct";
 import toast from "react-hot-toast";
 
 export interface NewProduct {
@@ -220,7 +220,7 @@ export default function AddProductModal({
 
   return (
     <Modal size="lg">
-      <div className="space-y-6">
+      <div className="space-y-6 p-6">
         {/* Header */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-foreground">

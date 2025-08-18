@@ -6,8 +6,8 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, product }: { id: string; product: Product }) =>
-      updateProduct(id, product),
+    mutationFn: async ({ id, product }: { id: string; product: Product }) =>
+      await updateProduct(id, product),
     onSuccess: () => {
       // Invalidate and refetch user products
       queryClient.invalidateQueries({ queryKey: ["user-products"] });
