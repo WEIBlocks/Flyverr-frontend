@@ -13,12 +13,8 @@ export function getMarketplaceProducts(filters: MarketplaceFilters = {}) {
   if (filters.stage) params.append("stage", filters.stage);
   if (filters.featured !== undefined)
     params.append("featured", filters.featured.toString());
-  if (filters.trending !== undefined)
-    params.append("trending", filters.trending.toString());
-  if (filters.recommended !== undefined)
-    params.append("recommended", filters.recommended.toString());
-  if (filters.hotDeals !== undefined)
-    params.append("hotDeals", filters.hotDeals.toString());
+  // Do not send frontend-only toggles to backend products endpoint
+  // (trending, recommended, hotDeals are handled via /marketplace/categories or client-only)
   if (filters.search) params.append("search", filters.search);
   if (filters.limit) params.append("limit", filters.limit.toString());
   if (filters.offset) params.append("offset", filters.offset.toString());
@@ -59,4 +55,24 @@ export function getAvailableLicenses(id: string) {
 
 export function trackProductView(id: string) {
   return api.post(`/marketplace/products/${id}/view`);
+}
+
+export function getCategoryProducts(args: {
+  type: "all" | "trending" | "featured" | "sponsored" | "hot_deals";
+  limit?: number;
+  page?: number;
+  offset?: number;
+}) {
+  const params = new URLSearchParams();
+  params.append("type", args.type);
+  if (args.limit) params.append("limit", String(args.limit));
+  if (args.page) params.append("page", String(args.page));
+  if (args.offset) params.append("offset", String(args.offset));
+  return api
+    .get(`/marketplace/categories?${params.toString()}`)
+    .then((res) => res.data)
+    .catch((err) => {
+      console.error(err);
+      throw err;
+    });
 }

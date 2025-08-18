@@ -25,13 +25,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetMarketplaceProducts } from "@/features/marketplace/hooks/useGetMarketplaceProducts";
+import { useRecommendedProducts } from "@/features/marketplace/hooks/useRecommendedProducts";
+import { useGetCategoryProducts } from "@/features/marketplace/hooks";
 import {
   resaleStages,
   type MarketplaceFilters,
   type MarketplaceProduct,
 } from "@/features/marketplace/marketplace.types";
 import Modal from "@/components/Modal";
-import { formatErrorMessage, getValidationErrors, isValidationError } from "@/lib/errorUtils";
+import {
+  formatErrorMessage,
+  getValidationErrors,
+  isValidationError,
+} from "@/lib/errorUtils";
 
 // Types
 interface ImageState {
@@ -40,16 +46,14 @@ interface ImageState {
   loaded: boolean;
 }
 
-// Updated categories based on new requirements
+// Updated categories based on new requirements (Sponsored removed as a tab)
 const categories = [
   { id: "all", name: "All Products", icon: Sparkles },
-  { id: "sponsored", name: "Sponsored", icon: Crown },
   { id: "trending", name: "Trending", icon: TrendingUp },
+  { id: "featured", name: "Featured", icon: Crown },
   { id: "recommended", name: "We Think You'll Like", icon: Gift },
   { id: "hot-deals", name: "Hot Deals", icon: Flame },
 ];
-
-
 
 // Skeleton Loading Component
 const ProductCardSkeleton = () => (
@@ -346,7 +350,7 @@ export default function MarketplacePage() {
     sortBy: "created_at",
     sortOrder: "desc",
   });
-  
+
   // Pending filters state (only applied when Apply button is clicked)
   const [pendingFilters, setPendingFilters] = useState({
     searchTerm: "",
@@ -354,10 +358,14 @@ export default function MarketplacePage() {
     selectedStage: undefined as string | undefined,
     showFeatured: undefined as boolean | undefined,
     priceRange: { min: 0, max: 0 },
-    sortBy: "created_at" as "created_at" | "price" | "title" | "remaining_licenses",
+    sortBy: "created_at" as
+      | "created_at"
+      | "price"
+      | "title"
+      | "remaining_licenses",
     sortOrder: "desc" as "asc" | "desc",
   });
-  
+
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter modal state
@@ -371,18 +379,128 @@ export default function MarketplacePage() {
     {}
   );
 
+  const useRecommended = !!filters.recommended;
+  const useTrending = !!filters.trending;
+  const useHotDeals = !!filters.hotDeals;
+  const useFeatured = !!filters.featured;
+
   // Fetch products using the hook
   const {
     data: marketplaceData,
     isLoading,
     error,
     refetch,
-  } = useGetMarketplaceProducts(filters);
+  } = useGetMarketplaceProducts(filters, {
+    enabled: !useTrending && !useFeatured && !useHotDeals && !useRecommended,
+  });
 
-  const products = marketplaceData?.data?.products || [];
-  const pagination = marketplaceData?.data?.pagination;
-  const totalProducts = pagination?.total || 0;
-  const hasMore = pagination?.hasMore || false;
+  // Recommended products (frontend-only)
+  const { data: recommendedProducts = [], isLoading: isLoadingRecommended } =
+    useRecommendedProducts(8);
+
+  // Category API datasets
+  const { data: trendingData, isLoading: isLoadingTrending } =
+    useGetCategoryProducts("trending", {
+      limit: 10,
+      page: 1,
+      enabled: useTrending,
+    });
+  const { data: featuredData, isLoading: isLoadingFeatured } =
+    useGetCategoryProducts("featured", {
+      limit: 10,
+      page: 1,
+      enabled: useFeatured,
+    });
+  const { data: hotDealsData, isLoading: isLoadingHotDeals } =
+    useGetCategoryProducts("hot_deals", {
+      limit: filters.limit || 20,
+      page: currentPage,
+      enabled: useHotDeals,
+    });
+
+  // Sponsored merge for All Products
+  const isAllCategory =
+    !useTrending && !useHotDeals && !useFeatured && !useRecommended;
+  const { data: sponsoredData, isLoading: isLoadingSponsored } =
+    useGetCategoryProducts("sponsored", {
+      limit: filters.limit || 20,
+      page: 1,
+    });
+
+  const baseProducts = marketplaceData?.data?.products || [];
+  const sponsored =
+    (sponsoredData?.data?.products as MarketplaceProduct[]) || [];
+
+  const mergedAllProducts: MarketplaceProduct[] = React.useMemo(() => {
+    if (!isAllCategory) return baseProducts;
+    if (isLoadingSponsored || !sponsored?.length) return baseProducts;
+    const seen = new Set<string>();
+    const merged: MarketplaceProduct[] = [];
+    for (const p of sponsored) {
+      if (!seen.has(p.id)) {
+        seen.add(p.id);
+        merged.push(p);
+      }
+    }
+    for (const p of baseProducts) {
+      if (!seen.has(p.id)) {
+        seen.add(p.id);
+        merged.push(p);
+      }
+    }
+    return merged.slice(0, baseProducts.length || filters.limit || 20);
+  }, [
+    isAllCategory,
+    isLoadingSponsored,
+    sponsored,
+    baseProducts,
+    filters.limit,
+  ]);
+
+  const loading = useRecommended
+    ? isLoadingRecommended
+    : useTrending
+    ? isLoadingTrending
+    : useFeatured
+    ? isLoadingFeatured
+    : useHotDeals
+    ? isLoadingHotDeals
+    : isLoading || (isAllCategory && isLoadingSponsored);
+
+  const products = useRecommended
+    ? recommendedProducts
+    : useTrending
+    ? (trendingData?.data?.products as MarketplaceProduct[]) || []
+    : useFeatured
+    ? (featuredData?.data?.products as MarketplaceProduct[]) || []
+    : useHotDeals
+    ? (hotDealsData?.data?.products as MarketplaceProduct[]) || []
+    : mergedAllProducts;
+
+  const basePagination = marketplaceData?.data?.pagination;
+  const trendingPagination = trendingData?.data?.pagination;
+  const featuredPagination = featuredData?.data?.pagination;
+  const hotDealsPagination = hotDealsData?.data?.pagination;
+
+  const totalProducts = useRecommended
+    ? products.length
+    : useTrending
+    ? trendingPagination?.total || 0
+    : useFeatured
+    ? featuredPagination?.total || 0
+    : useHotDeals
+    ? hotDealsPagination?.total || 0
+    : basePagination?.total || 0;
+
+  const hasMore = useRecommended
+    ? false
+    : useTrending
+    ? !!trendingPagination?.hasMore
+    : useFeatured
+    ? !!featuredPagination?.hasMore
+    : useHotDeals
+    ? !!hotDealsPagination?.hasMore
+    : !!basePagination?.hasMore;
 
   // Apply filters function - called when Apply button is clicked
   const applyFilters = () => {
@@ -398,9 +516,7 @@ export default function MarketplacePage() {
     }
 
     if (pendingFilters.selectedCategory !== "all") {
-      if (pendingFilters.selectedCategory === "sponsored") {
-        newFilters.featured = true;
-      } else if (pendingFilters.selectedCategory === "trending") {
+      if (pendingFilters.selectedCategory === "trending") {
         newFilters.trending = true;
       } else if (pendingFilters.selectedCategory === "recommended") {
         newFilters.recommended = true;
@@ -409,7 +525,10 @@ export default function MarketplacePage() {
       }
     }
 
-    if (pendingFilters.selectedStage && pendingFilters.selectedStage !== "all") {
+    if (
+      pendingFilters.selectedStage &&
+      pendingFilters.selectedStage !== "all"
+    ) {
       newFilters.stage = pendingFilters.selectedStage as any;
     }
 
@@ -430,8 +549,6 @@ export default function MarketplacePage() {
     setIsFilterModalOpen(false);
   };
 
-
-
   // Clear all filters function (used by both modal and main clear buttons)
   const clearAllFilters = () => {
     const newFilters: MarketplaceFilters = {
@@ -440,7 +557,7 @@ export default function MarketplacePage() {
       sortBy: "created_at",
       sortOrder: "desc",
     };
-    
+
     setFilters(newFilters);
     setPendingFilters({
       searchTerm: "",
@@ -460,8 +577,6 @@ export default function MarketplacePage() {
     setIsFilterModalOpen(false);
   };
 
-
-
   // Update offset when page changes
   useEffect(() => {
     setFilters((prev) => ({
@@ -480,10 +595,10 @@ export default function MarketplacePage() {
     };
 
     if (categoryId !== "all") {
-      if (categoryId === "sponsored") {
-        newFilters.featured = true;
-      } else if (categoryId === "trending") {
+      if (categoryId === "trending") {
         newFilters.trending = true;
+      } else if (categoryId === "featured") {
+        newFilters.featured = true;
       } else if (categoryId === "recommended") {
         newFilters.recommended = true;
       } else if (categoryId === "hot-deals") {
@@ -492,7 +607,7 @@ export default function MarketplacePage() {
     }
 
     setFilters(newFilters);
-    setPendingFilters(prev => ({ ...prev, selectedCategory: categoryId }));
+    setPendingFilters((prev) => ({ ...prev, selectedCategory: categoryId }));
     setCurrentPage(1);
   };
 
@@ -532,11 +647,9 @@ export default function MarketplacePage() {
   // Calculate total pages
   const totalPages = Math.ceil(totalProducts / (filters.limit || 20));
 
-
   const handleTryAgain = () => {
     refetch();
   };
- 
 
   return (
     <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
@@ -602,7 +715,12 @@ export default function MarketplacePage() {
                 type="text"
                 placeholder="Search digital products, creators, or categories..."
                 value={pendingFilters.searchTerm}
-                onChange={(e) => setPendingFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
+                onChange={(e) =>
+                  setPendingFilters((prev) => ({
+                    ...prev,
+                    searchTerm: e.target.value,
+                  }))
+                }
                 className="pl-10 sm:pl-12 h-10 sm:h-12 md:h-14 text-sm sm:text-base md:text-lg border-2 border-gray-200 dark:border-gray-700 focus:border-flyverr-primary dark:focus:border-flyverr-primary rounded-lg sm:rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               />
             </div>
@@ -611,7 +729,10 @@ export default function MarketplacePage() {
             {pendingFilters.searchTerm && (
               <Button
                 onClick={() => {
-                  setPendingFilters(prev => ({ ...prev, searchTerm: prev.searchTerm }));
+                  setPendingFilters((prev) => ({
+                    ...prev,
+                    searchTerm: prev.searchTerm,
+                  }));
                   applyFilters();
                 }}
                 className="h-10 sm:h-12 md:h-14 px-6 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white rounded-lg sm:rounded-xl font-medium"
@@ -622,7 +743,14 @@ export default function MarketplacePage() {
             )}
 
             {/* Clear Filters Button - Only show when filters are active */}
-            {(filters.search || filters.featured || filters.trending || filters.recommended || filters.hotDeals || filters.stage || filters.minPrice || filters.maxPrice) && (
+            {(filters.search ||
+              filters.featured ||
+              filters.trending ||
+              filters.recommended ||
+              filters.hotDeals ||
+              filters.stage ||
+              filters.minPrice ||
+              filters.maxPrice) && (
               <Button
                 variant="outline"
                 onClick={clearAllFilters}
@@ -640,13 +768,21 @@ export default function MarketplacePage() {
                 // Reset pending filters to current applied filters when opening modal
                 setPendingFilters({
                   searchTerm: filters.search || "",
-                  selectedCategory: filters.featured ? "sponsored" : 
-                                   filters.trending ? "trending" : 
-                                   filters.recommended ? "recommended" : 
-                                   filters.hotDeals ? "hot-deals" : "all",
+                  selectedCategory: filters.trending
+                    ? "trending"
+                    : filters.featured
+                    ? "featured"
+                    : filters.recommended
+                    ? "recommended"
+                    : filters.hotDeals
+                    ? "hot-deals"
+                    : "all",
                   selectedStage: filters.stage,
                   showFeatured: filters.featured,
-                  priceRange: { min: filters.minPrice || 0, max: filters.maxPrice || 0 },
+                  priceRange: {
+                    min: filters.minPrice || 0,
+                    max: filters.maxPrice || 0,
+                  },
                   sortBy: filters.sortBy || "created_at",
                   sortOrder: filters.sortOrder || "desc",
                 });
@@ -669,21 +805,30 @@ export default function MarketplacePage() {
                 <Button
                   key={category.id}
                   variant={
-                    (filters.featured && category.id === "sponsored") ||
                     (filters.trending && category.id === "trending") ||
+                    (filters.featured && category.id === "featured") ||
                     (filters.recommended && category.id === "recommended") ||
                     (filters.hotDeals && category.id === "hot-deals") ||
-                    (!filters.featured && !filters.trending && !filters.recommended && !filters.hotDeals && category.id === "all")
-                      ? "default" : "outline"
+                    (!filters.featured &&
+                      !filters.trending &&
+                      !filters.recommended &&
+                      !filters.hotDeals &&
+                      category.id === "all")
+                      ? "default"
+                      : "outline"
                   }
                   size="sm"
                   onClick={() => handleCategoryClick(category.id)}
                   className={`px-3 sm:px-4 md:px-6 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-full flex items-center gap-2 ${
-                    (filters.featured && category.id === "sponsored") ||
                     (filters.trending && category.id === "trending") ||
+                    (filters.featured && category.id === "featured") ||
                     (filters.recommended && category.id === "recommended") ||
                     (filters.hotDeals && category.id === "hot-deals") ||
-                    (!filters.featured && !filters.trending && !filters.recommended && !filters.hotDeals && category.id === "all")
+                    (!filters.featured &&
+                      !filters.trending &&
+                      !filters.recommended &&
+                      !filters.hotDeals &&
+                      category.id === "all")
                       ? "bg-flyverr-primary text-white hover:bg-flyverr-primary/90"
                       : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-flyverr-primary/5 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-flyverr-primary dark:hover:border-flyverr-primary"
                   }`}
@@ -693,18 +838,15 @@ export default function MarketplacePage() {
                 </Button>
               );
             })}
-            
-
           </div>
         </div>
 
         {/* Results Count */}
-        {!isLoading && (
+        {!loading && (
           <div className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 md:mb-8">
-            {products.length > 0 
+            {products.length > 0
               ? `Showing ${products.length} of ${totalProducts} digital products`
-              : "No products found"
-            }
+              : "No products found"}
           </div>
         )}
 
@@ -717,7 +859,9 @@ export default function MarketplacePage() {
                   <X className="w-3 h-3 text-red-600 dark:text-red-400" />
                 </div>
                 <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-                  {isValidationError(error) ? "Validation Error" : "Error Loading Products"}
+                  {isValidationError(error)
+                    ? "Validation Error"
+                    : "Error Loading Products"}
                 </h3>
               </div>
               <p className="text-red-700 dark:text-red-400 text-sm">
@@ -725,11 +869,15 @@ export default function MarketplacePage() {
               </p>
               {isValidationError(error) && (
                 <div className="mt-2 text-xs text-red-600 dark:text-red-400">
-                  <p className="font-medium mb-1">Please check the following:</p>
+                  <p className="font-medium mb-1">
+                    Please check the following:
+                  </p>
                   <ul className="text-left list-disc list-inside space-y-1">
-                    {getValidationErrors(error).map((err: string, index: number) => (
-                      <li key={index}>{err}</li>
-                    ))}
+                    {getValidationErrors(error).map(
+                      (err: string, index: number) => (
+                        <li key={index}>{err}</li>
+                      )
+                    )}
                   </ul>
                 </div>
               )}
@@ -747,7 +895,7 @@ export default function MarketplacePage() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-6 sm:mb-8 md:mb-10 lg:mb-12">
-          {isLoading
+          {loading
             ? // Show skeleton loading
               Array.from({ length: 8 }).map((_, index) => (
                 <ProductCardSkeleton key={index} />
@@ -890,23 +1038,42 @@ export default function MarketplacePage() {
                 );
               })
             : // No products found message
-              !isLoading && (
+              !loading && (
                 <div className="col-span-full text-center py-12">
                   <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
                     <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
                       <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                      No products found
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      {filters.search 
-                        ? `No products match your search "${filters.search}"`
-                        : filters.featured || filters.trending || filters.recommended || filters.hotDeals || filters.stage || filters.minPrice || filters.maxPrice
-                        ? "No products match your current filters. Try adjusting your search criteria."
-                        : "No products are currently available in this category."
-                      }
-                    </p>
+                    {useRecommended ? (
+                      <>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                          Nothing to show yet
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                          Browse a few products so we can personalize this
+                          section for you.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                          No products found
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                          {filters.search
+                            ? `No products match your search "${filters.search}"`
+                            : filters.featured ||
+                              filters.trending ||
+                              filters.recommended ||
+                              filters.hotDeals ||
+                              filters.stage ||
+                              filters.minPrice ||
+                              filters.maxPrice
+                            ? "No products match your current filters. Try adjusting your search criteria."
+                            : "No products are currently available in this category."}
+                        </p>
+                      </>
+                    )}
                     <Button
                       onClick={clearAllFilters}
                       variant="outline"
@@ -954,7 +1121,7 @@ export default function MarketplacePage() {
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {!useRecommended && totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 sm:gap-3">
             <Button
               variant="outline"
@@ -1004,17 +1171,29 @@ export default function MarketplacePage() {
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
         selectedCategory={pendingFilters.selectedCategory}
-        onCategoryChange={(category) => setPendingFilters(prev => ({ ...prev, selectedCategory: category }))}
+        onCategoryChange={(category) =>
+          setPendingFilters((prev) => ({ ...prev, selectedCategory: category }))
+        }
         selectedStage={pendingFilters.selectedStage}
-        onStageChange={(stage) => setPendingFilters(prev => ({ ...prev, selectedStage: stage }))}
+        onStageChange={(stage) =>
+          setPendingFilters((prev) => ({ ...prev, selectedStage: stage }))
+        }
         showFeatured={pendingFilters.showFeatured}
-        onFeaturedChange={(featured) => setPendingFilters(prev => ({ ...prev, showFeatured: featured }))}
+        onFeaturedChange={(featured) =>
+          setPendingFilters((prev) => ({ ...prev, showFeatured: featured }))
+        }
         priceRange={pendingFilters.priceRange}
-        onPriceRangeChange={(range) => setPendingFilters(prev => ({ ...prev, priceRange: range }))}
+        onPriceRangeChange={(range) =>
+          setPendingFilters((prev) => ({ ...prev, priceRange: range }))
+        }
         sortBy={pendingFilters.sortBy}
-        onSortByChange={(sortBy) => setPendingFilters(prev => ({ ...prev, sortBy }))}
+        onSortByChange={(sortBy) =>
+          setPendingFilters((prev) => ({ ...prev, sortBy }))
+        }
         sortOrder={pendingFilters.sortOrder}
-        onSortOrderChange={(sortOrder) => setPendingFilters(prev => ({ ...prev, sortOrder }))}
+        onSortOrderChange={(sortOrder) =>
+          setPendingFilters((prev) => ({ ...prev, sortOrder }))
+        }
         onApply={applyFilters}
         onClearAll={clearFiltersAndCloseModal}
       />

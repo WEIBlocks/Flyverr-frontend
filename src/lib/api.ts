@@ -6,7 +6,7 @@ import { storage } from "./utils";
  * Configured with base URL, credentials, and timeout.
  */
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://flyverr-api-production.up.railway.app/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api",
 
 });
 

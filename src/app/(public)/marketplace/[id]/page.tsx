@@ -1,150 +1,222 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import Image from 'next/image'
-import { ArrowLeft, Star, Heart, Share2, ChevronLeft, ChevronRight, Image as ImageIcon, Shield, TrendingUp, Users, Calendar, Download, Eye, ShoppingCart, Crown, Flame, Zap, Gift } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useGetMarketplaceProductDetail } from '@/features/marketplace/hooks/useGetMarketplaceProductDetail'
-import { useGetAvailableLicenses } from '@/features/marketplace/hooks/useGetAvailableLicenses'
-import type { AvailableLicensesResponse, ProductDetail } from '@/features/marketplace/marketplace.types'
-import { useTrackProductView } from '@/features/marketplace/hooks/useTrackProuductView'
+import React, { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import {
+  ArrowLeft,
+  Star,
+  Heart,
+  Share2,
+  ChevronLeft,
+  ChevronRight,
+  Image as ImageIcon,
+  Shield,
+  TrendingUp,
+  Users,
+  Calendar,
+  Download,
+  Eye,
+  ShoppingCart,
+  Crown,
+  Flame,
+  Zap,
+  Gift,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useGetMarketplaceProductDetail } from "@/features/marketplace/hooks/useGetMarketplaceProductDetail";
+import { useGetAvailableLicenses } from "@/features/marketplace/hooks/useGetAvailableLicenses";
+import type {
+  AvailableLicensesResponse,
+  ProductDetail,
+} from "@/features/marketplace/marketplace.types";
+import { useTrackProductView } from "@/features/marketplace/hooks/useTrackProuductView";
+import { useCategoryPreferences } from "@/features/marketplace/hooks/useCategoryPreferences";
 
 // Types
 interface Review {
-  id: string
-  user: string
-  avatar: string
-  rating: number
-  date: string
-  comment: string
-  helpful: number
+  id: string;
+  user: string;
+  avatar: string;
+  rating: number;
+  date: string;
+  comment: string;
+  helpful: number;
 }
 
 // Mock reviews (you can replace this with real API data later)
 const mockReviews: Review[] = [
   {
-    id: '1',
-    user: 'Sarah Johnson',
-    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face',
+    id: "1",
+    user: "Sarah Johnson",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face",
     rating: 5,
-    date: '2024-01-10',
-    comment: 'Amazing course! The instructor explains complex concepts in a very clear way. I went from knowing nothing about web development to building my first full-stack application.',
-    helpful: 24
+    date: "2024-01-10",
+    comment:
+      "Amazing course! The instructor explains complex concepts in a very clear way. I went from knowing nothing about web development to building my first full-stack application.",
+    helpful: 24,
   },
   {
-    id: '2',
-    user: 'Mike Chen',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face',
+    id: "2",
+    user: "Mike Chen",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
     rating: 4,
-    date: '2024-01-08',
-    comment: 'Great content and well-structured. The practical projects really help reinforce the learning. Would recommend to anyone starting their web development journey.',
-    helpful: 18
+    date: "2024-01-08",
+    comment:
+      "Great content and well-structured. The practical projects really help reinforce the learning. Would recommend to anyone starting their web development journey.",
+    helpful: 18,
   },
   {
-    id: '3',
-    user: 'Emily Rodriguez',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face',
+    id: "3",
+    user: "Emily Rodriguez",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face",
     rating: 5,
-    date: '2024-01-05',
-    comment: 'Excellent course! The instructor is very knowledgeable and the community support is fantastic. Already started working on my portfolio.',
-    helpful: 31
-  }
-]
+    date: "2024-01-05",
+    comment:
+      "Excellent course! The instructor is very knowledgeable and the community support is fantastic. Already started working on my portfolio.",
+    helpful: 31,
+  },
+];
 
 // Resale Stage Configuration
 const resaleStages = {
-  newboom: { name: 'Newboom', color: 'bg-green-500', description: 'Never resold - Original licenses only', earningPotential: 'High' },
-  blossom: { name: 'Blossom', color: 'bg-blue-500', description: '1st resale cycle - Growing demand', earningPotential: 'Very High' },
-  evergreen: { name: 'Evergreen', color: 'bg-purple-500', description: '2nd resale cycle - Stable value', earningPotential: 'Medium' },
-  exit: { name: 'Exit', color: 'bg-orange-500', description: '3rd resale cycle - Final opportunity', earningPotential: 'Low' }
-}
+  newboom: {
+    name: "Newboom",
+    color: "bg-green-500",
+    description: "Never resold - Original licenses only",
+    earningPotential: "High",
+  },
+  blossom: {
+    name: "Blossom",
+    color: "bg-blue-500",
+    description: "1st resale cycle - Growing demand",
+    earningPotential: "Very High",
+  },
+  evergreen: {
+    name: "Evergreen",
+    color: "bg-purple-500",
+    description: "2nd resale cycle - Stable value",
+    earningPotential: "Medium",
+  },
+  exit: {
+    name: "Exit",
+    color: "bg-orange-500",
+    description: "3rd resale cycle - Final opportunity",
+    earningPotential: "Low",
+  },
+};
 
 export default function ProductDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const productId = params.id as string
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isWishlisted, setIsWishlisted] = useState(false)
-  const [selectedTab, setSelectedTab] = useState<'description' | 'reviews' | 'creator'>('description')
+  const params = useParams();
+  const router = useRouter();
+  const productId = params.id as string;
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<
+    "description" | "reviews" | "creator"
+  >("description");
 
   // Get product ID from params
-  
+
   // Fetch product data using the hook
-  const { data: product, isLoading, error } = useGetMarketplaceProductDetail(productId)
-  const { data: licenseData } = useGetAvailableLicenses(productId) as { data: AvailableLicensesResponse }
-  const { mutate: trackProductView } = useTrackProductView()
+  const {
+    data: product,
+    isLoading,
+    error,
+  } = useGetMarketplaceProductDetail(productId);
+  const { data: licenseData } = useGetAvailableLicenses(productId) as {
+    data: AvailableLicensesResponse;
+  };
+  const { mutate: trackProductView } = useTrackProductView();
+  const { recordView } = useCategoryPreferences();
 
   // Track product view when product is loaded
   useEffect(() => {
     if (productId && product && !isLoading) {
-      trackProductView(productId)
+      trackProductView(productId);
+      recordView(product.category_id);
     }
-  }, [productId, product, isLoading, trackProductView])
+  }, [productId, product, isLoading, trackProductView, recordView]);
 
   // Show loading state
-    if (isLoading) {
-      return (
-        <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading product details...</p>
-          </div>
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading product details...
+          </p>
         </div>
-      )
-    }
+      </div>
+    );
+  }
 
-         // Show error state
-     if (error || !product) {
-       return (
-         <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
-           <div className="text-center">
-             <div className="text-red-500 text-6xl mb-4">⚠️</div>
-             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Product Not Found</h2>
-             <p className="text-gray-600 dark:text-gray-400 mb-6">{error instanceof Error ? error.message : 'The product you are looking for does not exist.'}</p>
-             <Button onClick={() => router.push('/marketplace')} className="bg-flyverr-primary hover:bg-flyverr-primary/90">
-               Back to Marketplace
-             </Button>
-           </div>
-         </div>
-       )
-     }
+  // Show error state
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Product Not Found
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            {error instanceof Error
+              ? error.message
+              : "The product you are looking for does not exist."}
+          </p>
+          <Button
+            onClick={() => router.push("/marketplace")}
+            className="bg-flyverr-primary hover:bg-flyverr-primary/90"
+          >
+            Back to Marketplace
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
-     const stage = resaleStages[product.current_stage]
-  const images = product.images_urls && product.images_urls.length > 0 ? product.images_urls : [product.thumbnail_url]
+  const stage = resaleStages[product.current_stage];
+  const images =
+    product.images_urls && product.images_urls.length > 0
+      ? product.images_urls
+      : [product.thumbnail_url];
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length)
-  }
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
-  }
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   const handleBuyToUse = () => {
     // Handle buy to use logic
-    console.log('Buy to Use clicked for product:', product.id)
+    console.log("Buy to Use clicked for product:", product.id);
     // You can implement the actual purchase logic here
     // For example, redirect to a checkout page or open a payment modal
-  }
+  };
 
   const handleBuyToResell = () => {
     // Handle buy to resell logic
-    console.log('Buy to Resell clicked for product:', product.id)
+    console.log("Buy to Resell clicked for product:", product.id);
     // You can implement the actual resell purchase logic here
     // This might involve different pricing or terms
-  }
+  };
 
   const handleBuyWithInsurance = () => {
     // Handle buy with insurance logic
-    console.log('Buy with Insurance clicked for product:', product.id)
+    console.log("Buy with Insurance clicked for product:", product.id);
     // You can implement the actual insurance purchase logic here
     // This might involve additional fees or different terms
-  }
+  };
 
- 
   return (
     <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8 lg:py-12 xl:py-16">
@@ -172,7 +244,7 @@ export default function ProductDetailPage() {
                   sizes="(max-width: 1024px) 100vw, 66vw"
                   priority
                 />
-              
+
                 {/* Image Navigation */}
                 {images.length > 1 && (
                   <>
@@ -192,16 +264,16 @@ export default function ProductDetailPage() {
                     >
                       <ChevronRight className="h-5 w-5" />
                     </Button>
-                    
+
                     {/* Image Dots */}
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
                       {images.map((_, index) => (
                         <div
                           key={index}
                           className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer ${
-                            index === currentImageIndex 
-                              ? 'bg-white shadow-lg' 
-                              : 'bg-white/60 hover:bg-white/80'
+                            index === currentImageIndex
+                              ? "bg-white shadow-lg"
+                              : "bg-white/60 hover:bg-white/80"
                           }`}
                           onClick={() => setCurrentImageIndex(index)}
                         />
@@ -228,9 +300,15 @@ export default function ProductDetailPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsWishlisted(!isWishlisted)}
-                    className={`p-2 rounded-full ${isWishlisted ? 'text-red-500' : 'text-gray-400'}`}
+                    className={`p-2 rounded-full ${
+                      isWishlisted ? "text-red-500" : "text-gray-400"
+                    }`}
                   >
-                    <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-current' : ''}`} />
+                    <Heart
+                      className={`h-5 w-5 ${
+                        isWishlisted ? "fill-current" : ""
+                      }`}
+                    />
                   </Button>
                   <Button
                     variant="ghost"
@@ -251,8 +329,8 @@ export default function ProductDetailPage() {
                         key={i}
                         className={`h-5 w-5 ${
                           i < 4 // You can replace this with actual rating when available
-                            ? 'text-yellow-400 fill-current' 
-                            : 'text-gray-300 dark:text-gray-600'
+                            ? "text-yellow-400 fill-current"
+                            : "text-gray-300 dark:text-gray-600"
                         }`}
                       />
                     ))}
@@ -274,7 +352,7 @@ export default function ProductDetailPage() {
                     Featured
                   </Badge>
                 )}
-                {product.status === 'approved' && (
+                {product.status === "approved" && (
                   <Badge className="bg-green-500 text-white">
                     <Shield className="h-3 w-3 mr-1" />
                     Approved
@@ -286,7 +364,10 @@ export default function ProductDetailPage() {
               <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <Badge className={`${stage.color} text-white text-sm`}>
-                    Stage {Object.keys(resaleStages).indexOf(product.current_stage) + 1}: {stage.name}
+                    Stage{" "}
+                    {Object.keys(resaleStages).indexOf(product.current_stage) +
+                      1}
+                    : {stage.name}
                   </Badge>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Earning Potential: {stage.earningPotential}
@@ -298,18 +379,31 @@ export default function ProductDetailPage() {
                 <div className="flex justify-between items-center text-sm">
                   <div className="flex items-center gap-2">
                     <span className="text-gray-600 dark:text-gray-400">
-                        Remaining: {licenseData?.data?.product?.remaining_licenses ?? product.remaining_licenses} of {product.total_licenses} licenses
+                      Remaining:{" "}
+                      {licenseData?.data?.product?.remaining_licenses ??
+                        product.remaining_licenses}{" "}
+                      of {product.total_licenses} licenses
                     </span>
                     {licenseData && (
-                      <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                      <Badge
+                        variant="outline"
+                        className="text-xs text-green-600 border-green-600"
+                      >
                         Live
                       </Badge>
                     )}
                   </div>
                   <div className="w-24 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-flyverr-primary h-2 rounded-full"
-                      style={{ width: `${((licenseData?.data?.product?.remaining_licenses ?? product.remaining_licenses) / product.total_licenses) * 100}%` }}
+                      style={{
+                        width: `${
+                          ((licenseData?.data?.product?.remaining_licenses ??
+                            product.remaining_licenses) /
+                            product.total_licenses) *
+                          100
+                        }%`,
+                      }}
                     ></div>
                   </div>
                 </div>
@@ -319,17 +413,17 @@ export default function ProductDetailPage() {
               <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
                 <div className="flex space-x-8">
                   {[
-                    { id: 'description', label: 'Description' },
-                    { id: 'reviews', label: 'Reviews (0)' },
-                    { id: 'creator', label: 'Creator' }
+                    { id: "description", label: "Description" },
+                    { id: "reviews", label: "Reviews (0)" },
+                    { id: "creator", label: "Creator" },
                   ].map((tab) => (
                     <button
                       key={tab.id}
                       onClick={() => setSelectedTab(tab.id as any)}
                       className={`pb-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                         selectedTab === tab.id
-                          ? 'border-flyverr-primary text-flyverr-primary dark:text-flyverr-primary'
-                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                          ? "border-flyverr-primary text-flyverr-primary dark:text-flyverr-primary"
+                          : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                       }`}
                     >
                       {tab.label}
@@ -340,18 +434,22 @@ export default function ProductDetailPage() {
 
               {/* Tab Content */}
               <div className="min-h-[400px]">
-                {selectedTab === 'description' && (
+                {selectedTab === "description" && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold text-flyverr-text dark:text-white mb-3">About this product</h3>
+                      <h3 className="text-lg font-semibold text-flyverr-text dark:text-white mb-3">
+                        About this product
+                      </h3>
                       <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                         {product.description}
                       </p>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">Product Details</h4>
+                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">
+                          Product Details
+                        </h4>
                         <ul className="space-y-2">
                           <li className="flex items-center text-gray-600 dark:text-gray-300">
                             <div className="w-2 h-2 bg-flyverr-secondary rounded-full mr-3"></div>
@@ -369,36 +467,55 @@ export default function ProductDetailPage() {
                       </div>
 
                       <div>
-                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">Stage Pricing</h4>
+                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">
+                          Stage Pricing
+                        </h4>
                         <ul className="space-y-2">
-                          {Object.entries(product.stage_pricing).map(([stage, price]) => (
-                            <li key={stage} className="flex items-center justify-between text-gray-600 dark:text-gray-300">
-                              <span className="capitalize">{stage}:</span>
-                              <span className="font-medium">${price}</span>
-                            </li>
-                          ))}
+                          {Object.entries(product.stage_pricing).map(
+                            ([stage, price]) => (
+                              <li
+                                key={stage}
+                                className="flex items-center justify-between text-gray-600 dark:text-gray-300"
+                              >
+                                <span className="capitalize">{stage}:</span>
+                                <span className="font-medium">${price}</span>
+                              </li>
+                            )
+                          )}
                         </ul>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
+                      <Badge
+                        variant="outline"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
                         {product.current_stage}
                       </Badge>
-                      <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
+                      <Badge
+                        variant="outline"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
                         Round {product.current_round}
                       </Badge>
-                      <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
+                      <Badge
+                        variant="outline"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
                         {product.availability_percentage}% Available
                       </Badge>
                     </div>
                   </div>
                 )}
 
-                {selectedTab === 'reviews' && (
+                {selectedTab === "reviews" && (
                   <div className="space-y-6">
                     {mockReviews.map((review) => (
-                      <div key={review.id} className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0">
+                      <div
+                        key={review.id}
+                        className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
+                      >
                         <div className="flex items-start gap-4">
                           <Image
                             src={review.avatar}
@@ -409,8 +526,12 @@ export default function ProductDetailPage() {
                           />
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-semibold text-flyverr-text dark:text-white">{review.user}</h4>
-                              <span className="text-sm text-gray-500 dark:text-gray-400">{review.date}</span>
+                              <h4 className="font-semibold text-flyverr-text dark:text-white">
+                                {review.user}
+                              </h4>
+                              <span className="text-sm text-gray-500 dark:text-gray-400">
+                                {review.date}
+                              </span>
                             </div>
                             <div className="flex items-center mb-2">
                               {[...Array(5)].map((_, i) => (
@@ -418,15 +539,21 @@ export default function ProductDetailPage() {
                                   key={i}
                                   className={`h-4 w-4 ${
                                     i < review.rating
-                                      ? 'text-yellow-400 fill-current'
-                                      : 'text-gray-300 dark:text-gray-600'
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300 dark:text-gray-600"
                                   }`}
                                 />
                               ))}
                             </div>
-                            <p className="text-gray-600 dark:text-gray-300">{review.comment}</p>
+                            <p className="text-gray-600 dark:text-gray-300">
+                              {review.comment}
+                            </p>
                             <div className="mt-3">
-                              <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-gray-500 dark:text-gray-400"
+                              >
                                 Helpful ({review.helpful})
                               </Button>
                             </div>
@@ -437,25 +564,32 @@ export default function ProductDetailPage() {
                   </div>
                 )}
 
-                {selectedTab === 'creator' && (
+                {selectedTab === "creator" && (
                   <div className="space-y-6">
                     <div className="flex items-center gap-4">
                       <div className="w-20 h-20 bg-flyverr-primary/20 rounded-full flex items-center justify-center">
                         <Users className="h-10 w-10 text-flyverr-primary" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">Creator ID: {product.creator_id}</h3>
+                        <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">
+                          Creator ID: {product.creator_id}
+                        </h3>
                         <div className="flex items-center gap-4 mt-2">
-                          <span className="text-gray-600 dark:text-gray-400">Digital Creator</span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Digital Creator
+                          </span>
                         </div>
                       </div>
                     </div>
 
                     <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                      <h4 className="font-semibold text-flyverr-text dark:text-white mb-2">About the creator</h4>
+                      <h4 className="font-semibold text-flyverr-text dark:text-white mb-2">
+                        About the creator
+                      </h4>
                       <p className="text-gray-600 dark:text-gray-300">
-                        This creator has developed digital products available on our marketplace. 
-                        Their products go through our approval process to ensure quality and compliance.
+                        This creator has developed digital products available on
+                        our marketplace. Their products go through our approval
+                        process to ensure quality and compliance.
                       </p>
                     </div>
                   </div>
@@ -476,15 +610,26 @@ export default function ProductDetailPage() {
                   {/* License Info */}
                   <div className="bg-flyverr-primary/10 dark:bg-flyverr-primary/20 rounded-lg p-4 mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-flyverr-text dark:text-white">Available Licenses</span>
+                      <span className="text-sm font-medium text-flyverr-text dark:text-white">
+                        Available Licenses
+                      </span>
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {licenseData?.data?.product?.remaining_licenses ?? product.remaining_licenses} of {product.total_licenses}
+                        {licenseData?.data?.product?.remaining_licenses ??
+                          product.remaining_licenses}{" "}
+                        of {product.total_licenses}
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${((licenseData?.data?.product?.remaining_licenses ?? product.remaining_licenses) / product.total_licenses) * 100}%` }}
+                        style={{
+                          width: `${
+                            ((licenseData?.data?.product?.remaining_licenses ??
+                              product.remaining_licenses) /
+                              product.total_licenses) *
+                            100
+                          }%`,
+                        }}
                       ></div>
                     </div>
                   </div>
@@ -499,7 +644,7 @@ export default function ProductDetailPage() {
                       <Download className="h-6 w-6 mr-3" />
                       Buy to Use
                     </Button>
-                    
+
                     {/* Secondary Action - Buy to Resell */}
                     <Button
                       variant="outline"
@@ -509,9 +654,9 @@ export default function ProductDetailPage() {
                       <TrendingUp className="h-6 w-6 mr-3" />
                       Buy to Resell
                     </Button>
-                    
+
                     {/* Tertiary Action - Buy with Insurance */}
-                    <Button 
+                    <Button
                       variant="outline"
                       className="w-full bg-white dark:bg-gray-800 border-2 border-flyverr-accent text-flyverr-accent hover:bg-flyverr-accent hover:text-white dark:hover:bg-flyverr-accent dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
                       onClick={handleBuyWithInsurance}
@@ -525,7 +670,9 @@ export default function ProductDetailPage() {
                   <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex justify-between">
                       <span>File Size:</span>
-                      <span className="font-medium text-flyverr-text dark:text-white">{product.file_size_formatted}</span>
+                      <span className="font-medium text-flyverr-text dark:text-white">
+                        {product.file_size_formatted}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Last Updated:</span>
@@ -536,7 +683,7 @@ export default function ProductDetailPage() {
                     <div className="flex justify-between">
                       <span>Category:</span>
                       <span className="font-medium text-flyverr-text dark:text-white">
-                        {product.category_id || 'Digital Product'}
+                        {product.category_id || "Digital Product"}
                       </span>
                     </div>
                   </div>
@@ -545,10 +692,13 @@ export default function ProductDetailPage() {
                   <div className="mt-6 p-4 bg-flyverr-secondary/10 dark:bg-flyverr-secondary/20 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <Shield className="h-5 w-5 text-flyverr-secondary dark:text-flyverr-secondary" />
-                      <span className="font-semibold text-flyverr-secondary dark:text-flyverr-secondary">30-Day Money Back Guarantee</span>
+                      <span className="font-semibold text-flyverr-secondary dark:text-flyverr-secondary">
+                        30-Day Money Back Guarantee
+                      </span>
                     </div>
                     <p className="text-sm text-flyverr-secondary/80 dark:text-flyverr-secondary/80">
-                      Not satisfied? Get a full refund within 30 days of purchase.
+                      Not satisfied? Get a full refund within 30 days of
+                      purchase.
                     </p>
                   </div>
                 </CardContent>
@@ -558,5 +708,5 @@ export default function ProductDetailPage() {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}
