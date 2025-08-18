@@ -327,11 +327,11 @@ export default function AdminUsersPage() {
               <AdminTableCell align="center">
                 <div className="flex items-center justify-center space-x-2">
                   <Link href={`/admin/users/${user.id}`}>
-                  <Button size="sm" variant="outline" className="hover:bg-blue-50 dark:hover:bg-blue-900/20">
-                    <Edit className="w-3 h-3" />
-                  </Button>
+                    <Button size="sm" variant="outline" className="hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                      <Edit className="w-3 h-3" />
+                    </Button>
                   </Link>
-                  <Button size="sm" variant="outline" className="hover:bg-green-50 dark:hover:bg-green-900/20">
+                  {/* <Button size="sm" variant="outline" className="hover:bg-green-50 dark:hover:bg-green-900/20">
                     <UserCheck className="w-3 h-3" />
                   </Button>
                   <Button size="sm" variant="outline" className="hover:bg-red-50 dark:hover:bg-red-900/20">
@@ -339,7 +339,7 @@ export default function AdminUsersPage() {
                   </Button>
                   <Button size="sm" variant="ghost" className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                     <MoreVertical className="w-3 h-3" />
-                  </Button>
+                  </Button> */}
                 </div>
               </AdminTableCell>
             </AdminTableRow>

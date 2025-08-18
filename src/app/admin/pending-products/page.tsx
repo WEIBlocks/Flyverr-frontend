@@ -16,6 +16,7 @@ import { useGetPendingProducts } from "@/features/admin/product/hooks/useGetPend
 import { PendingProduct } from "@/features/admin/product/product.types"
 import ProductApprovalModal from "@/components/ProductApprovalModal"
 import ImageWithFallback from "@/components/ui/ImageWithFallback"
+import PendingProductsSkeleton from "@/components/ui/PendingProductsSkeleton"
 
 export default function AdminPendingProductsPage() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -94,16 +95,7 @@ export default function AdminPendingProductsPage() {
 
   // Loading state
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center py-12">
-          <div className="flex items-center space-x-2">
-            <Loader2 className="w-6 h-6 animate-spin text-flyverr-primary" />
-            <span className="text-gray-600 dark:text-gray-400">Loading pending products...</span>
-          </div>
-        </div>
-      </div>
-    )
+    return <PendingProductsSkeleton />
   }
 
   // Error state

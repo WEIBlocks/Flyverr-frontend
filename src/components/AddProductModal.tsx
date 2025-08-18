@@ -551,7 +551,7 @@ export default function AddProductModal({
               type="button"
               variant="outline"
               onClick={handleClose}
-              className="flex-1 border-border text-foreground hover:bg-accent hover:text-accent-foreground"
+              className="flex-1  border-border text-foreground hover:bg-accent hover:text-accent-foreground"
               disabled={isPending}
             >
               Cancel

@@ -144,7 +144,7 @@ export default function MyProductsPage() {
 
 
   const handleEditProduct = (productId: string) => {
-    router.push(`/user/products/${productId}/edit`);
+    router.push(`/user/products/${productId}`);
   };
 
   const handleDeleteProduct = (productId: string) => {

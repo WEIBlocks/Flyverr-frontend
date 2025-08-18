@@ -34,6 +34,7 @@ import type {
 } from "@/features/marketplace/marketplace.types";
 import { useTrackProductView } from "@/features/marketplace/hooks/useTrackProuductView";
 import { useCategoryPreferences } from "@/features/marketplace/hooks/useCategoryPreferences";
+import ProductDetailSkeleton from "@/components/ProductDetailSkeleton";
 
 // Types
 interface Review {
@@ -145,16 +146,7 @@ export default function ProductDetailPage() {
 
   // Show loading state
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">
-            Loading product details...
-          </p>
-        </div>
-      </div>
-    );
+    return <ProductDetailSkeleton />
   }
 
   // Show error state
