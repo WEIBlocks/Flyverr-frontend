@@ -12,6 +12,8 @@ import { useGetAvailableLicenses } from '@/features/marketplace/hooks/useGetAvai
 import type { AvailableLicensesResponse, ProductDetail } from '@/features/marketplace/marketplace.types'
 import { useTrackProductView } from '@/features/marketplace/hooks/useTrackProuductView'
 import ProductDetailSkeleton from '@/components/ProductDetailSkeleton'
+import StripeOnboardingModal from '@/components/ui/StripeOnboardingModal'
+import { canPurchaseProducts } from '@/lib/stripeHelpers'
 
 // Types
 interface Review {
@@ -70,6 +72,7 @@ export default function ProductDetailPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [selectedTab, setSelectedTab] = useState<'description' | 'reviews' | 'creator'>('description')
+  const [isStripeOnboardingModalOpen, setIsStripeOnboardingModalOpen] = useState(false)
 
   // Get product ID from params
   
@@ -118,6 +121,10 @@ export default function ProductDetailPage() {
   }
 
   const handleBuyToUse = () => {
+    if (!canPurchaseProducts()) {
+      setIsStripeOnboardingModalOpen(true)
+      return
+    }
     // Handle buy to use logic
     console.log('Buy to Use clicked for product:', product.id)
     // You can implement the actual purchase logic here
@@ -125,6 +132,10 @@ export default function ProductDetailPage() {
   }
 
   const handleBuyToResell = () => {
+    if (!canPurchaseProducts()) {
+      setIsStripeOnboardingModalOpen(true)
+      return
+    }
     // Handle buy to resell logic
     console.log('Buy to Resell clicked for product:', product.id)
     // You can implement the actual resell purchase logic here
@@ -132,6 +143,10 @@ export default function ProductDetailPage() {
   }
 
   const handleBuyWithInsurance = () => {
+    if (!canPurchaseProducts()) {
+      setIsStripeOnboardingModalOpen(true)
+      return
+    }
     // Handle buy with insurance logic
     console.log('Buy with Insurance clicked for product:', product.id)
     // You can implement the actual insurance purchase logic here
@@ -551,6 +566,8 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+      {/* Stripe Onboarding Modal */}
+      <StripeOnboardingModal isOpen={isStripeOnboardingModalOpen} onClose={() => setIsStripeOnboardingModalOpen(false)} />
     </div>
   )
 } 
