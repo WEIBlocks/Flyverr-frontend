@@ -29,9 +29,11 @@ import { useAuth } from '@/contexts/AuthContext'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/DashboardLayout'
 import AddProductModal, { NewProduct } from '@/components/AddProductModal'
+import StripeOnboardingModal from '@/components/ui/StripeOnboardingModal'
 import { useGetMyProducts } from '@/features/user/product/hooks/useGetMyProducts'
 import { UserProduct } from '@/features/user/product/product.types'
 import { useRouter } from 'next/navigation'
+import { canCreateProducts } from '@/lib/stripeHelpers'
 
 // Skeleton loading components
 const ProductTableSkeleton = () => (
@@ -120,6 +122,7 @@ export default function MyProductsPage() {
   const router = useRouter();
   // Add Product Modal state
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [isStripeOnboardingModalOpen, setIsStripeOnboardingModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -138,7 +141,11 @@ export default function MyProductsPage() {
   });
 
   const handleAddProductClick = () => {
-    setIsAddProductModalOpen(true);
+    if (canCreateProducts()) {
+      setIsAddProductModalOpen(true);
+    } else {
+      setIsStripeOnboardingModalOpen(true);
+    }
   };
 
 
@@ -564,6 +571,12 @@ export default function MyProductsPage() {
       <AddProductModal
         isOpen={isAddProductModalOpen}
         onClose={() => setIsAddProductModalOpen(false)}
+      />
+
+      {/* Stripe Onboarding Modal */}
+      <StripeOnboardingModal
+        isOpen={isStripeOnboardingModalOpen}
+        onClose={() => setIsStripeOnboardingModalOpen(false)}
       />
     </div>
   );

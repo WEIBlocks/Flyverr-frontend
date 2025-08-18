@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import Navigation from "@/components/Navigation";
+import StripeOnboardingAlert from "@/components/ui/StripeOnboardingAlert";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
@@ -28,17 +29,21 @@ export default function PublicLayout({
 
     // Only protect the home page (/) - require login for access
     // All other pages in this layout are public (faq, marketplace, blog)
-    if (!isAuthenticated && pathname === '/') {
-      console.log('🔒 Access Control: User not authenticated, redirecting from home page (/) to marketplace');
-      router.push('/marketplace');
+    if (!isAuthenticated && pathname === "/") {
+      console.log(
+        "🔒 Access Control: User not authenticated, redirecting from home page (/) to marketplace"
+      );
+      router.push("/marketplace");
       return;
     }
 
     // Log successful access for debugging
-    if (pathname === '/') {
-      console.log('✅ Access Control: Authenticated user accessing protected home page');
+    if (pathname === "/") {
+      console.log(
+        "✅ Access Control: Authenticated user accessing protected home page"
+      );
     } else {
-      console.log('🌐 Access Control: Public page accessed:', pathname);
+      console.log("🌐 Access Control: Public page accessed:", pathname);
     }
 
     // Allow rendering if auth check is complete
@@ -60,6 +65,11 @@ export default function PublicLayout({
   return (
     <div>
       <Navigation />
+      <div className=" bg-flyverr-neutral dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto w-full">
+          <StripeOnboardingAlert />
+        </div>
+      </div>
       {children}
     </div>
   );
