@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -34,7 +34,7 @@ export default function StatusUpdateModal({
   });
 
   // Update form data when modal opens or currentStatus changes
-  React.useEffect(() => {
+  useEffect(() => {
     setFormData({
       status: currentStatus as "active" | "suspended" | "banned",
       reason: '',
