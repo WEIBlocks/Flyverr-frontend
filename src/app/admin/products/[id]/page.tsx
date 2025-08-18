@@ -333,7 +333,7 @@ export default function AdminProductDetailPage() {
                  >
                    <Flag className="w-4 h-4 mr-2" />
                    Hide Product
-                 </Button>
+                </Button>
                )}
                
                {product.status === 'flagged' && (
@@ -344,7 +344,7 @@ export default function AdminProductDetailPage() {
                  >
                    <Shield className="w-4 h-4 mr-2" />
                    Show Product
-                 </Button>
+                </Button>
                )}
                
                {product.status !== 'deleted' && (
@@ -355,8 +355,8 @@ export default function AdminProductDetailPage() {
                  >
                    <Trash2 className="w-4 h-4 mr-2" />
                    Delete Product
-                 </Button>
-               )}
+              </Button>
+            )}
              </div>
           </div>
         </div>
