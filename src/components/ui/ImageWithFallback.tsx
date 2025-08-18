@@ -74,14 +74,13 @@ export default function ImageWithFallback({
         height={fill ? undefined : height}
         className={`transition-opacity duration-200 ${
           imageState === 'loaded' ? 'opacity-100' : 'opacity-0'
-        }`}
+        } ${fill ? 'object-cover' : ''}`}
         priority={priority}
         quality={quality}
         fill={fill}
         sizes={sizes}
         onLoad={() => setImageState('loaded')}
         onError={() => setImageState('error')}
-        style={fill ? { objectFit: 'cover' } : {}}
       />
     </div>
   )

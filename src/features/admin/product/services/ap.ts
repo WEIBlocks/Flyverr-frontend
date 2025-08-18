@@ -1,6 +1,9 @@
 import api from "@/lib/api";
-import type { ProductApprovalRequest, ProductApprovalResponse } from "../product.types";
-
+import type {
+  ProductApprovalRequest,
+  ProductApprovalResponse,
+} from "../product.types";
+import { Product } from "@/features/user/product/product.types";
 
 export function getPendingProducts(page: number = 1, limit: number = 20) {
   return api
@@ -11,26 +14,34 @@ export function getPendingProducts(page: number = 1, limit: number = 20) {
     });
 }
 
-export function approveProduct(productId: string, approvalData: ProductApprovalRequest) {
+export function approveProduct(
+  productId: string,
+  approvalData: ProductApprovalRequest
+) {
   return api
-    .post(`admin/products/${productId}/approve`, approvalData)
+    .put(`admin/products/${productId}/approve`, approvalData)
     .then((res) => res.data)
     .catch((err) => {
       throw err;
     });
 }
 
-export function getAllProducts(page: number = 1, limit: number = 20, status?: string, search?: string) {
+export function getAllProducts(
+  page: number = 1,
+  limit: number = 20,
+  status?: string,
+  search?: string
+) {
   const params = new URLSearchParams();
-  params.append('page', page.toString());
-  params.append('limit', limit.toString());
-  
+  params.append("page", page.toString());
+  params.append("limit", limit.toString());
+
   if (status) {
-    params.append('status', status);
+    params.append("status", status);
   }
-  
+
   if (search) {
-    params.append('search', search);
+    params.append("search", search);
   }
 
   return api
@@ -50,3 +61,16 @@ export function getProductById(id: string) {
     });
 }
 
+interface FlagProductRequest {
+  action: "flag" | "unflag" | "delete";
+  reason: string;
+  adminNotes?: string;
+  flagType?: "inappropriate" | "copyright" | "spam" | "quality" | "other" | "";
+}
+
+export function flagProduct(productId: string, flagData: FlagProductRequest) {
+  return api.put(`admin/products/${productId}/flag`, flagData);
+}
+export function editProduct(productId: string, product: Partial<Product>) {
+  return api.put(`admin/products/${productId}/edit`, product);
+}

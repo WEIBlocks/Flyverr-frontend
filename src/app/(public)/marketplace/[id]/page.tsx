@@ -11,6 +11,7 @@ import { useGetMarketplaceProductDetail } from '@/features/marketplace/hooks/use
 import { useGetAvailableLicenses } from '@/features/marketplace/hooks/useGetAvailableLicenses'
 import type { AvailableLicensesResponse, ProductDetail } from '@/features/marketplace/marketplace.types'
 import { useTrackProductView } from '@/features/marketplace/hooks/useTrackProuductView'
+import ProductDetailSkeleton from '@/components/ProductDetailSkeleton'
 
 // Types
 interface Review {
@@ -85,16 +86,9 @@ export default function ProductDetailPage() {
   }, [productId, product, isLoading, trackProductView])
 
   // Show loading state
-    if (isLoading) {
-      return (
-        <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flyverr-primary mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading product details...</p>
-          </div>
-        </div>
-      )
-    }
+  if (isLoading) {
+    return <ProductDetailSkeleton />
+  }
 
          // Show error state
      if (error || !product) {

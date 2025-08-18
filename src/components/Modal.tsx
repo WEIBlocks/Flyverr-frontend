@@ -37,7 +37,7 @@ const Modal = ({ children, size = 'md', className = '' }: ModalProps) => {
   // Create a portal to render the modal at the root level
   return createPortal(
     <div className="fixed inset-0 w-full h-screen bg-black/50 dark:bg-black/70 backdrop-blur-sm overflow-y-auto z-50">
-      <div className="w-full min-h-screen p-4 sm:p-6 flex justify-center items-start pt-16">
+      <div className="w-full min-h-screen p-4 sm:p-6 flex justify-center items-center pt-16">
         <div className={`slide-down-big-in ${getSizeClasses()} mx-auto rounded-2xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-2xl dark:shadow-black/25 ${className}`}>
           {children}
         </div>

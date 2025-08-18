@@ -24,6 +24,8 @@ export default function MyLicensesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
 
+  // const { data: licenses, isLoading, error } = useGetMyLicenses();
+
   // Sample licenses data
   const licenses = [
     {
