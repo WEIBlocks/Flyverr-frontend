@@ -97,12 +97,8 @@ export default function StripeOnboardingModal({
           >
             Cancel
           </Button>
-          
-          <CompleteSetupButton
-            closeModal={handleOnboardingSuccess}
-         
-            className="bg-amber-600 hover:bg-amber-700 text-white"
-          >
+
+          <CompleteSetupButton className="bg-amber-600 hover:bg-amber-700 text-white">
             Complete Setup
           </CompleteSetupButton>
         </div>

@@ -3,23 +3,22 @@ import { onboardStripe } from "../services/apt";
 
 import Swal from "sweetalert2";
 import { ErrorResponse } from "@/lib/types";
+import { storage } from "@/lib/utils";
 
 export function useOnboardStripe() {
   const queryClient = useQueryClient();
-
+  const token = storage.getToken();
   return useMutation({
     mutationFn: async () => {
       return await onboardStripe();
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
     
       // Invalidate relevant queries to refresh user data
-      queryClient.invalidateQueries({
-        queryKey: ["current-user"],
+      await queryClient.invalidateQueries({
+        queryKey: [, "current-user", token],
       });
-      queryClient.invalidateQueries({
-        queryKey: ["admin-user"],
-      });
+     
 
      
     },

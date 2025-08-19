@@ -10,13 +10,13 @@ import CompleteSetupButton from "./CompleteSetupButton";
 
 export default function StripeOnboardingAlert() {
   const [showAlert, setShowAlert] = useState(false);
-  const { data: currentUser } = useGetCurrentUser();
+  const { data: currentUser, isRefetching } = useGetCurrentUser();
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     // Use helper function to determine if alert should be shown
     setShowAlert(shouldShowStripeAlert(currentUser));
-  }, [currentUser]);
+  }, [currentUser, isRefetching]);
 
   const handleDismiss = () => {
     setShowAlert(false);
@@ -26,11 +26,6 @@ export default function StripeOnboardingAlert() {
   const handleOnboardingSuccess = () => {
     // Hide the alert after successful onboarding initiation
     setShowAlert(false);
-  };
-
-  const handleOnboardingError = (error: any) => {
-    console.error("Failed to initiate Stripe onboarding:", error);
-    // You can show error toast here if needed
   };
 
   if (!showAlert || !isAuthenticated) {
@@ -58,7 +53,7 @@ export default function StripeOnboardingAlert() {
               <div className="flex items-center space-x-3 mt-3">
                 <CompleteSetupButton
                   size="sm"
-                  closeModal={handleOnboardingSuccess}
+                 
                   className="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1"
                 >
                   Complete Setup

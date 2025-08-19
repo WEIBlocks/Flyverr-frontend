@@ -6,7 +6,6 @@ import { storage } from "@/lib/utils";
 
 export function useGetMyProducts() {
   const { isAuthenticated } = useAuth();
-
   const token = storage.getToken();
   return useQuery<UserProductsResponse>({
     queryKey: ["user-products", isAuthenticated, token],

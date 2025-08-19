@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,12 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Modal from "@/components/Modal";
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
+import {
+  Plus,
+  Search,
+  Filter,
+  Edit,
+  Trash2,
   Star,
   Upload,
   FileText,
@@ -23,23 +23,26 @@ import {
   AlertCircle,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
 } from "lucide-react";
-import { useAuth } from '@/contexts/AuthContext'
-import { ProtectedRoute } from '@/components/ProtectedRoute'
-import DashboardLayout from '@/components/DashboardLayout'
-import AddProductModal, { NewProduct } from '@/components/AddProductModal'
-import StripeOnboardingModal from '@/components/ui/StripeOnboardingModal'
-import { useGetMyProducts } from '@/features/user/product/hooks/useGetMyProducts'
-import { UserProduct } from '@/features/user/product/product.types'
-import { useRouter } from 'next/navigation'
-import { canCreateProducts } from '@/lib/stripeHelpers'
+import { useAuth } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import DashboardLayout from "@/components/DashboardLayout";
+import AddProductModal, { NewProduct } from "@/components/AddProductModal";
+import StripeOnboardingModal from "@/components/ui/StripeOnboardingModal";
+import { useGetMyProducts } from "@/features/user/product/hooks/useGetMyProducts";
+import { UserProduct } from "@/features/user/product/product.types";
+import { useRouter } from "next/navigation";
+import { canCreateProducts } from "@/lib/stripeHelpers";
 
 // Skeleton loading components
 const ProductTableSkeleton = () => (
   <div className="space-y-4">
     {[...Array(5)].map((_, index) => (
-      <div key={index} className="flex items-center space-x-4 p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+      <div
+        key={index}
+        className="flex items-center space-x-4 p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700"
+      >
         <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
         <div className="flex-1 space-y-2">
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse"></div>
@@ -59,7 +62,10 @@ const ProductTableSkeleton = () => (
 const StatsCardSkeleton = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {[...Array(4)].map((_, index) => (
-      <Card key={index} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg">
+      <Card
+        key={index}
+        className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg"
+      >
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
@@ -75,41 +81,57 @@ const StatsCardSkeleton = () => (
 );
 
 // Product Image Component with loading and error handling
-const ProductImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
-  const [imageState, setImageState] = useState<'loading' | 'loaded' | 'error'>('loading');
+const ProductImage = ({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) => {
+  const [imageState, setImageState] = useState<"loading" | "loaded" | "error">(
+    "loading"
+  );
   const [imageSrc, setImageSrc] = useState(src);
 
   const handleImageLoad = () => {
-    setImageState('loaded');
+    setImageState("loaded");
   };
 
   const handleImageError = () => {
-    setImageState('error');
-    setImageSrc('/api/placeholder/150/150'); // Fallback to placeholder API or default image
+    setImageState("error");
+    setImageSrc("/api/placeholder/150/150"); // Fallback to placeholder API or default image
   };
 
   // Default placeholder image (you can replace this with your own default image)
   const defaultImage = (
-    <div className={`${className} bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-600`}>
+    <div
+      className={`${className} bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-600`}
+    >
       <ImageIcon className="w-6 h-6 text-gray-400 dark:text-gray-500" />
     </div>
   );
 
-  if (imageState === 'error') {
+  if (imageState === "error") {
     return defaultImage;
   }
 
   return (
     <>
-      {imageState === 'loading' && (
-        <div className={`${className} bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center`}>
+      {imageState === "loading" && (
+        <div
+          className={`${className} bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center`}
+        >
           <div className="w-4 h-4 border-2 border-gray-300 dark:border-gray-600 border-t-flyverr-primary rounded-full animate-spin"></div>
         </div>
       )}
       <img
         src={imageSrc}
         alt={alt}
-        className={`${className} ${imageState === 'loading' ? 'hidden' : 'block'}`}
+        className={`${className} ${
+          imageState === "loading" ? "hidden" : "block"
+        }`}
         onLoad={handleImageLoad}
         onError={handleImageError}
       />
@@ -118,11 +140,12 @@ const ProductImage = ({ src, alt, className }: { src: string; alt: string; class
 };
 
 export default function MyProductsPage() {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const router = useRouter();
   // Add Product Modal state
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
-  const [isStripeOnboardingModalOpen, setIsStripeOnboardingModalOpen] = useState(false);
+  const [isStripeOnboardingModalOpen, setIsStripeOnboardingModalOpen] =
+    useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -131,12 +154,14 @@ export default function MyProductsPage() {
   const { data: productsData, isLoading, error } = useGetMyProducts();
   const products: UserProduct[] = productsData?.data?.products || [];
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || 
-                           (product.category?.slug === selectedCategory);
-    const matchesStatus = selectedStatus === "all" || product.status === selectedStatus;
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch =
+      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || product.category?.slug === selectedCategory;
+    const matchesStatus =
+      selectedStatus === "all" || product.status === selectedStatus;
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
@@ -148,16 +173,18 @@ export default function MyProductsPage() {
     }
   };
 
-
-
   const handleEditProduct = (productId: string) => {
     router.push(`/user/products/${productId}`);
   };
 
   const handleDeleteProduct = (productId: string) => {
     // TODO: Implement delete confirmation modal and API call
-    if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-      console.log('Delete product:', productId);
+    if (
+      confirm(
+        "Are you sure you want to delete this product? This action cannot be undone."
+      )
+    ) {
+      console.log("Delete product:", productId);
       // Add delete API call here
     }
   };
@@ -193,13 +220,13 @@ export default function MyProductsPage() {
   };
 
   const getFileTypeIcon = (fileType: string) => {
-    if (fileType.startsWith('image/')) {
+    if (fileType.startsWith("image/")) {
       return <ImageIcon className="w-4 h-4" />;
-    } else if (fileType.includes('pdf')) {
+    } else if (fileType.includes("pdf")) {
       return <FileText className="w-4 h-4" />;
-    } else if (fileType.includes('zip') || fileType.includes('rar')) {
+    } else if (fileType.includes("zip") || fileType.includes("rar")) {
       return <Package className="w-4 h-4" />;
-    } else if (fileType.includes('video/')) {
+    } else if (fileType.includes("video/")) {
       return <Upload className="w-4 h-4" />;
     } else {
       return <FileText className="w-4 h-4" />;
@@ -207,10 +234,10 @@ export default function MyProductsPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -292,7 +319,7 @@ export default function MyProductsPage() {
             Manage your digital products and track their performance
           </p>
         </div>
-        <Button 
+        <Button
           onClick={handleAddProductClick}
           className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
         >
@@ -307,8 +334,12 @@ export default function MyProductsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Total Products</p>
-                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{products.length}</p>
+                <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                  Total Products
+                </p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                  {products.length}
+                </p>
               </div>
               <div className="p-3 bg-blue-500/10 dark:bg-blue-400/20 rounded-lg">
                 <Package className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -321,9 +352,11 @@ export default function MyProductsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-600 dark:text-green-400">Approved Products</p>
+                <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                  Approved Products
+                </p>
                 <p className="text-2xl font-bold text-green-900 dark:text-green-100">
-                  {products.filter(p => p.status === "approved").length}
+                  {products.filter((p) => p.status === "approved").length}
                 </p>
               </div>
               <div className="p-3 bg-green-500/10 dark:bg-green-400/20 rounded-lg">
@@ -337,7 +370,9 @@ export default function MyProductsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Total Revenue</p>
+                <p className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                  Total Revenue
+                </p>
                 <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
                   ${products.reduce((sum, p) => sum + revenue(p), 0).toFixed(2)}
                 </p>
@@ -353,7 +388,9 @@ export default function MyProductsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Total Sales</p>
+                <p className="text-sm font-medium text-orange-600 dark:text-orange-400">
+                  Total Sales
+                </p>
                 <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
                   {products.reduce((sum, p) => sum + soldLicenses(p), 0)}
                 </p>
@@ -438,13 +475,16 @@ export default function MyProductsPage() {
                   </thead>
                   <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                     {filteredProducts.map((product) => (
-                      <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200">
+                      <tr
+                        key={product.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-12 w-12">
                               {product.thumbnail_url ? (
-                                <ProductImage 
-                                  src={product.thumbnail_url} 
+                                <ProductImage
+                                  src={product.thumbnail_url}
                                   alt={product.title}
                                   className="h-12 w-12 rounded-lg object-cover border border-gray-200 dark:border-gray-600 shadow-sm"
                                 />
@@ -465,16 +505,22 @@ export default function MyProductsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge className={`${getStatusColor(product.status)} font-medium flex items-center gap-1`}>
+                          <Badge
+                            className={`${getStatusColor(
+                              product.status
+                            )} font-medium flex items-center gap-1`}
+                          >
                             {getStatusIcon(product.status)}
-                            {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
+                            {product.status.charAt(0).toUpperCase() +
+                              product.status.slice(1)}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             {getFileTypeIcon(product.file_type)}
                             <span className="text-sm text-gray-600 dark:text-gray-400">
-                              {product.file_type.split('/')[1]?.toUpperCase() || product.file_type}
+                              {product.file_type.split("/")[1]?.toUpperCase() ||
+                                product.file_type}
                             </span>
                           </div>
                         </td>
@@ -489,9 +535,15 @@ export default function MyProductsPage() {
                               {soldLicenses(product)}/{product.total_licenses}
                             </span>
                             <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                              <div 
+                              <div
                                 className="bg-gradient-to-r from-flyverr-primary to-flyverr-secondary h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${(soldLicenses(product) / product.total_licenses) * 100}%` }}
+                                style={{
+                                  width: `${
+                                    (soldLicenses(product) /
+                                      product.total_licenses) *
+                                    100
+                                  }%`,
+                                }}
                               ></div>
                             </div>
                           </div>
@@ -508,22 +560,22 @@ export default function MyProductsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center space-x-2">
-                            <Button 
-                              variant="outline" 
+                            <Button
+                              variant="outline"
                               size="sm"
                               onClick={() => handleEditProduct(product.id)}
                               className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-500"
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
-                            <Button 
+                            {/* <Button 
                               variant="outline" 
                               size="sm"
                               onClick={() => handleDeleteProduct(product.id)}
                               className="border-red-200 dark:border-red-600 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-800 hover:border-red-300 dark:hover:border-red-500"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </td>
                       </tr>
@@ -547,15 +599,14 @@ export default function MyProductsPage() {
               {products.length === 0 ? "No products yet" : "No products found"}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-sm mx-auto">
-              {products.length === 0 
+              {products.length === 0
                 ? "Get started by adding your first digital product"
-                : searchTerm || selectedStatus !== "all" 
-                  ? "Try adjusting your search or filter criteria"
-                  : "No products match your current filters"
-              }
+                : searchTerm || selectedStatus !== "all"
+                ? "Try adjusting your search or filter criteria"
+                : "No products match your current filters"}
             </p>
             {products.length === 0 && (
-              <Button 
+              <Button
                 onClick={handleAddProductClick}
                 className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
               >
@@ -580,4 +631,4 @@ export default function MyProductsPage() {
       />
     </div>
   );
-} 
+}

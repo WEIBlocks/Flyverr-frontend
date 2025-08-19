@@ -12,7 +12,6 @@ interface CompleteSetupButtonProps {
   size?: "default" | "sm" | "lg";
   className?: string;
   children?: React.ReactNode;
-  closeModal: () => void;
 }
 
 export default function CompleteSetupButton({
@@ -20,7 +19,6 @@ export default function CompleteSetupButton({
   size = "default",
   className = "",
   children = "Complete Setup",
-  closeModal,
 }: CompleteSetupButtonProps) {
   const [showRedirectModal, setShowRedirectModal] = useState(false);
   const [onboardingUrl, setOnboardingUrl] = useState<string>("");
@@ -31,11 +29,11 @@ export default function CompleteSetupButton({
       onSuccess: ({ data }: { data: any }) => {
         if (data?.data?.onboarding_url) {
           console.log("data", data?.data?.onboarding_url);
-        
+
           // Store the onboarding URL and show redirect modal
           setOnboardingUrl(data?.data?.onboarding_url);
           setShowRedirectModal(true);
-          closeModal(); // Close the parent modal
+          //   closeModal(); // Close the parent modal
         } else {
           console.error("Invalid onboarding URL received");
           Swal.fire({
@@ -55,8 +53,6 @@ export default function CompleteSetupButton({
     window.open(onboardingUrl, "_blank");
     setShowRedirectModal(false);
   };
-  console.log("onboardingUrl", onboardingUrl);
-  console.log("showRedirectModal", showRedirectModal);
 
   return (
     <>
