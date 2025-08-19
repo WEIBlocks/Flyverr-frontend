@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUserStatus } from "../services/api";
 import { toast } from "react-hot-toast";
+import Swal from "sweetalert2";
+import { createUserFriendlyError } from "@/lib/errorUtils";
 
 interface UpdateUserStatusData {
   status: "active" | "suspended" | "banned";
@@ -24,16 +26,25 @@ export function useUpdateUserStatus() {
     },
     onSuccess: (data, variables) => {
       // Invalidate and refetch user data
-      queryClient.invalidateQueries({
-        queryKey: ["admin-user", variables.userId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["admin-users"],
+      Swal.fire({
+        title: "User status updated",
+        icon: "success",
+        text: "User status updated successfully",
+      }).then(async () => {
+        await queryClient.invalidateQueries({
+          queryKey: ["admin-user", variables.userId],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["admin-users"],
+        });
       });
     },
     onError: (error) => {
-      console.error("Error updating user status:", error);
-      toast.error("Failed to update user status");
+      Swal.fire({
+        title: "Error",
+        icon: "error",
+        text: createUserFriendlyError(error),
+      });
     },
   });
 }
