@@ -13,11 +13,11 @@ export function useRecommendedProducts(limitPerCategory = 6) {
     queryKey: ["recommended-products", mostRecent, limitPerCategory],
     queryFn: async (): Promise<MarketplaceProduct[]> => {
       if (!mostRecent) return [];
-      const res = await getMarketplaceProducts({
+      const response = await getMarketplaceProducts({
         category: mostRecent,
         limit: limitPerCategory,
       });
-      return (res.data.products as MarketplaceProduct[]).filter(
+      return (response.data.products as MarketplaceProduct[]).filter(
         (p) => p.category_id === mostRecent
       );
     },

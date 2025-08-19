@@ -6,7 +6,9 @@ import type {
   ProductDetailResponse,
 } from "../marketplace.types";
 
-export function getMarketplaceProducts(filters: MarketplaceFilters = {}) {
+export async function getMarketplaceProducts(
+  filters: MarketplaceFilters = {}
+): Promise<MarketplaceResponse> {
   const params = new URLSearchParams();
 
   if (filters.category) params.append("category", filters.category);
@@ -23,13 +25,13 @@ export function getMarketplaceProducts(filters: MarketplaceFilters = {}) {
   if (filters.minPrice) params.append("minPrice", filters.minPrice.toString());
   if (filters.maxPrice) params.append("maxPrice", filters.maxPrice.toString());
 
-  return api
-    .get(`/marketplace/products?${params.toString()}`)
-    .then((res) => res.data as MarketplaceResponse)
-    .catch((err) => {
-      console.error(err);
-      throw err;
-    });
+  try {
+    const res = await api.get(`/marketplace/products?${params.toString()}`);
+    return res.data as MarketplaceResponse;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 }
 
 export function getProductDetail(id: string) {

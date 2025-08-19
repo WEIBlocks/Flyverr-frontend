@@ -236,7 +236,7 @@ export default function AddProductModal({
         ...data,
         thumbnailUrl: thumb.url || "",
         imagesUrls: images.map((i) => i.url || "").filter(Boolean),
-        fileUrl: file.url || "", // non-public; backend will issue signed URLs for downloads
+        fileUrl: file.path, // store storage path; backend will create signed URL for downloads
         fileType: mainFile.type || data.fileType,
         fileSize: mainFile.size || data.fileSize,
       };
