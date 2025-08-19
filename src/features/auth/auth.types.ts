@@ -27,6 +27,7 @@ export type UserProfile = {
     role: string;
     status: string;
     email_verified: boolean;
+    stripe_onboarded: boolean;
     created_at: string;
     updated_at: string;
 }

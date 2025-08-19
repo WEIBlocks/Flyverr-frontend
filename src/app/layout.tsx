@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+import "sweetalert2/src/sweetalert2.scss";
+import "sweetalert2/dist/sweetalert2.js";
 
 import Providers from "@/components/Providers";
 
