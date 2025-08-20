@@ -16,7 +16,7 @@ export function useOnboardStripe() {
     
       // Invalidate relevant queries to refresh user data
       await queryClient.invalidateQueries({
-        queryKey: [, "current-user", token],
+        queryKey: ['auth', 'current-user', token],
       });
      
 

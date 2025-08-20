@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -34,6 +34,7 @@ import {
 } from "@/features/marketplace/marketplace.types";
 import Modal from "@/components/Modal";
 import {
+  createUserFriendlyError,
   formatErrorMessage,
   getValidationErrors,
   isValidationError,
@@ -136,36 +137,6 @@ const FilterModal = ({
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Categories */}
-          <div>
-            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-              Categories
-            </h4>
-            <div className="grid grid-cols-2 gap-3">
-              {categories.map((category) => {
-                const Icon = category.icon;
-                return (
-                  <Button
-                    key={category.id}
-                    variant={
-                      selectedCategory === category.id ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() => onCategoryChange(category.id)}
-                    className={`justify-start ${
-                      selectedCategory === category.id
-                        ? "bg-flyverr-primary text-white hover:bg-flyverr-primary/90"
-                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-flyverr-primary/5"
-                    }`}
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    {category.name}
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Resale Stages */}
           <div>
             <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
@@ -343,6 +314,10 @@ export default function MarketplacePage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
 
+  // Debounced search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
   // State for filters and pagination
   const [filters, setFilters] = useState<MarketplaceFilters>({
     limit: 20,
@@ -353,7 +328,6 @@ export default function MarketplacePage() {
 
   // Pending filters state (only applied when Apply button is clicked)
   const [pendingFilters, setPendingFilters] = useState({
-    searchTerm: "",
     selectedCategory: "all",
     selectedStage: undefined as string | undefined,
     showFeatured: undefined as boolean | undefined,
@@ -367,6 +341,28 @@ export default function MarketplacePage() {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Apply search when debounced term changes
+  useEffect(() => {
+    if (debouncedSearchTerm !== filters.search) {
+      const newFilters = {
+        ...filters,
+        search: debouncedSearchTerm || undefined,
+        offset: 0, // Reset to first page when searching
+      };
+      setFilters(newFilters);
+      setCurrentPage(1);
+    }
+  }, [debouncedSearchTerm, filters.search]);
 
   // Filter modal state
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -511,8 +507,9 @@ export default function MarketplacePage() {
       sortOrder: pendingFilters.sortOrder,
     };
 
-    if (pendingFilters.searchTerm) {
-      newFilters.search = pendingFilters.searchTerm;
+    // Include current search term
+    if (debouncedSearchTerm) {
+      newFilters.search = debouncedSearchTerm;
     }
 
     if (pendingFilters.selectedCategory !== "all") {
@@ -559,8 +556,9 @@ export default function MarketplacePage() {
     };
 
     setFilters(newFilters);
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
     setPendingFilters({
-      searchTerm: "",
       selectedCategory: "all",
       selectedStage: undefined,
       showFeatured: undefined,
@@ -594,6 +592,11 @@ export default function MarketplacePage() {
       sortOrder: filters.sortOrder || "desc",
     };
 
+    // Preserve current search term
+    if (debouncedSearchTerm) {
+      newFilters.search = debouncedSearchTerm;
+    }
+
     if (categoryId !== "all") {
       if (categoryId === "trending") {
         newFilters.trending = true;
@@ -613,21 +616,6 @@ export default function MarketplacePage() {
 
   const handleCardClick = (productId: string) => {
     router.push(`/marketplace/${productId}`);
-  };
-
-  const nextImage = (productId: string, totalImages: number) => {
-    setImageIndices((prev) => ({
-      ...prev,
-      [productId]: ((prev[productId] || 0) + 1) % totalImages,
-    }));
-  };
-
-  const prevImage = (productId: string, totalImages: number) => {
-    setImageIndices((prev) => ({
-      ...prev,
-      [productId]:
-        prev[productId] === 0 ? totalImages - 1 : (prev[productId] || 0) - 1,
-    }));
   };
 
   const handleImageLoad = (productId: string) => {
@@ -664,47 +652,6 @@ export default function MarketplacePage() {
           </p>
         </div>
 
-        {/* Welcome Message for Non-Authenticated Users */}
-        {!isAuthenticated && (
-          <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12">
-            <div className="bg-gradient-to-r from-flyverr-primary/10 to-flyverr-secondary/10 border border-flyverr-primary/20 rounded-xl p-6 sm:p-8">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-flyverr-text dark:text-white mb-2">
-                    Welcome to Flyverr! 🚀
-                  </h2>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4">
-                    You're currently browsing our marketplace as a guest. Sign
-                    up or sign in to access exclusive features, create your own
-                    digital products, and start your resale journey!
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button
-                      onClick={() => router.push("/signup")}
-                      className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      Get Started Free
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => router.push("/login")}
-                      className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 px-6 py-2 rounded-lg font-medium transition-all duration-200"
-                    >
-                      Sign In
-                    </Button>
-                  </div>
-                </div>
-                <div className="hidden sm:block">
-                  <div className="w-24 h-24 bg-flyverr-primary/20 rounded-full flex items-center justify-center">
-                    <Sparkles className="w-12 h-12 text-flyverr-primary" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Search and Filter Section */}
         <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12">
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
@@ -714,33 +661,12 @@ export default function MarketplacePage() {
               <Input
                 type="text"
                 placeholder="Search digital products, creators, or categories..."
-                value={pendingFilters.searchTerm}
-                onChange={(e) =>
-                  setPendingFilters((prev) => ({
-                    ...prev,
-                    searchTerm: e.target.value,
-                  }))
-                }
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 sm:pl-12 h-10 sm:h-12 md:h-14 text-sm sm:text-base md:text-lg border-2 border-gray-200 dark:border-gray-700 focus:border-flyverr-primary dark:focus:border-flyverr-primary rounded-lg sm:rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               />
             </div>
 
-            {/* Search Button - Only show when there's search text */}
-            {pendingFilters.searchTerm && (
-              <Button
-                onClick={() => {
-                  setPendingFilters((prev) => ({
-                    ...prev,
-                    searchTerm: prev.searchTerm,
-                  }));
-                  applyFilters();
-                }}
-                className="h-10 sm:h-12 md:h-14 px-6 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white rounded-lg sm:rounded-xl font-medium"
-              >
-                <Search className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                <span className="hidden sm:inline">Search</span>
-              </Button>
-            )}
 
             {/* Clear Filters Button - Only show when filters are active */}
             {(filters.search ||
@@ -767,11 +693,10 @@ export default function MarketplacePage() {
               onClick={() => {
                 // Reset pending filters to current applied filters when opening modal
                 setPendingFilters({
-                  searchTerm: filters.search || "",
-                  selectedCategory: filters.trending
+                  selectedCategory: filters.featured
+                    ? "sponsored"
+                    : filters.trending
                     ? "trending"
-                    : filters.featured
-                    ? "featured"
                     : filters.recommended
                     ? "recommended"
                     : filters.hotDeals
@@ -865,22 +790,9 @@ export default function MarketplacePage() {
                 </h3>
               </div>
               <p className="text-red-700 dark:text-red-400 text-sm">
-                {formatErrorMessage(error)}
+                {createUserFriendlyError(error)}
               </p>
-              {isValidationError(error) && (
-                <div className="mt-2 text-xs text-red-600 dark:text-red-400">
-                  <p className="font-medium mb-1">
-                    Please check the following:
-                  </p>
-                  <ul className="text-left list-disc list-inside space-y-1">
-                    {getValidationErrors(error).map(
-                      (err: string, index: number) => (
-                        <li key={index}>{err}</li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
+
               <Button
                 onClick={handleTryAgain}
                 variant="outline"
@@ -901,142 +813,151 @@ export default function MarketplacePage() {
                 <ProductCardSkeleton key={index} />
               ))
             : products.length > 0
-            ? products.map((product: MarketplaceProduct) => {
-                const currentImageIndex = imageIndices[product.id] || 0;
-                const currentImage = product.thumbnail_url;
-                const imageState = imageStates[product.id] || {
-                  loading: true,
-                  error: false,
-                  loaded: false,
-                };
-                const stage = resaleStages.find(
-                  (s) => s.id === product.current_stage
-                );
+            ? products
+                .filter((product: MarketplaceProduct) => {
+                  // Hide products with current_stage "newboom" and remaining_licenses = 1
+                  return !(
+                    product.current_stage === "exit" &&
+                    product.remaining_licenses === 0
+                  );
+                })
+                .map((product: MarketplaceProduct) => {
+                  const currentImageIndex = imageIndices[product.id] || 0;
+                  const currentImage = product.thumbnail_url;
+                  const imageState = imageStates[product.id] || {
+                    loading: true,
+                    error: false,
+                    loaded: false,
+                  };
+                  const stage = resaleStages.find(
+                    (s) => s.id === product.current_stage
+                  );
 
-                return (
-                  <Card
-                    key={product.id}
-                    className="group hover:shadow-xl transition-all duration-300 border-0 bg-white dark:bg-gray-800 overflow-hidden cursor-pointer rounded-lg shadow-md"
-                    onClick={() => handleCardClick(product.id)}
-                  >
-                    <div className="relative bg-gray-100 dark:bg-gray-700">
-                      {/* Image Container */}
-                      <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
-                        {/* Error State */}
-                        {imageState.error && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700">
-                            <div className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 dark:text-gray-500 mb-2 flex items-center justify-center">
-                              <svg
-                                className="w-full h-full"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                              </svg>
+                  return (
+                    <Card
+                      key={product.id}
+                      className="group hover:shadow-xl transition-all duration-300 border-0 bg-white dark:bg-gray-800 overflow-hidden cursor-pointer rounded-lg shadow-md"
+                      onClick={() => handleCardClick(product.id)}
+                    >
+                      <div className="relative bg-gray-100 dark:bg-gray-700">
+                        {/* Image Container */}
+                        <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
+                          {/* Error State */}
+                          {imageState.error && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700">
+                              <div className="h-8 h-8 sm:h-10 sm:w-10 text-gray-400 dark:text-gray-500 mb-2 flex items-center justify-center">
+                                <svg
+                                  className="w-full h-full"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                                </svg>
+                              </div>
+                              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                Image unavailable
+                              </p>
                             </div>
-                            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                              Image unavailable
-                            </p>
+                          )}
+
+                          {/* Next.js Optimized Image */}
+                          {!imageState.error && currentImage && (
+                            <Image
+                              src={currentImage}
+                              alt={product.title}
+                              fill
+                              className="object-cover transition-all duration-300 group-hover:scale-110"
+                              onLoad={() => handleImageLoad(product.id)}
+                              onError={() => handleImageError(product.id)}
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                              priority={false}
+                            />
+                          )}
+                        </div>
+
+                        {/* Resale Stage Badge */}
+                        {stage && (
+                          <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                            <Badge
+                              className={`${stage.color} text-white text-xs px-2 py-1`}
+                            >
+                              Stage{" "}
+                              {resaleStages.findIndex(
+                                (s) => s.id === product.current_stage
+                              ) + 1}
+                              : {stage.name}
+                            </Badge>
                           </div>
                         )}
 
-                        {/* Next.js Optimized Image */}
-                        {!imageState.error && currentImage && (
-                          <Image
-                            src={currentImage}
-                            alt={product.title}
-                            fill
-                            className="object-cover transition-all duration-300 group-hover:scale-110"
-                            onLoad={() => handleImageLoad(product.id)}
-                            onError={() => handleImageError(product.id)}
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                            priority={false}
-                          />
-                        )}
-                      </div>
-
-                      {/* Resale Stage Badge */}
-                      {stage && (
-                        <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
-                          <Badge
-                            className={`${stage.color} text-white text-xs px-2 py-1`}
-                          >
-                            Stage{" "}
-                            {resaleStages.findIndex(
-                              (s) => s.id === product.current_stage
-                            ) + 1}
-                            : {stage.name}
-                          </Badge>
-                        </div>
-                      )}
-
-                      {/* Special Badges */}
-                      <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5">
-                        {product.featured && (
-                          <Badge className="bg-flyverr-accent text-flyverr-text text-xs px-2 py-1">
-                            <Crown className="h-3 w-3 mr-1" />
-                            <span className="hidden sm:inline">Featured</span>
-                            <span className="sm:hidden">FT</span>
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-
-                    <CardContent className="p-4">
-                      {/* Title */}
-                      <div className="mb-3">
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base md:text-lg lg:text-xl mb-1 line-clamp-2 group-hover:text-flyverr-primary transition-colors duration-300">
-                          {product.title}
-                        </h3>
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                        {product.description}
-                      </p>
-
-                      {/* Remaining Licenses */}
-                      <div className="mb-4">
-                        <div className="flex justify-between items-center text-xs sm:text-sm md:text-base">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Remaining:
-                          </span>
-                          <span className="font-medium text-gray-900 dark:text-white">
-                            {product.remaining_licenses} of{" "}
-                            {product.total_licenses}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
-                          <div
-                            className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
-                            style={{
-                              width: `${
-                                (product.remaining_licenses /
-                                  product.total_licenses) *
-                                100
-                              }%`,
-                            }}
-                          ></div>
-                        </div>
-                      </div>
-
-                      {/* Price and Action */}
-                      <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                          <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white">
-                            ${product.current_price}
-                          </div>
-                          {product.original_price !== product.current_price && (
-                            <div className="text-sm text-gray-500 line-through">
-                              ${product.original_price}
-                            </div>
+                        {/* Special Badges */}
+                        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5">
+                          {product.featured && (
+                            <Badge className="bg-flyverr-accent text-flyverr-text text-xs px-2 py-1">
+                              <Crown className="h-3 w-3 mr-1" />
+                              <span className="hidden sm:inline">Featured</span>
+                              <span className="sm:hidden">FT</span>
+                            </Badge>
                           )}
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                );
-              })
+
+                      <CardContent className="p-4">
+                        {/* Title */}
+                        <div className="mb-3">
+                          <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base md:text-lg lg:text-xl mb-1 line-clamp-2 group-hover:text-flyverr-primary transition-colors duration-300">
+                            {product.title}
+                          </h3>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                          {product.description}
+                        </p>
+
+                        {/* Remaining Licenses */}
+                        <div className="mb-4">
+                          <div className="flex justify-between items-center text-xs sm:text-sm md:text-base">
+                            <span className="text-gray-600 dark:text-gray-400">
+                              Remaining:
+                            </span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {product.remaining_licenses} of{" "}
+                              {product.total_licenses}
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                            <div
+                              className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
+                              style={{
+                                width: `${
+                                  (product.remaining_licenses /
+                                    product.total_licenses) *
+                                  100
+                                }%`,
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        {/* Price and Action */}
+                        <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                          <div className="flex items-center justify-between">
+                            <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white">
+                              ${product.current_price}
+                            </div>
+                            {product.original_price !==
+                              product.current_price && (
+                              <div className="text-sm text-gray-500 line-through">
+                                ${product.original_price}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })
             : // No products found message
               !loading && (
                 <div className="col-span-full text-center py-12">
@@ -1085,40 +1006,6 @@ export default function MarketplacePage() {
                 </div>
               )}
         </div>
-
-        {/* Call-to-Action for Non-Authenticated Users */}
-        {!isAuthenticated && (
-          <div className="mb-8 sm:mb-10 lg:mb-12">
-            <div className="bg-gradient-to-r from-flyverr-primary/5 to-flyverr-secondary/5 border border-flyverr-primary/10 rounded-xl p-6 sm:p-8 text-center">
-              <div className="max-w-2xl mx-auto">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-flyverr-text dark:text-white mb-3">
-                  Ready to Start Your Digital Journey?
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-6">
-                  Join thousands of creators and buyers who are already
-                  profiting from digital product resales. Create your account
-                  today and unlock exclusive marketplace features!
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button
-                    onClick={() => router.push("/signup")}
-                    className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
-                    Create Free Account
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => router.push("/login")}
-                    className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 px-8 py-3 rounded-lg font-medium transition-all duration-200"
-                  >
-                    Sign In to Existing Account
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Pagination */}
         {!useRecommended && totalPages > 1 && (

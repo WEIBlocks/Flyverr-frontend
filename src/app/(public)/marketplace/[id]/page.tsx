@@ -42,6 +42,8 @@ import { canPurchaseProducts } from "@/lib/stripeHelpers";
 import { usePurchaseProduct } from "@/features/user/product/hooks/usePurchaseProduct";
 import Modal from "@/components/Modal";
 import { useGetCurrentUser } from "@/features/auth/hooks";
+import { useAuth } from "@/contexts/AuthContext";
+import { swal } from "@/lib/utils";
 
 // Types
 interface Review {
@@ -121,9 +123,6 @@ const resaleStages = {
  
 
 export default function ProductDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const productId = params.id as string;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedTab, setSelectedTab] = useState<
@@ -137,7 +136,10 @@ export default function ProductDetailPage() {
   >(null);
   const [isBuyingToUse, setIsBuyingToUse] = useState(false);
   const [isBuyingToResell, setIsBuyingToResell] = useState(false);
-
+  const params = useParams();
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const productId = params.id as string;
   // Get product ID from params
 
   // Fetch product data using the hook
@@ -210,6 +212,17 @@ export default function ProductDetailPage() {
     
 
   const handleBuyToUse = () => {
+    if (!isAuthenticated) {
+      swal(
+        "Please login to purchase",
+        "You must be logged in to purchase this product",
+        "info",
+        () => {
+          router.push("/login");
+        }
+      );
+      return;
+    }
     if (!canPurchaseProducts(currentUser)) {
       setIsStripeOnboardingModalOpen(true);
       return;
@@ -241,6 +254,17 @@ export default function ProductDetailPage() {
   };
 
   const handleBuyToResell = () => {
+    if (!isAuthenticated) {
+      swal(
+        "Please login to purchase",
+        "You must be logged in to purchase this product",
+        "info",
+        () => {
+          router.push("/login");
+        }
+      );
+      return;
+    }
     if (!canPurchaseProducts(currentUser)) {
       setIsStripeOnboardingModalOpen(true);
       return;
@@ -292,7 +316,7 @@ export default function ProductDetailPage() {
 
     // Reset loading state after a delay
   };
- 
+
   return (
     <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8 lg:py-12 xl:py-16">
@@ -758,8 +782,8 @@ export default function ProductDetailPage() {
                         </div>
                       ) : (
                         <>
-                      <Download className="h-6 w-6 mr-3" />
-                      Buy to Use
+                          <Download className="h-6 w-6 mr-3" />
+                          Buy to Use
                         </>
                       )}
                     </Button>
@@ -778,8 +802,8 @@ export default function ProductDetailPage() {
                         </div>
                       ) : (
                         <>
-                      <TrendingUp className="h-6 w-6 mr-3" />
-                      Buy to Resell
+                          <TrendingUp className="h-6 w-6 mr-3" />
+                          Buy to Resell
                         </>
                       )}
                     </Button>
@@ -918,4 +942,4 @@ export default function ProductDetailPage() {
       )}
     </div>
   );
-} 
+}

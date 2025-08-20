@@ -41,7 +41,7 @@ export function canPurchaseProducts(user?: UserProfile | null): boolean {
  */
 export function shouldShowStripeAlert(user?: UserProfile | null): boolean {
   const isOnboarded = getStripeOnboardingStatus(user);
-  const isDismissed = storage.get('stripe-onboarding-dismissed');
+  const isDismissed = storage.get('stripe-alert-dismissed');
   
   return !isOnboarded && !isDismissed ;
 }

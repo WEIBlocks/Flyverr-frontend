@@ -36,7 +36,7 @@ export default function AdminLayout({
   ]
 
   return (
-    <ProtectedRoute requireAuth={true}>
+    <ProtectedRoute requireAuth allowedRoles={['admin']}>
       <DashboardLayout navItems={navItems} headerTitle="Admin" profileHref="/admin/profile">
         {children}
       </DashboardLayout>
