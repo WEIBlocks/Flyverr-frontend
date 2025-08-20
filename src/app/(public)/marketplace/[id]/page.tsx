@@ -61,25 +61,13 @@ const mockReviews: Review[] = [
     user: "Sarah Johnson",
     avatar:
       "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face",
-    id: "1",
-    user: "Sarah Johnson",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face",
     rating: 5,
-    date: "2024-01-10",
-    comment:
-      "Amazing course! The instructor explains complex concepts in a very clear way. I went from knowing nothing about web development to building my first full-stack application.",
-    helpful: 24,
     date: "2024-01-10",
     comment:
       "Amazing course! The instructor explains complex concepts in a very clear way. I went from knowing nothing about web development to building my first full-stack application.",
     helpful: 24,
   },
   {
-    id: "2",
-    user: "Mike Chen",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
     id: "2",
     user: "Mike Chen",
     avatar:
@@ -89,16 +77,8 @@ const mockReviews: Review[] = [
     comment:
       "Great content and well-structured. The practical projects really help reinforce the learning. Would recommend to anyone starting their web development journey.",
     helpful: 18,
-    date: "2024-01-08",
-    comment:
-      "Great content and well-structured. The practical projects really help reinforce the learning. Would recommend to anyone starting their web development journey.",
-    helpful: 18,
   },
   {
-    id: "3",
-    user: "Emily Rodriguez",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face",
     id: "3",
     user: "Emily Rodriguez",
     avatar:
@@ -110,13 +90,7 @@ const mockReviews: Review[] = [
     helpful: 31,
   },
 ];
-    date: "2024-01-05",
-    comment:
-      "Excellent course! The instructor is very knowledgeable and the community support is fantastic. Already started working on my portfolio.",
-    helpful: 31,
-  },
-];
-
+    
 // Resale Stage Configuration
 const resaleStages = {
   newboom: {
@@ -144,31 +118,7 @@ const resaleStages = {
     earningPotential: "Low",
   },
 };
-  newboom: {
-    name: "Newboom",
-    color: "bg-green-500",
-    description: "Never resold - Original licenses only",
-    earningPotential: "High",
-  },
-  blossom: {
-    name: "Blossom",
-    color: "bg-blue-500",
-    description: "1st resale cycle - Growing demand",
-    earningPotential: "Very High",
-  },
-  evergreen: {
-    name: "Evergreen",
-    color: "bg-purple-500",
-    description: "2nd resale cycle - Stable value",
-    earningPotential: "Medium",
-  },
-  exit: {
-    name: "Exit",
-    color: "bg-orange-500",
-    description: "3rd resale cycle - Final opportunity",
-    earningPotential: "Low",
-  },
-};
+ 
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -243,11 +193,7 @@ export default function ProductDetailPage() {
     );
   }
 
-  const stage = resaleStages[product.current_stage];
-  const images =
-    product.images_urls && product.images_urls.length > 0
-      ? product.images_urls
-      : [product.thumbnail_url];
+ 
   const stage = resaleStages[product.current_stage];
   const images =
     product.images_urls && product.images_urls.length > 0
@@ -257,14 +203,11 @@ export default function ProductDetailPage() {
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  };
-
+  
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+    
 
   const handleBuyToUse = () => {
     if (!canPurchaseProducts(currentUser)) {
@@ -623,30 +566,21 @@ export default function ProductDetailPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      <Badge
-                        variant="outline"
-                        className="text-gray-600 dark:text-gray-400"
-                      >
+                     
                       <Badge
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
                       >
                         {product.current_stage}
                       </Badge>
-                      <Badge
-                        variant="outline"
-                        className="text-gray-600 dark:text-gray-400"
-                      >
+                    
                       <Badge
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
                       >
                         Round {product.current_round}
                       </Badge>
-                      <Badge
-                        variant="outline"
-                        className="text-gray-600 dark:text-gray-400"
-                      >
+                     
                       <Badge
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
@@ -657,7 +591,6 @@ export default function ProductDetailPage() {
                   </div>
                 )}
 
-                {selectedTab === "reviews" && (
                 {selectedTab === "reviews" && (
                   <div className="space-y-6">
                     {mockReviews.map((review) => (
@@ -700,8 +633,6 @@ export default function ProductDetailPage() {
                                     i < review.rating
                                       ? "text-yellow-400 fill-current"
                                       : "text-gray-300 dark:text-gray-600"
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300 dark:text-gray-600"
                                   }`}
                                 />
                               ))}
@@ -713,11 +644,7 @@ export default function ProductDetailPage() {
                               {review.comment}
                             </p>
                             <div className="mt-3">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-gray-500 dark:text-gray-400"
-                              >
+                          
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -729,11 +656,11 @@ export default function ProductDetailPage() {
                           </div>
                         </div>
                       </div>
+                      </div>
                     ))}
                   </div>
                 )}
 
-                {selectedTab === "creator" && (
                 {selectedTab === "creator" && (
                   <div className="space-y-6">
                     <div className="flex items-center gap-4">
