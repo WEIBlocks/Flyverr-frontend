@@ -29,6 +29,7 @@ export interface MarketplaceFilters {
     current_stage: "newboom" | "blossom" | "evergreen" | "exit";
     featured: boolean;
     created_at: string;
+    is_platform_product: boolean;
     creator_id: string;
     category_id: string | null;
     stage_pricing: {

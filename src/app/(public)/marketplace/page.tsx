@@ -704,10 +704,11 @@ export default function MarketplacePage() {
             : products.length > 0
             ? products
                 .filter((product: MarketplaceProduct) => {
-                  // Hide products with current_stage "newboom" and remaining_licenses = 1
+                  // Hide products with current_stage "exit" and remaining_licenses = 0
+                  // OR hide platform products with current_stage "newboom"
                   return !(
-                    product.current_stage === "exit" &&
-                    product.remaining_licenses === 0
+                    (product.current_stage === "exit" && product.remaining_licenses === 0) ||
+                    (product.is_platform_product === true && product.current_stage === "newboom")
                   );
                 })
                 .map((product: MarketplaceProduct) => {
