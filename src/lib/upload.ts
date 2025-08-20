@@ -1,4 +1,9 @@
-import { supabase, PRODUCT_ASSETS_BUCKET, SUPABASE_URL } from "./supabase";
+import {
+  supabase,
+  PRODUCT_ASSETS_BUCKET,
+  PRODUCT_IMAGES_BUCKET,
+  SUPABASE_URL,
+} from "./supabase";
 
 export type UploadTarget = "thumbnails" | "images" | "files";
 
@@ -23,9 +28,18 @@ export async function uploadToStorage(
   file: File,
   userId?: string
 ) {
+  if (!userId) {
+    throw new Error(
+      "Supabase session required for upload. Please log in again and retry."
+    );
+  }
   const filepath = buildPath(folder, userId, file);
+  // Route by asset type: images to public bucket, files to private bucket
+  const targetBucket =
+    folder === "files" ? PRODUCT_ASSETS_BUCKET : PRODUCT_IMAGES_BUCKET;
+
   const { data, error } = await supabase.storage
-    .from(PRODUCT_ASSETS_BUCKET)
+    .from(targetBucket)
     .upload(filepath, file, {
       cacheControl: "3600",
       upsert: false,
@@ -34,13 +48,12 @@ export async function uploadToStorage(
 
   if (error) throw error;
 
-  // For thumbnails/images: create a signed URL (works for both public/private buckets)
+  // For thumbnails/images: return a public URL (bucket must be public)
   if (folder === "thumbnails" || folder === "images") {
-    const { data: signed, error: signError } = await supabase.storage
-      .from(PRODUCT_ASSETS_BUCKET)
-      .createSignedUrl(data.path, 60 * 60); // 1 hour
-    if (signError) throw signError;
-    return { path: data.path, url: signed.signedUrl };
+    const { data: pub } = supabase.storage
+      .from(PRODUCT_IMAGES_BUCKET)
+      .getPublicUrl(data.path);
+    return { path: data.path, url: pub.publicUrl };
   }
 
   // For files: return a non-public object URL; backend should provide signed URL for download

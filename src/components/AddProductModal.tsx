@@ -221,15 +221,18 @@ export default function AddProductModal({
 
     const dismiss = toast.loading("Uploading assets...");
     try {
-      // Prefer Supabase Auth user id for RLS policies
+      // Require Supabase Auth user id for Storage RLS folder policy
       const { data: authData } = await supabase.auth.getUser();
       const supabaseUserId = authData?.user?.id;
-      const pathUserId = supabaseUserId || user?.id;
+      if (!supabaseUserId) {
+        toast.error("Session expired. Please log in again to upload files.");
+        return;
+      }
       // Upload assets in parallel
       const [thumb, images, file] = await Promise.all([
-        uploadToStorage("thumbnails", thumbnailFile, pathUserId),
-        uploadMultipleImages(imageFiles, pathUserId),
-        uploadToStorage("files", mainFile, pathUserId),
+        uploadToStorage("thumbnails", thumbnailFile, supabaseUserId),
+        uploadMultipleImages(imageFiles, supabaseUserId),
+        uploadToStorage("files", mainFile, supabaseUserId),
       ]);
 
       const payload = {

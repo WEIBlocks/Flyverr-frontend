@@ -166,10 +166,10 @@ export default function MyProductsPage() {
   });
 
   const handleAddProductClick = () => {
-    if (canCreateProducts()) {
+    if (true) {
       setIsAddProductModalOpen(true);
     } else {
-      setIsStripeOnboardingModalOpen(true);
+      setIsAddProductModalOpen(true);
     }
   };
 
