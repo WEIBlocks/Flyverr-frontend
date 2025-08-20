@@ -26,3 +26,15 @@ export function getProductById(id: string) {
       throw err;
     });
 }
+
+export function purchaseProduct(
+  id: string,
+  data: {
+    licenseId?: string;
+    purchaseType: string;
+    hasInsurance: boolean;
+    paymentMethod: string;
+  }
+) {
+  return api.post(`marketplace/products/${id}/purchase`, data);
+}

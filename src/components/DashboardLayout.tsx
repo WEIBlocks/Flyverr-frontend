@@ -30,6 +30,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useGetCurrentUser } from '@/features/auth/hooks'
+import StripeOnboardingAlert from '@/components/ui/StripeOnboardingAlert'
 import { log } from 'console'
 
 interface NavigationItem {
@@ -417,6 +418,7 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
         {/* Page content - Scrollable with header offset */}
         <main className="min-h-screen p-4 sm:p-6 lg:p-8 lg:pt-24 pt-20">
           <div className="max-w-7xl mx-auto">
+            <StripeOnboardingAlert />
             <div className={`transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
               {mounted ? children : (
                 <div className="flex items-center justify-center min-h-[400px]">

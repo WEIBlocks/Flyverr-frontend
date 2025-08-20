@@ -1,8 +1,10 @@
 "use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import {
   ArrowLeft,
   Star,
@@ -35,6 +37,11 @@ import type {
 import { useTrackProductView } from "@/features/marketplace/hooks/useTrackProuductView";
 import { useCategoryPreferences } from "@/features/marketplace/hooks/useCategoryPreferences";
 import ProductDetailSkeleton from "@/components/ProductDetailSkeleton";
+import StripeOnboardingModal from "@/components/ui/StripeOnboardingModal";
+import { canPurchaseProducts } from "@/lib/stripeHelpers";
+import { usePurchaseProduct } from "@/features/user/product/hooks/usePurchaseProduct";
+import Modal from "@/components/Modal";
+import { useGetCurrentUser } from "@/features/auth/hooks";
 
 // Types
 interface Review {
@@ -54,7 +61,15 @@ const mockReviews: Review[] = [
     user: "Sarah Johnson",
     avatar:
       "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face",
+    id: "1",
+    user: "Sarah Johnson",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face",
     rating: 5,
+    date: "2024-01-10",
+    comment:
+      "Amazing course! The instructor explains complex concepts in a very clear way. I went from knowing nothing about web development to building my first full-stack application.",
+    helpful: 24,
     date: "2024-01-10",
     comment:
       "Amazing course! The instructor explains complex concepts in a very clear way. I went from knowing nothing about web development to building my first full-stack application.",
@@ -65,13 +80,25 @@ const mockReviews: Review[] = [
     user: "Mike Chen",
     avatar:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
+    id: "2",
+    user: "Mike Chen",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
     rating: 4,
+    date: "2024-01-08",
+    comment:
+      "Great content and well-structured. The practical projects really help reinforce the learning. Would recommend to anyone starting their web development journey.",
+    helpful: 18,
     date: "2024-01-08",
     comment:
       "Great content and well-structured. The practical projects really help reinforce the learning. Would recommend to anyone starting their web development journey.",
     helpful: 18,
   },
   {
+    id: "3",
+    user: "Emily Rodriguez",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face",
     id: "3",
     user: "Emily Rodriguez",
     avatar:
@@ -83,9 +110,40 @@ const mockReviews: Review[] = [
     helpful: 31,
   },
 ];
+    date: "2024-01-05",
+    comment:
+      "Excellent course! The instructor is very knowledgeable and the community support is fantastic. Already started working on my portfolio.",
+    helpful: 31,
+  },
+];
 
 // Resale Stage Configuration
 const resaleStages = {
+  newboom: {
+    name: "Newboom",
+    color: "bg-green-500",
+    description: "Never resold - Original licenses only",
+    earningPotential: "High",
+  },
+  blossom: {
+    name: "Blossom",
+    color: "bg-blue-500",
+    description: "1st resale cycle - Growing demand",
+    earningPotential: "Very High",
+  },
+  evergreen: {
+    name: "Evergreen",
+    color: "bg-purple-500",
+    description: "2nd resale cycle - Stable value",
+    earningPotential: "Medium",
+  },
+  exit: {
+    name: "Exit",
+    color: "bg-orange-500",
+    description: "3rd resale cycle - Final opportunity",
+    earningPotential: "Low",
+  },
+};
   newboom: {
     name: "Newboom",
     color: "bg-green-500",
@@ -121,6 +179,14 @@ export default function ProductDetailPage() {
   const [selectedTab, setSelectedTab] = useState<
     "description" | "reviews" | "creator"
   >("description");
+  const [isStripeOnboardingModalOpen, setIsStripeOnboardingModalOpen] =
+    useState(false);
+  const [isInsuranceModalOpen, setIsInsuranceModalOpen] = useState(false);
+  const [selectedPurchaseType, setSelectedPurchaseType] = useState<
+    "use" | "resell" | null
+  >(null);
+  const [isBuyingToUse, setIsBuyingToUse] = useState(false);
+  const [isBuyingToResell, setIsBuyingToResell] = useState(false);
 
   // Get product ID from params
 
@@ -135,6 +201,9 @@ export default function ProductDetailPage() {
   };
   const { mutate: trackProductView } = useTrackProductView();
   const { recordView } = useCategoryPreferences();
+  const { mutate: purchaseProduct, isPending: isPurchasing } =
+    usePurchaseProduct();
+  const { data: currentUser } = useGetCurrentUser();
 
   // Track product view when product is loaded
   useEffect(() => {
@@ -146,7 +215,7 @@ export default function ProductDetailPage() {
 
   // Show loading state
   if (isLoading) {
-    return <ProductDetailSkeleton />
+    return <ProductDetailSkeleton />;
   }
 
   // Show error state
@@ -179,36 +248,108 @@ export default function ProductDetailPage() {
     product.images_urls && product.images_urls.length > 0
       ? product.images_urls
       : [product.thumbnail_url];
+  const stage = resaleStages[product.current_stage];
+  const images =
+    product.images_urls && product.images_urls.length > 0
+      ? product.images_urls
+      : [product.thumbnail_url];
 
   const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   const handleBuyToUse = () => {
+    if (!canPurchaseProducts(currentUser)) {
+      setIsStripeOnboardingModalOpen(true);
+      return;
+    }
     // Handle buy to use logic
     console.log("Buy to Use clicked for product:", product.id);
-    // You can implement the actual purchase logic here
-    // For example, redirect to a checkout page or open a payment modal
+    setIsBuyingToUse(true);
+
+    purchaseProduct(
+      {
+        id: productId,
+        data: {
+          purchaseType: "use",
+          hasInsurance: false,
+          paymentMethod: "stripe",
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsBuyingToUse(false);
+        },
+        onError: () => {
+          setIsBuyingToUse(false);
+        },
+      }
+    );
+
+    // Reset loading state after a delay (you can also handle this in onSuccess/onError)
   };
 
   const handleBuyToResell = () => {
-    // Handle buy to resell logic
-    console.log("Buy to Resell clicked for product:", product.id);
-    // You can implement the actual resell purchase logic here
-    // This might involve different pricing or terms
+    if (!canPurchaseProducts(currentUser)) {
+      setIsStripeOnboardingModalOpen(true);
+      return;
+    }
+    // Show insurance modal for resell
+    setSelectedPurchaseType("resell");
+    setIsInsuranceModalOpen(true);
   };
 
-  const handleBuyWithInsurance = () => {
-    // Handle buy with insurance logic
-    console.log("Buy with Insurance clicked for product:", product.id);
-    // You can implement the actual insurance purchase logic here
-    // This might involve additional fees or different terms
-  };
+  const handleInsuranceChoice = (hasInsurance: boolean) => {
+    if (!selectedPurchaseType) return;
 
+    // Calculate insurance fee if applicable
+    // const basePrice = product.current_price;
+    // const insuranceFee = hasInsurance ? basePrice * 0.05 : 0;
+    // const totalPrice = basePrice + insuranceFee;
+
+    // console.log(`${selectedPurchaseType === 'resell' ? 'Buy to Resell' : 'Buy to Use'} clicked for product:`, product.id)
+    // console.log(`Insurance: ${hasInsurance ? 'Yes' : 'No'}, Fee: $${insuranceFee.toFixed(2)}, Total: $${totalPrice.toFixed(2)}`)
+
+    // Set loading state for resell
+    if (selectedPurchaseType === "resell") {
+      setIsBuyingToResell(true);
+    }
+
+    // Call purchase with insurance choice
+    purchaseProduct(
+      {
+        id: productId,
+        data: {
+          purchaseType: selectedPurchaseType,
+          hasInsurance,
+          paymentMethod: "stripe",
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsBuyingToResell(false);
+        },
+        onError: () => {
+          setIsBuyingToResell(false);
+        },
+      }
+    );
+
+    // Close modal and reset
+    setIsInsuranceModalOpen(false);
+    setSelectedPurchaseType(null);
+
+    // Reset loading state after a delay
+  };
+ 
   return (
     <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8 lg:py-12 xl:py-16">
@@ -228,11 +369,11 @@ export default function ProductDetailPage() {
             {/* Image Gallery */}
             <div className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden mb-8">
               <div className="relative aspect-video">
-                <Image
+                <ImageWithFallback
                   src={images[currentImageIndex]}
                   alt={product.title}
                   fill
-                  className="object-cover"
+                  className="w-full h-full"
                   sizes="(max-width: 1024px) 100vw, 66vw"
                   priority
                 />
@@ -462,6 +603,9 @@ export default function ProductDetailPage() {
                         <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">
                           Stage Pricing
                         </h4>
+                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">
+                          Stage Pricing
+                        </h4>
                         <ul className="space-y-2">
                           {Object.entries(product.stage_pricing).map(
                             ([stage, price]) => (
@@ -483,14 +627,26 @@ export default function ProductDetailPage() {
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
                       >
+                      <Badge
+                        variant="outline"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
                         {product.current_stage}
                       </Badge>
                       <Badge
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
                       >
+                      <Badge
+                        variant="outline"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
                         Round {product.current_round}
                       </Badge>
+                      <Badge
+                        variant="outline"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
                       <Badge
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
@@ -502,8 +658,13 @@ export default function ProductDetailPage() {
                 )}
 
                 {selectedTab === "reviews" && (
+                {selectedTab === "reviews" && (
                   <div className="space-y-6">
                     {mockReviews.map((review) => (
+                      <div
+                        key={review.id}
+                        className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
+                      >
                       <div
                         key={review.id}
                         className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
@@ -524,6 +685,12 @@ export default function ProductDetailPage() {
                               <span className="text-sm text-gray-500 dark:text-gray-400">
                                 {review.date}
                               </span>
+                              <h4 className="font-semibold text-flyverr-text dark:text-white">
+                                {review.user}
+                              </h4>
+                              <span className="text-sm text-gray-500 dark:text-gray-400">
+                                {review.date}
+                              </span>
                             </div>
                             <div className="flex items-center mb-2">
                               {[...Array(5)].map((_, i) => (
@@ -533,6 +700,8 @@ export default function ProductDetailPage() {
                                     i < review.rating
                                       ? "text-yellow-400 fill-current"
                                       : "text-gray-300 dark:text-gray-600"
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300 dark:text-gray-600"
                                   }`}
                                 />
                               ))}
@@ -540,7 +709,15 @@ export default function ProductDetailPage() {
                             <p className="text-gray-600 dark:text-gray-300">
                               {review.comment}
                             </p>
+                            <p className="text-gray-600 dark:text-gray-300">
+                              {review.comment}
+                            </p>
                             <div className="mt-3">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-gray-500 dark:text-gray-400"
+                              >
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -557,6 +734,7 @@ export default function ProductDetailPage() {
                 )}
 
                 {selectedTab === "creator" && (
+                {selectedTab === "creator" && (
                   <div className="space-y-6">
                     <div className="flex items-center gap-4">
                       <div className="w-20 h-20 bg-flyverr-primary/20 rounded-full flex items-center justify-center">
@@ -566,7 +744,13 @@ export default function ProductDetailPage() {
                         <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">
                           Creator ID: {product.creator_id}
                         </h3>
+                        <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">
+                          Creator ID: {product.creator_id}
+                        </h3>
                         <div className="flex items-center gap-4 mt-2">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Digital Creator
+                          </span>
                           <span className="text-gray-600 dark:text-gray-400">
                             Digital Creator
                           </span>
@@ -578,7 +762,13 @@ export default function ProductDetailPage() {
                       <h4 className="font-semibold text-flyverr-text dark:text-white mb-2">
                         About the creator
                       </h4>
+                      <h4 className="font-semibold text-flyverr-text dark:text-white mb-2">
+                        About the creator
+                      </h4>
                       <p className="text-gray-600 dark:text-gray-300">
+                        This creator has developed digital products available on
+                        our marketplace. Their products go through our approval
+                        process to ensure quality and compliance.
                         This creator has developed digital products available on
                         our marketplace. Their products go through our approval
                         process to ensure quality and compliance.
@@ -632,30 +822,50 @@ export default function ProductDetailPage() {
                     <Button
                       className="w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-white py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
                       onClick={handleBuyToUse}
+                      disabled={isBuyingToUse}
                     >
+                      {isBuyingToUse ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Buying...
+                        </div>
+                      ) : (
+                        <>
                       <Download className="h-6 w-6 mr-3" />
                       Buy to Use
+                        </>
+                      )}
                     </Button>
 
                     {/* Secondary Action - Buy to Resell */}
                     <Button
                       variant="outline"
-                      className="w-full bg-white dark:bg-gray-800 border-2 border-flyverr-secondary text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white dark:hover:bg-flyverr-secondary dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                      className="w-full bg-transparent dark:bg-transparent border-2 border-flyverr-secondary text-flyverr-secondary dark:text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white dark:hover:bg-flyverr-secondary dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400 "
                       onClick={handleBuyToResell}
+                      disabled={isBuyingToResell}
                     >
+                      {isBuyingToResell ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-flyverr-secondary mr-2"></div>
+                          Buying...
+                        </div>
+                      ) : (
+                        <>
                       <TrendingUp className="h-6 w-6 mr-3" />
                       Buy to Resell
+                        </>
+                      )}
                     </Button>
 
                     {/* Tertiary Action - Buy with Insurance */}
-                    <Button
+                    {/* <Button 
                       variant="outline"
-                      className="w-full bg-white dark:bg-gray-800 border-2 border-flyverr-accent text-flyverr-accent hover:bg-flyverr-accent hover:text-white dark:hover:bg-flyverr-accent dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                      className="w-full bg-transparent dark:bg-transparent border-2 border-flyverr-accent text-flyverr-accent dark:text-flyverr-accent hover:bg-flyverr-accent hover:text-white dark:hover:bg-flyverr-accent  py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-amber-400 dark:hover:text-white"
                       onClick={handleBuyWithInsurance}
                     >
                       <Shield className="h-6 w-6 mr-3" />
                       Buy with Insurance
-                    </Button>
+                    </Button> */}
                   </div>
 
                   {/* Product Details */}
@@ -699,6 +909,86 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+      {/* Stripe Onboarding Modal */}
+      <StripeOnboardingModal
+        isOpen={isStripeOnboardingModalOpen}
+        onClose={() => setIsStripeOnboardingModalOpen(false)}
+      />
+
+      {/* Insurance Choice Modal */}
+      {isInsuranceModalOpen && (
+        <Modal size="sm">
+          <div className="p-6">
+            <div className="text-center mb-6">
+              <Shield className="h-16 w-16 text-flyverr-accent mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-flyverr-text dark:text-white mb-2">
+                Resell Protection Insurance
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                Protect your investment with our resell insurance. If the
+                product doesn't sell, we'll refund your fee.
+              </p>
+            </div>
+
+            <div className="bg-flyverr-accent/10 dark:bg-flyverr-accent/20 rounded-lg p-4 mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-flyverr-text dark:text-white">
+                  Base Price:
+                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  ${product.current_price}
+                </span>
+              </div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-flyverr-text dark:text-white">
+                  Insurance Fee (5%):
+                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  ${(product.current_price * 0.05).toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-600 pt-2">
+                <span className="text-sm font-bold text-flyverr-text dark:text-white">
+                  Total Price:
+                </span>
+                <span className="text-sm font-bold text-flyverr-accent">
+                  ${(product.current_price * 1.05).toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <Button
+                className="w-full bg-flyverr-accent hover:bg-flyverr-accent/90 text-white py-3 font-semibold"
+                onClick={() => handleInsuranceChoice(true)}
+              >
+                <Shield className="h-5 w-5 mr-2" />
+                Yes, Add Insurance (+5%)
+              </Button>
+
+              <Button
+                variant="outline"
+                className="w-full text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white py-3 font-semibold border border-flyverr-secondary dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400 dark:hover:text-white"
+                onClick={() => handleInsuranceChoice(false)}
+              >
+                <TrendingUp className="h-5 w-5 mr-2" />
+                No Insurance, Proceed
+              </Button>
+
+              <Button
+                variant="ghost"
+                className="w-full text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                onClick={() => {
+                  setIsInsuranceModalOpen(false);
+                  setSelectedPurchaseType(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
-}
+} 

@@ -246,4 +246,7 @@ export const storage = {
   setSettings: (settings: any) => LocalStorageHelper.set('settings', settings),
   getSettings: () => LocalStorageHelper.get<any>('settings', {}),
   removeSettings: () => LocalStorageHelper.remove('settings'),
+  get: (key: string) => LocalStorageHelper.get(key),
+  set: (key: string, value: any) => LocalStorageHelper.set(key, value),
+  remove: (key: string) => LocalStorageHelper.remove(key),
 }

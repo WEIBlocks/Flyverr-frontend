@@ -7,7 +7,7 @@ export function useGetCurrentUser() {
   const token = storage.getToken()
 
   return useQuery({
-    queryKey: ['auth', 'user'],
+    queryKey: ['auth', 'current-user', token],
     queryFn: async (): Promise<UserProfile> => {
       const response = await getUser()
      
