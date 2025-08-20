@@ -22,8 +22,8 @@ export function useLogout() {
     // Show success message
     toast.success('Logged out successfully')
     
-    // Redirect to marketplace
-    router.push('/marketplace')
+    // Redirect to login
+    router.replace('/login')
   }
 
   return { logout }

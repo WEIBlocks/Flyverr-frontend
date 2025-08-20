@@ -10,6 +10,7 @@ import { useForgotPassword } from "@/features/auth/hooks"
 import * as yup from "yup"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
+import { ProtectedRoute } from "@/components/ProtectedRoute"
 
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email address").required("Email is required"),
@@ -18,11 +19,11 @@ const schema = yup.object().shape({
 type FormData = yup.InferType<typeof schema>
 
 export default function ForgotPasswordPage() {
-  const [emailSent, setEmailSent] = React.useState(false)
+
 
 
   const router = useRouter()
-  const { sendResetEmail, isSending } = useForgotPassword()
+  const { sendResetEmail, isSending, isSuccess } = useForgotPassword()
   
   const {
     register,
@@ -37,14 +38,8 @@ export default function ForgotPasswordPage() {
   })
 
   const onSubmit =  async (data: FormData) => {
-    try {
-      await sendResetEmail(data)
-      setEmailSent(true)
-     
-    } catch (error) {
-      // Error is handled by the hook
-      console.error("Forgot password error:", error)
-    }
+    await sendResetEmail(data)
+   
   }
 
   const handleResendEmail = async () => {
@@ -52,13 +47,13 @@ export default function ForgotPasswordPage() {
     
     try {
       await sendResetEmail({ email: getValues("email") })
-      setEmailSent(true)
+     
     } catch (error) {
       console.error("Resend email error:", error)
     }
   }
 
-  if (emailSent) {
+  if (isSuccess) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
@@ -147,6 +142,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         {/* Header */}
@@ -235,5 +231,6 @@ export default function ForgotPasswordPage() {
         </Card>
       </div>
     </div>
+    </ProtectedRoute>
   )
 } 

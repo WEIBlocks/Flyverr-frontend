@@ -40,6 +40,8 @@ import { canPurchaseProducts } from "@/lib/stripeHelpers";
 import { usePurchaseProduct } from "@/features/user/product/hooks/usePurchaseProduct";
 import Modal from "@/components/Modal";
 import { useGetCurrentUser } from "@/features/auth/hooks";
+import { useAuth } from "@/contexts/AuthContext";
+import { swal } from "@/lib/utils";
 
 // Types
 interface Review {
@@ -118,9 +120,6 @@ const resaleStages = {
 };
 
 export default function ProductDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const productId = params.id as string;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedTab, setSelectedTab] = useState<
@@ -134,9 +133,12 @@ export default function ProductDetailPage() {
   >(null);
   const [isBuyingToUse, setIsBuyingToUse] = useState(false);
   const [isBuyingToResell, setIsBuyingToResell] = useState(false);
-
+  const params = useParams();
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const productId = params.id as string;
   // Get product ID from params
-  
+
   // Fetch product data using the hook
   const {
     data: product,
@@ -163,12 +165,12 @@ export default function ProductDetailPage() {
     return <ProductDetailSkeleton />;
   }
 
-         // Show error state
-     if (error || !product) {
-       return (
-         <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
-           <div className="text-center">
-             <div className="text-red-500 text-6xl mb-4">⚠️</div>
+  // Show error state
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Product Not Found
           </h2>
@@ -181,10 +183,10 @@ export default function ProductDetailPage() {
             onClick={() => router.push("/marketplace")}
             className="bg-flyverr-primary hover:bg-flyverr-primary/90"
           >
-               Back to Marketplace
-             </Button>
-           </div>
-         </div>
+            Back to Marketplace
+          </Button>
+        </div>
+      </div>
     );
   }
 
@@ -203,6 +205,17 @@ export default function ProductDetailPage() {
   };
 
   const handleBuyToUse = () => {
+    if (!isAuthenticated) {
+      swal(
+        "Please login to purchase",
+        "You must be logged in to purchase this product",
+        "info",
+        () => {
+          router.push("/login");
+        }
+      );
+      return;
+    }
     if (!canPurchaseProducts(currentUser)) {
       setIsStripeOnboardingModalOpen(true);
       return;
@@ -234,6 +247,17 @@ export default function ProductDetailPage() {
   };
 
   const handleBuyToResell = () => {
+    if (!isAuthenticated) {
+      swal(
+        "Please login to purchase",
+        "You must be logged in to purchase this product",
+        "info",
+        () => {
+          router.push("/login");
+        }
+      );
+      return;
+    }
     if (!canPurchaseProducts(currentUser)) {
       setIsStripeOnboardingModalOpen(true);
       return;
@@ -285,7 +309,7 @@ export default function ProductDetailPage() {
 
     // Reset loading state after a delay
   };
- 
+
   return (
     <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8 lg:py-12 xl:py-16">
@@ -313,7 +337,7 @@ export default function ProductDetailPage() {
                   sizes="(max-width: 1024px) 100vw, 66vw"
                   priority
                 />
-              
+
                 {/* Image Navigation */}
                 {images.length > 1 && (
                   <>
@@ -333,14 +357,14 @@ export default function ProductDetailPage() {
                     >
                       <ChevronRight className="h-5 w-5" />
                     </Button>
-                    
+
                     {/* Image Dots */}
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
                       {images.map((_, index) => (
                         <div
                           key={index}
                           className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer ${
-                            index === currentImageIndex 
+                            index === currentImageIndex
                               ? "bg-white shadow-lg"
                               : "bg-white/60 hover:bg-white/80"
                           }`}
@@ -463,7 +487,7 @@ export default function ProductDetailPage() {
                     )}
                   </div>
                   <div className="w-24 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-flyverr-primary h-2 rounded-full"
                       style={{
                         width: `${
@@ -513,7 +537,7 @@ export default function ProductDetailPage() {
                         {product.description}
                       </p>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">
@@ -546,9 +570,9 @@ export default function ProductDetailPage() {
                                 key={stage}
                                 className="flex items-center justify-between text-gray-600 dark:text-gray-300"
                               >
-                              <span className="capitalize">{stage}:</span>
-                              <span className="font-medium">${price}</span>
-                            </li>
+                                <span className="capitalize">{stage}:</span>
+                                <span className="font-medium">${price}</span>
+                              </li>
                             )
                           )}
                         </ul>
@@ -689,7 +713,7 @@ export default function ProductDetailPage() {
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
                         style={{
                           width: `${
@@ -718,12 +742,12 @@ export default function ProductDetailPage() {
                         </div>
                       ) : (
                         <>
-                      <Download className="h-6 w-6 mr-3" />
-                      Buy to Use
+                          <Download className="h-6 w-6 mr-3" />
+                          Buy to Use
                         </>
                       )}
                     </Button>
-                    
+
                     {/* Secondary Action - Buy to Resell */}
                     <Button
                       variant="outline"
@@ -738,12 +762,12 @@ export default function ProductDetailPage() {
                         </div>
                       ) : (
                         <>
-                      <TrendingUp className="h-6 w-6 mr-3" />
-                      Buy to Resell
+                          <TrendingUp className="h-6 w-6 mr-3" />
+                          Buy to Resell
                         </>
                       )}
                     </Button>
-                    
+
                     {/* Tertiary Action - Buy with Insurance */}
                     {/* <Button 
                       variant="outline"
@@ -878,4 +902,4 @@ export default function ProductDetailPage() {
       )}
     </div>
   );
-} 
+}

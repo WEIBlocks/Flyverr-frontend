@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle } from "lucide-react"
 import React, { Suspense } from "react"
+import { ProtectedRoute } from "@/components/ProtectedRoute"
 import { useRouter, useSearchParams } from "next/navigation"
 import { resetPassword } from "@/lib/api"
 import toast from "react-hot-toast"
@@ -258,22 +259,24 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-background px-4">
-        <Card className="w-full max-w-md space-y-6">
-          <div className="flex flex-col items-center mb-6">
-            <span className="bg-primary/10 rounded-full p-3 mb-2">
-              <Lock className="w-8 h-8 text-primary" />
-            </span>
-            <h1 className="text-2xl font-bold">Loading...</h1>
-            <p className="text-sm text-muted-foreground mt-2 text-center">
-              Please wait while we load the reset password page.
-            </p>
-          </div>
-        </Card>
-      </div>
-    }>
-      <ResetPasswordContent />
-    </Suspense>
+    <ProtectedRoute>
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-background px-4">
+          <Card className="w-full max-w-md space-y-6">
+            <div className="flex flex-col items-center mb-6">
+              <span className="bg-primary/10 rounded-full p-3 mb-2">
+                <Lock className="w-8 h-8 text-primary" />
+              </span>
+              <h1 className="text-2xl font-bold">Loading...</h1>
+              <p className="text-sm text-muted-foreground mt-2 text-center">
+                Please wait while we load the reset password page.
+              </p>
+            </div>
+          </Card>
+        </div>
+      }>
+        <ResetPasswordContent />
+      </Suspense>
+    </ProtectedRoute>
   )
 } 

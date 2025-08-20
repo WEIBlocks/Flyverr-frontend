@@ -1,8 +1,10 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import router from "next/router";
+import Swal from "sweetalert2";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 /**
@@ -11,15 +13,17 @@ export function cn(...inputs: ClassValue[]) {
  * @returns true if the value is an object, false otherwise
  */
 export function isObject(value: unknown): value is Record<string, unknown> {
-  return value !== null && 
-         typeof value === 'object' && 
-         !Array.isArray(value) && 
-         !(value instanceof Date) && 
-         !(value instanceof RegExp) && 
-         !(value instanceof Map) && 
-         !(value instanceof Set) && 
-         !(value instanceof WeakMap) && 
-         !(value instanceof WeakSet)
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    !(value instanceof Date) &&
+    !(value instanceof RegExp) &&
+    !(value instanceof Map) &&
+    !(value instanceof Set) &&
+    !(value instanceof WeakMap) &&
+    !(value instanceof WeakSet)
+  );
 }
 
 /**
@@ -27,12 +31,14 @@ export function isObject(value: unknown): value is Record<string, unknown> {
  * @param value - The value to check
  * @returns true if the value is a plain object, false otherwise
  */
-export function isPlainObject(value: unknown): value is Record<string, unknown> {
-  if (!isObject(value)) return false
-  
+export function isPlainObject(
+  value: unknown
+): value is Record<string, unknown> {
+  if (!isObject(value)) return false;
+
   // Check if it's a plain object by looking at the constructor
-  const prototype = Object.getPrototypeOf(value)
-  return prototype === Object.prototype || prototype === null
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
 }
 
 /**
@@ -41,7 +47,7 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
  * @returns true if the value is an empty object, false otherwise
  */
 export function isEmptyObject(value: unknown): boolean {
-  return isObject(value) && Object.keys(value).length === 0
+  return isObject(value) && Object.keys(value).length === 0;
 }
 
 // LocalStorage Helper Functions
@@ -53,12 +59,12 @@ export class LocalStorageHelper {
    */
   static set<T>(key: string, value: T): void {
     try {
-      if (typeof window !== 'undefined') {
-        const serializedValue = JSON.stringify(value)
-        localStorage.setItem(key, serializedValue)
+      if (typeof window !== "undefined") {
+        const serializedValue = JSON.stringify(value);
+        localStorage.setItem(key, serializedValue);
       }
     } catch (error) {
-      console.error(`Error saving to localStorage with key "${key}":`, error)
+      console.error(`Error saving to localStorage with key "${key}":`, error);
     }
   }
 
@@ -70,17 +76,20 @@ export class LocalStorageHelper {
    */
   static get<T>(key: string, defaultValue?: T): T | null {
     try {
-      if (typeof window !== 'undefined') {
-        const item = localStorage.getItem(key)
+      if (typeof window !== "undefined") {
+        const item = localStorage.getItem(key);
         if (item === null) {
-          return defaultValue || null
+          return defaultValue || null;
         }
-        return JSON.parse(item) as T
+        return JSON.parse(item) as T;
       }
-      return defaultValue || null
+      return defaultValue || null;
     } catch (error) {
-      console.error(`Error reading from localStorage with key "${key}":`, error)
-      return defaultValue || null
+      console.error(
+        `Error reading from localStorage with key "${key}":`,
+        error
+      );
+      return defaultValue || null;
     }
   }
 
@@ -90,11 +99,14 @@ export class LocalStorageHelper {
    */
   static remove(key: string): void {
     try {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(key)
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(key);
       }
     } catch (error) {
-      console.error(`Error removing from localStorage with key "${key}":`, error)
+      console.error(
+        `Error removing from localStorage with key "${key}":`,
+        error
+      );
     }
   }
 
@@ -103,11 +115,11 @@ export class LocalStorageHelper {
    */
   static clear(): void {
     try {
-      if (typeof window !== 'undefined') {
-        localStorage.clear()
+      if (typeof window !== "undefined") {
+        localStorage.clear();
       }
     } catch (error) {
-      console.error('Error clearing localStorage:', error)
+      console.error("Error clearing localStorage:", error);
     }
   }
 
@@ -118,13 +130,13 @@ export class LocalStorageHelper {
    */
   static has(key: string): boolean {
     try {
-      if (typeof window !== 'undefined') {
-        return localStorage.getItem(key) !== null
+      if (typeof window !== "undefined") {
+        return localStorage.getItem(key) !== null;
       }
-      return false
+      return false;
     } catch (error) {
-      console.error(`Error checking localStorage for key "${key}":`, error)
-      return false
+      console.error(`Error checking localStorage for key "${key}":`, error);
+      return false;
     }
   }
 
@@ -134,13 +146,13 @@ export class LocalStorageHelper {
    */
   static keys(): string[] {
     try {
-      if (typeof window !== 'undefined') {
-        return Object.keys(localStorage)
+      if (typeof window !== "undefined") {
+        return Object.keys(localStorage);
       }
-      return []
+      return [];
     } catch (error) {
-      console.error('Error getting localStorage keys:', error)
-      return []
+      console.error("Error getting localStorage keys:", error);
+      return [];
     }
   }
 
@@ -150,13 +162,13 @@ export class LocalStorageHelper {
    */
   static size(): number {
     try {
-      if (typeof window !== 'undefined') {
-        return localStorage.length
+      if (typeof window !== "undefined") {
+        return localStorage.length;
       }
-      return 0
+      return 0;
     } catch (error) {
-      console.error('Error getting localStorage size:', error)
-      return 0
+      console.error("Error getting localStorage size:", error);
+      return 0;
     }
   }
 
@@ -166,13 +178,13 @@ export class LocalStorageHelper {
    */
   static setMultiple(items: Record<string, any>): void {
     try {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         Object.entries(items).forEach(([key, value]) => {
-          this.set(key, value)
-        })
+          this.set(key, value);
+        });
       }
     } catch (error) {
-      console.error('Error saving multiple items to localStorage:', error)
+      console.error("Error saving multiple items to localStorage:", error);
     }
   }
 
@@ -181,22 +193,24 @@ export class LocalStorageHelper {
    * @param keys - Array of keys to retrieve
    * @returns Object with key-value pairs
    */
-  static getMultiple<T extends Record<string, any>>(keys: string[]): Partial<T> {
+  static getMultiple<T extends Record<string, any>>(
+    keys: string[]
+  ): Partial<T> {
     try {
-      if (typeof window !== 'undefined') {
-        const result: Partial<T> = {}
-        keys.forEach(key => {
-          const value = this.get(key)
+      if (typeof window !== "undefined") {
+        const result: Partial<T> = {};
+        keys.forEach((key) => {
+          const value = this.get(key);
           if (value !== null) {
-            (result as any)[key] = value
+            (result as any)[key] = value;
           }
-        })
-        return result
+        });
+        return result;
       }
-      return {} as Partial<T>
+      return {} as Partial<T>;
     } catch (error) {
-      console.error('Error getting multiple items from localStorage:', error)
-      return {} as Partial<T>
+      console.error("Error getting multiple items from localStorage:", error);
+      return {} as Partial<T>;
     }
   }
 
@@ -206,13 +220,13 @@ export class LocalStorageHelper {
    */
   static removeMultiple(keys: string[]): void {
     try {
-      if (typeof window !== 'undefined') {
-        keys.forEach(key => {
-          this.remove(key)
-        })
+      if (typeof window !== "undefined") {
+        keys.forEach((key) => {
+          this.remove(key);
+        });
       }
     } catch (error) {
-      console.error('Error removing multiple items from localStorage:', error)
+      console.error("Error removing multiple items from localStorage:", error);
     }
   }
 }
@@ -220,33 +234,53 @@ export class LocalStorageHelper {
 // Convenience functions for common use cases
 export const storage = {
   // Auth-related storage
-  setToken: (token: string) => LocalStorageHelper.set('token', token),
-  getToken: () => LocalStorageHelper.get<string>('token'),
-  removeToken: () => LocalStorageHelper.remove('token'),
-  
-  setRefreshToken: (token: string) => LocalStorageHelper.set('refreshToken', token),
-  getRefreshToken: () => LocalStorageHelper.get<string>('refreshToken'),
-  removeRefreshToken: () => LocalStorageHelper.remove('refreshToken'),
-  
-  setUser: (user: any) => LocalStorageHelper.set('user', user),
-  getUser: () => LocalStorageHelper.get<any>('user'),
-  removeUser: () => LocalStorageHelper.remove('user'),
-  
+  setToken: (token: string) => LocalStorageHelper.set("token", token),
+  getToken: () => LocalStorageHelper.get<string>("token"),
+  removeToken: () => LocalStorageHelper.remove("token"),
+
+  setRefreshToken: (token: string) =>
+    LocalStorageHelper.set("refreshToken", token),
+  getRefreshToken: () => LocalStorageHelper.get<string>("refreshToken"),
+  removeRefreshToken: () => LocalStorageHelper.remove("refreshToken"),
+
+  setUser: (user: any) => LocalStorageHelper.set("user", user),
+  getUser: () => LocalStorageHelper.get<any>("user"),
+  removeUser: () => LocalStorageHelper.remove("user"),
+
   // Clear all auth data
   clearAuth: () => {
-    LocalStorageHelper.removeMultiple(['token', 'refreshToken', 'user'])
+    LocalStorageHelper.removeMultiple(["token", "refreshToken", "user"]);
   },
-  
+
   // Theme-related storage
-  setTheme: (theme: string) => LocalStorageHelper.set('theme', theme),
-  getTheme: () => LocalStorageHelper.get<string>('theme', 'light'),
-  removeTheme: () => LocalStorageHelper.remove('theme'),
-  
+  setTheme: (theme: string) => LocalStorageHelper.set("theme", theme),
+  getTheme: () => LocalStorageHelper.get<string>("theme", "light"),
+  removeTheme: () => LocalStorageHelper.remove("theme"),
+
   // Settings-related storage
-  setSettings: (settings: any) => LocalStorageHelper.set('settings', settings),
-  getSettings: () => LocalStorageHelper.get<any>('settings', {}),
-  removeSettings: () => LocalStorageHelper.remove('settings'),
+  setSettings: (settings: any) => LocalStorageHelper.set("settings", settings),
+  getSettings: () => LocalStorageHelper.get<any>("settings", {}),
+  removeSettings: () => LocalStorageHelper.remove("settings"),
   get: (key: string) => LocalStorageHelper.get(key),
   set: (key: string, value: any) => LocalStorageHelper.set(key, value),
   remove: (key: string) => LocalStorageHelper.remove(key),
-}
+};
+
+export const swal = (
+  title: string,
+  text: string,
+  icon: "success" | "error" | "warning" | "info" | "question",
+  callback?: () => void
+) => {
+  Swal.fire({
+    title,
+    text,
+    icon,
+    confirmButtonText: "OK",
+    allowOutsideClick: false,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      callback?.();
+    }
+  });
+};
