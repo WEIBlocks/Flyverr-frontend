@@ -1,26 +1,24 @@
-import { useMutation } from '@tanstack/react-query'
-import toast from 'react-hot-toast'
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
-import { forgotPassword } from '../services/api'
-import type { ForgotPasswordData } from '../auth.types'
+import { forgotPassword } from "../services/api";
+import type { ForgotPasswordData } from "../auth.types";
+import Swal from "sweetalert2";
+import { swal } from "@/lib/utils";
+import router from "next/router";
+import { ErrorResponse } from "@/lib/types";
+import { formatErrorMessage } from "@/lib/errorUtils";
 
 export function useForgotPassword() {
   const mutation = useMutation({
     mutationFn: async (data: ForgotPasswordData) => await forgotPassword(data),
     onSuccess: (response) => {
-      const responseData: any = response.data
-
-      if (!responseData?.success) {
-        throw new Error(responseData?.message || 'Failed to send reset email')
-      }
-
-      toast.success('Password reset email sent! Please check your inbox.')
+      swal("Password reset email sent!", "Please check your inbox.", "success");
     },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || error?.message || 'Failed to send reset email'
-      toast.error(message)
+    onError: (error: ErrorResponse) => {
+      swal("Error", formatErrorMessage(error), "error");
     },
-  })
+  });
 
   return {
     sendResetEmail: mutation.mutateAsync,
@@ -28,7 +26,5 @@ export function useForgotPassword() {
     isSuccess: mutation.isSuccess,
     error: mutation.error,
     reset: mutation.reset,
-  }
+  };
 }
-
-

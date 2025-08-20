@@ -30,21 +30,12 @@ export default function PublicLayout({
     // Only protect the home page (/) - require login for access
     // All other pages in this layout are public (faq, marketplace, blog)
     if (!isAuthenticated && pathname === "/") {
-      console.log(
-        "🔒 Access Control: User not authenticated, redirecting from home page (/) to marketplace"
-      );
       router.push("/marketplace");
       return;
     }
 
     // Log successful access for debugging
-    if (pathname === "/") {
-      console.log(
-        "✅ Access Control: Authenticated user accessing protected home page"
-      );
-    } else {
-      console.log("🌐 Access Control: Public page accessed:", pathname);
-    }
+    // Optional logging removed in production
 
     // Allow rendering if auth check is complete
     setShouldRender(true);

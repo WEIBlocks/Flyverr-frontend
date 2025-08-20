@@ -30,7 +30,7 @@ export default function UserLayout({
     { name: 'My Licenses', href: '/user/licenses', iconName: 'licenses' },
   ]
   return (
-    <ProtectedRoute requireAuth={true}>
+    <ProtectedRoute requireAuth allowedRoles={['user']}>
       <DashboardLayout navItems={navItems} headerTitle="Dashboard" profileHref="/user/profile">
         {children}
       </DashboardLayout>

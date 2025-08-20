@@ -7,6 +7,7 @@ import type { LoginData } from "../auth.types";
 import { storage } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import Swal from "sweetalert2";
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -16,18 +17,7 @@ export function useLogin() {
   const mutation = useMutation({
     mutationFn: async (data: LoginData) => await login(data),
     onSuccess: async (response) => {
-      const responseData = response.data as {
-        success: boolean;
-        data?: {
-          user?: { id: string; email: string };
-          session?: {
-            accessToken: string;
-            refreshToken: string;
-            expiresAt?: number;
-          };
-        };
-        message?: string;
-      };
+      const responseData: any = response.data;
 
       if (!responseData?.success) {
         throw new Error(responseData?.message || "Login failed");
@@ -57,21 +47,28 @@ export function useLogin() {
       }
 
       // Update React Query cache
-      queryClient.invalidateQueries({ queryKey: ["auth", "user"] });
 
-      // Show success message
-      toast.success("Login successful! Welcome back!");
-
-      // Redirect to dashboard
-      router.push("/user/dashboard");
+      Swal.fire({
+        title: "Login successful!",
+        text: "Welcome back!",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          storage.setToken(session.accessToken);
+          storage.setRefreshToken(session.refreshToken);
+          storage.setUser(user);
+          setIsAuthenticated(true);
+          await queryClient.invalidateQueries({ queryKey: ["auth", "user"] });
+          // No direct router navigation here; ProtectedRoute will handle role-based redirect
+        }
+      });
 
       console.log("🔐 Login successful - tokens stored and user redirected");
     },
-    onError: (error: unknown) => {
-      const apiMessage = (
-        error as { response?: { data?: { message?: string } } }
-      )?.response?.data?.message;
-      const message = apiMessage || (error as Error)?.message || "Login failed";
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message || error?.message || "Login failed";
       toast.error(message);
       console.error("Login error:", error);
     },
