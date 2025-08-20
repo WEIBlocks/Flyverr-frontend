@@ -151,6 +151,7 @@ export default function MyProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedSponsored, setSelectedSponsored] = useState("all");
 
   // Get products from API
   const { data: productsData, isLoading, error } = useGetMyProducts();
@@ -164,7 +165,13 @@ export default function MyProductsPage() {
       selectedCategory === "all" || product.category?.slug === selectedCategory;
     const matchesStatus =
       selectedStatus === "all" || product.status === selectedStatus;
-    return matchesSearch && matchesCategory && matchesStatus;
+    const isSponsored = !!product.isSponsored;
+    const matchesSponsorship =
+      selectedSponsored === "all" ||
+      (selectedSponsored === "sponsored" ? isSponsored : !isSponsored);
+    return (
+      matchesSearch && matchesCategory && matchesStatus && matchesSponsorship
+    );
   });
 
   const handleAddProductClick = () => {
@@ -452,6 +459,17 @@ export default function MyProductsPage() {
                 <option value="approved">Approved</option>
                 <option value="rejected">Rejected</option>
                 <option value="draft">Draft</option>
+              </select>
+            </div>
+            <div className="sm:w-48">
+              <select
+                value={selectedSponsored}
+                onChange={(e) => setSelectedSponsored(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-flyverr-primary dark:focus:ring-flyverr-secondary focus:border-transparent"
+              >
+                <option value="all">All Products</option>
+                <option value="sponsored">Sponsored Only</option>
+                <option value="not_sponsored">Not Sponsored</option>
               </select>
             </div>
           </div>
