@@ -5,7 +5,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, RefreshCw, Eye, Package, AlertCircle } from "lucide-react";
+import {
+  Search,
+  RefreshCw,
+  Eye,
+  Package,
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useGetMyLicenses } from "@/features/user/licenses/hooks/useGetMyLicenses";
 import { useEnableResale } from "@/features/user/licenses/hooks/useEnableResale";
 
@@ -13,9 +21,18 @@ export default function MyLicensesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [enablingId, setEnablingId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
-  const { data, isLoading, error } = useGetMyLicenses();
+  const { data, isLoading, error } = useGetMyLicenses(
+    currentPage,
+    itemsPerPage
+  );
   const { mutate: enableResale } = useEnableResale();
+
+  // Helper to safely access pagination data
+  const paginationData = (data as unknown as GetMyLicensesResponse)?.data
+    ?.pagination;
 
   type GetMyLicensesResponse = {
     success: boolean;
@@ -223,7 +240,10 @@ export default function MyLicensesPage() {
                 <Input
                   placeholder="Search licenses..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
                   className="pl-10 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-gray-700"
                 />
               </div>
@@ -231,10 +251,14 @@ export default function MyLicensesPage() {
             <div className="sm:w-48">
               <select
                 value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
+                onChange={(e) => {
+                  setSelectedStatus(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-flyverr-primary dark:focus:ring-flyverr-secondary focus:border-transparent"
               >
                 <option value="all">All Status</option>
+                <option value="use">USE</option>
                 <option value="active">Active</option>
                 <option value="completed">Completed</option>
                 <option value="inactive">Inactive</option>
@@ -402,6 +426,106 @@ export default function MyLicensesPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Pagination */}
+        {paginationData && paginationData.totalPages > 1 && (
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <span>
+                    Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                    {Math.min(currentPage * itemsPerPage, paginationData.total)}{" "}
+                    of {paginationData.total} licenses
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Items per page:
+                    </span>
+                    <select
+                      value={itemsPerPage}
+                      onChange={(e) => {
+                        setItemsPerPage(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                      className="px-2 py-1 border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-flyverr-primary"
+                    >
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setCurrentPage(Math.max(1, currentPage - 1))
+                      }
+                      disabled={currentPage === 1}
+                      className="p-2"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </Button>
+
+                    <div className="flex items-center gap-1">
+                      {Array.from(
+                        { length: Math.min(5, paginationData.totalPages) },
+                        (_, i) => {
+                          const pageNum = (() => {
+                            const totalPages = paginationData.totalPages;
+                            if (totalPages <= 5) return i + 1;
+                            if (currentPage <= 3) return i + 1;
+                            if (currentPage >= totalPages - 2) {
+                              return totalPages - 4 + i;
+                            }
+                            return currentPage - 2 + i;
+                          })();
+
+                          return (
+                            <Button
+                              key={pageNum}
+                              variant={
+                                currentPage === pageNum ? "default" : "outline"
+                              }
+                              size="sm"
+                              onClick={() => setCurrentPage(pageNum)}
+                              className={`w-8 h-8 p-0 text-sm ${
+                                currentPage === pageNum
+                                  ? "bg-flyverr-primary text-white"
+                                  : ""
+                              }`}
+                            >
+                              {pageNum}
+                            </Button>
+                          );
+                        }
+                      )}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setCurrentPage(
+                          Math.min(paginationData.totalPages, currentPage + 1)
+                        )
+                      }
+                      disabled={currentPage === paginationData.totalPages}
+                      className="p-2"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Empty State */}
