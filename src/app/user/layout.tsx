@@ -29,6 +29,12 @@ export default function UserLayout({
     { name: "My Products", href: "/user/products", iconName: "products" },
     { name: "My Licenses", href: "/user/licenses", iconName: "licenses" },
     { name: "My Listings", href: "/user/user-listings", iconName: "resale" },
+    { name: "My Earnings", href: "/user/user-earnings", iconName: "revenue" },
+    {
+      name: "Payout Requests",
+      href: "/user/payout-requests",
+      iconName: "payout",
+    },
   ];
   return (
     <ProtectedRoute requireAuth allowedRoles={["user"]}>

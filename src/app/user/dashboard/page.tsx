@@ -10,10 +10,7 @@ import {
   Eye,
   Activity,
   Tag,
-  ArrowUpRight,
-  ArrowDownRight,
   Download,
-  Upload,
 } from "lucide-react";
 import { useGetCurrentUser } from "@/features/auth/hooks";
 import { useDashboardStats } from "@/features/user/dashboard/hooks/useDashboardStats";
@@ -21,6 +18,8 @@ import { useResaleListings } from "@/features/user/dashboard/hooks/useResaleList
 import { ResaleListing } from "@/features/user/dashboard/dashboard.types";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { useRouter } from "next/navigation";
+import { useEarnings } from "@/features/user/earnings/hooks/useEarnings";
+import { Earning } from "@/features/user/earnings/earnings.types";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -30,9 +29,12 @@ export default function DashboardPage() {
     1,
     5
   );
+  const { data: earningsData, isLoading: isEarningsLoading } = useEarnings();
 
   const stats = statsData?.data || null;
   const resaleListings = resaleData?.data?.listings || [];
+  const earnings = earningsData?.data?.earnings || [];
+  const earningsOverview = earningsData?.data?.summary || null;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -97,86 +99,23 @@ export default function DashboardPage() {
     });
   };
 
-  const transactions = [
-    {
-      id: "TXN001",
-      type: "Sale",
-      product: "Complete Web Development Masterclass",
-      amount: "$299",
-      status: "Completed",
-      date: "2024-01-25",
-      time: "14:30",
-      buyer: "john.doe@email.com",
-    },
-    {
-      id: "TXN002",
-      type: "Resale",
-      product: "Premium UI/UX Design System",
-      amount: "$99",
-      status: "Completed",
-      date: "2024-01-24",
-      time: "09:15",
-      buyer: "sarah.smith@email.com",
-    },
-    {
-      id: "TXN003",
-      type: "Withdrawal",
-      product: "Bank Transfer",
-      amount: "-$500",
-      status: "Processing",
-      date: "2024-01-23",
-      time: "16:45",
-      buyer: "Your Bank Account",
-    },
-    {
-      id: "TXN004",
-      type: "Royalty",
-      product: "Resale Commission",
-      amount: "$15",
-      status: "Completed",
-      date: "2024-01-22",
-      time: "11:20",
-      buyer: "Platform Commission",
-    },
-    {
-      id: "TXN005",
-      type: "Sale",
-      product: "Digital Marketing Strategy Guide",
-      amount: "$199",
-      status: "Completed",
-      date: "2024-01-21",
-      time: "13:10",
-      buyer: "mike.wilson@email.com",
-    },
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Active":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
-      case "Sold":
+  const getEarningTypeColor = (type: string) => {
+    switch (type) {
+      case "royalty":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
+      case "resale":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "Completed":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "Processing":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
     }
   };
 
-  const getTypeIcon = (type: string) => {
+  const getEarningTypeIcon = (type: string) => {
     switch (type) {
-      case "Sale":
-        return <ArrowUpRight className="w-4 h-4 text-green-600" />;
-      case "Resale":
-        return <Tag className="w-4 h-4 text-blue-600" />;
-      case "Withdrawal":
-        return <ArrowDownRight className="w-4 h-4 text-red-600" />;
-      case "Royalty":
+      case "royalty":
         return <DollarSign className="w-4 h-4 text-purple-600" />;
+      case "resale":
+        return <Tag className="w-4 h-4 text-blue-600" />;
       default:
         return <Activity className="w-4 h-4 text-gray-600" />;
     }
@@ -412,23 +351,116 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Section 3: Transaction History */}
+      {/* Section 3: Earnings */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Transaction History
+            Recent Earnings
           </h2>
-          <div className="flex space-x-2">
-            <Button variant="outline" className="flex items-center space-x-2">
-              <Download className="w-4 h-4" />
-              <span>Export</span>
-            </Button>
-            <Button variant="outline" className="flex items-center space-x-2">
-              <Upload className="w-4 h-4" />
-              <span>Withdraw</span>
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            className="flex items-center space-x-2"
+            onClick={() => router.push("/user/user-earnings")}
+          >
+            <DollarSign className="w-4 h-4" />
+            <span>View All</span>
+          </Button>
         </div>
+
+        {/* Earnings Overview Cards */}
+        {isEarningsLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            {[...Array(4)].map((_, index) => (
+              <Card
+                key={index}
+                className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+              >
+                <CardContent className="p-6">
+                  <div className="animate-pulse">
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
+                    <div className="h-8 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      Total Earnings
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {formatCurrency(earningsOverview?.total ?? 0)}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/20">
+                    <DollarSign className="w-6 h-6 text-green-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      Available
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {formatCurrency(earningsOverview?.available ?? 0)}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/20">
+                    <Package className="w-6 h-6 text-blue-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      Withdrawn
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {formatCurrency(earningsOverview?.withdrawn ?? 0)}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900/20">
+                    <Download className="w-6 h-6 text-purple-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      Reserved
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {formatCurrency(earningsOverview?.reserved ?? 0)}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/20">
+                    <Eye className="w-6 h-6 text-yellow-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Earnings Table */}
         <Card className="border-0 shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -437,9 +469,6 @@ export default function DashboardPage() {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Type
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Product/Description
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Amount
@@ -451,69 +480,87 @@ export default function DashboardPage() {
                       Date
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Buyer/Recipient
+                      Transaction ID
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                  {transactions.map((transaction) => (
-                    <tr
-                      key={transaction.id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-2">
-                          {getTypeIcon(transaction.type)}
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">
-                            {transaction.type}
-                          </span>
+                  {isEarningsLoading ? (
+                    // Loading skeleton
+                    [...Array(3)].map((_, index) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="animate-pulse flex items-center space-x-2">
+                            <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16"></div>
+                          </div>
+                        </td>
+                        {[...Array(4)].map((_, i) => (
+                          <td key={i} className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16 animate-pulse"></div>
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : earnings.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-12 text-center">
+                        <div className="text-gray-500 dark:text-gray-400">
+                          <DollarSign className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                          <p>No earnings found</p>
+                          <p className="text-sm mt-1">
+                            Your earnings will appear here once you start making
+                            sales
+                          </p>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {transaction.product}
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            ID: {transaction.id}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`text-sm font-medium ${
-                            transaction.amount.startsWith("-")
-                              ? "text-red-600 dark:text-red-400"
-                              : "text-green-600 dark:text-green-400"
-                          }`}
-                        >
-                          {transaction.amount}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                            transaction.status
-                          )}`}
-                        >
-                          {transaction.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm text-gray-900 dark:text-white">
-                            {transaction.date}
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {transaction.time}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                        {transaction.buyer}
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    earnings.slice(0, 5).map((earning: Earning) => (
+                      <tr
+                        key={earning.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center space-x-2">
+                            {getEarningTypeIcon(earning.earning_type)}
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getEarningTypeColor(
+                                earning.earning_type
+                              )}`}
+                            >
+                              {earning.earning_type}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                            {formatCurrency(earning.amount)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              earning.is_withdrawn
+                                ? "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+                                : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            }`}
+                          >
+                            {earning.is_withdrawn ? "Withdrawn" : "Available"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          {formatDate(earning.created_at)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          {earning.id.slice(0, 8)}...
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
