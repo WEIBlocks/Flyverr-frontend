@@ -16,8 +16,9 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import AddProductModal, { NewProduct } from "@/components/AddProductModal";
+
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import AddProuduct from "@/features/user/product/components/AddProuduct";
 
 /**
  * Home Page - Protected Route
@@ -85,15 +86,9 @@ export default function Home() {
   };
 
   // Add Product Modal state
-  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+ 
 
-  const handleAddProduct = (product: NewProduct) => {
-    console.log("New product from home page:", product);
-    toast.success(
-      "Product submitted for review! You'll be notified once it's approved."
-    );
-    setIsAddProductModalOpen(false);
-  };
+
 
   return (
     <ProtectedRoute requireAuth={true}>
@@ -273,6 +268,28 @@ export default function Home() {
 
         {/* Animated Hero Component */}
         <AnimatedHero />
+
+        <div className="text-center my-16">
+          <div className="bg-flyverr-primary/5 dark:bg-gray-800 rounded-2xl p-8 max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Ready to Start Your Digital Journey?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              Join thousands of creators and investors who are already profiting
+              from appreciating digital assets.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+             <AddProuduct />
+              <Button
+                onClick={handleExploreMarketplace}
+                variant="outline"
+                className="px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-primary dark:hover:text-flyverr-primary font-semibold rounded-xl transition-all duration-300"
+              >
+                Explore Marketplace
+              </Button>
+            </div>
+          </div>
+        </div>
 
         {/* Value Proposition Section */}
         <section className="py-20 bg-white dark:bg-gray-800">
@@ -555,33 +572,6 @@ export default function Home() {
             </div>
 
             {/* CTA Section */}
-            <div className="text-center mt-16">
-              <div className="bg-flyverr-primary/5 dark:bg-gray-800 rounded-2xl p-8 max-w-2xl mx-auto">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  Ready to Start Your Digital Journey?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Join thousands of creators and investors who are already
-                  profiting from appreciating digital assets.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button
-                    onClick={() => setIsAddProductModalOpen(true)}
-                    className="group px-6 py-3 sm:px-8 sm:py-4 md:px-8 md:py-4 lg:px-8 lg:py-4 xl:px-8 xl:py-4 bg-flyverr-secondary hover:bg-flyverr-secondary/90 text-white  font-semibold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-                  >
-                    <Plus className="mr-2 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-5 lg:h-5 xl:w-5 xl:h-5" />
-                    Add Product
-                  </Button>
-                  <Button
-                    onClick={handleExploreMarketplace}
-                    variant="outline"
-                    className="px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-primary dark:hover:text-flyverr-primary font-semibold rounded-xl transition-all duration-300"
-                  >
-                    Explore Marketplace
-                  </Button>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -1200,11 +1190,8 @@ export default function Home() {
           </div>
         </footer>
 
-        {/* Add Product Modal */}
-        <AddProductModal
-          isOpen={isAddProductModalOpen}
-          onClose={() => setIsAddProductModalOpen(false)}
-        />
+        
+      
       </main>
     </ProtectedRoute>
   );

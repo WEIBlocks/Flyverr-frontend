@@ -15,15 +15,9 @@ export default function StripeOnboardingModal({
   isOpen,
   onClose,
 }: StripeOnboardingModalProps) {
-  const handleOnboardingSuccess = () => {
-    // Close the modal after successful onboarding initiation
-    onClose();
-  };
+ 
 
-  const handleOnboardingError = (error: any) => {
-    console.error("Failed to initiate Stripe onboarding:", error);
-    // You can show error toast here if needed
-  };
+
 
   if (!isOpen) return null;
 
@@ -98,9 +92,7 @@ export default function StripeOnboardingModal({
             Cancel
           </Button>
 
-          <CompleteSetupButton className="bg-amber-600 hover:bg-amber-700 text-white">
-            Complete Setup
-          </CompleteSetupButton>
+          
         </div>
       </div>
     </Modal>

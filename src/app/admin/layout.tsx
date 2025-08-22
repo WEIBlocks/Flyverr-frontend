@@ -25,22 +25,30 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   const navItems = [
-    { name: 'Overview', href: '/admin', iconName: 'overview' },
-    { name: 'Pending Products', href: '/admin/pending-products', iconName: 'pending' },
-    { name: 'All Products', href: '/admin/products', iconName: 'products' },
-    { name: 'Users', href: '/admin/users', iconName: 'users' },
-    { name: 'Resale Listings', href: '/admin/resales', iconName: 'resales' },
-    { name: 'Stale Resales (30d)', href: '/admin/stale-resales', iconName: 'stale' },
-    { name: 'Reviews', href: '/admin/reviews', iconName: 'reviews' },
-    { name: 'Settings', href: '/admin/settings', iconName: 'settings' },
-  ]
+    {
+      name: "Pending Products",
+      href: "/admin/pending-products",
+      iconName: "pending",
+    },
+    { name: "All Products", href: "/admin/products", iconName: "products" },
+    { name: "Users", href: "/admin/users", iconName: "users" },
+    {
+      name: "Stale Resales (30d)",
+      href: "/admin/stale-resales",
+      iconName: "stale",
+    },
+    { name: "Reviews", href: "/admin/reviews", iconName: "reviews" },
+  ];
 
   return (
-    <ProtectedRoute requireAuth allowedRoles={['admin']}>
-      <DashboardLayout navItems={navItems} headerTitle="Admin" profileHref="/admin/profile">
+    <ProtectedRoute requireAuth allowedRoles={["admin"]}>
+      <DashboardLayout
+        navItems={navItems}
+        headerTitle="Admin"
+        profileHref="/admin/profile"
+      >
         {children}
       </DashboardLayout>
     </ProtectedRoute>
   );
 }
-

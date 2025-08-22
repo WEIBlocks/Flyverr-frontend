@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { purchaseProduct } from "../services/api";
 import Swal from "sweetalert2";
+import { createUserFriendlyError } from "@/lib/errorUtils";
+import { ErrorResponse } from "@/lib/types";
+import { log } from "console";
 
 export function usePurchaseProduct() {
   const queryClient = useQueryClient();
@@ -17,15 +20,61 @@ export function usePurchaseProduct() {
         paymentMethod: string;
       };
     }) => await purchaseProduct(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-products"] });
-      queryClient.invalidateQueries({ queryKey: ["product"] });
+    onSuccess: (data: any) => {
+      console.log("data", data);
+
+      // Show success message with payment button
+      if (data?.data?.data?.payment_url) {
+        Swal.fire({
+          title: data?.data?.message,
+          text: `Transaction ID: ${data?.data?.data?.transaction_id}`,
+          icon: "success",
+          confirmButtonText: "Continue to Payment",
+          showCancelButton: true,
+          cancelButtonText: "Close",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await queryClient.invalidateQueries({
+              queryKey: ["user-products"],
+            });
+            await queryClient.invalidateQueries({ queryKey: ["product"] });
+            window.open(data?.data?.data?.payment_url, "_blank");
+          }
+        });
+      } else {
+        // Fallback success message
+        Swal.fire({
+          title: "Success!",
+          text: "Purchase initiated successfully",
+          icon: "success",
+        });
+      }
     },
-    onError: (error: any) => {
+    onError: (error: ErrorResponse) => {
       console.log(error);
+      const code = error?.response?.data?.code;
+      const link = error?.response?.data?.link;
+
+      if (code === "CONNECT_REQUIRED" && typeof link === "string") {
+        Swal.fire({
+          title: "Complete Stripe Onboarding",
+          text: createUserFriendlyError(error),
+          icon: "info",
+          confirmButtonText: "Complete Stripe Onboarding",
+          showCancelButton: true,
+          cancelButtonText: "Cancel",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.open(link, "_blank");
+          }
+        });
+        return;
+      }
+
+      // Default error handling
       Swal.fire({
         title: "Error",
-        text: error.response.data.message,
+        text: createUserFriendlyError(error),
         icon: "error",
       });
     },

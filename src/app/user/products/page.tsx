@@ -28,12 +28,13 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
-import AddProductModal, { NewProduct } from "@/components/AddProductModal";
+
 import StripeOnboardingModal from "@/components/ui/StripeOnboardingModal";
 import { useGetMyProducts } from "@/features/user/product/hooks/useGetMyProducts";
 import { UserProduct } from "@/features/user/product/product.types";
 import { useRouter } from "next/navigation";
 import { canCreateProducts } from "@/lib/stripeHelpers";
+import AddProduct from "@/features/user/product/components/AddProuduct";
 
 // Skeleton loading components
 const ProductTableSkeleton = () => (
@@ -143,7 +144,6 @@ export default function MyProductsPage() {
   const { user } = useAuth();
   const router = useRouter();
   // Add Product Modal state
-  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [isStripeOnboardingModalOpen, setIsStripeOnboardingModalOpen] =
     useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -165,13 +165,7 @@ export default function MyProductsPage() {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const handleAddProductClick = () => {
-    if (canCreateProducts()) {
-      setIsAddProductModalOpen(true);
-    } else {
-      setIsStripeOnboardingModalOpen(true);
-    }
-  };
+  
 
   const handleEditProduct = (productId: string) => {
     router.push(`/user/products/${productId}`);
@@ -319,13 +313,7 @@ export default function MyProductsPage() {
             Manage your digital products and track their performance
           </p>
         </div>
-        <Button
-          onClick={handleAddProductClick}
-          className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add New Product
-        </Button>
+        <AddProduct />
       </div>
 
       {/* Stats Cards */}
@@ -605,7 +593,7 @@ export default function MyProductsPage() {
                 ? "Try adjusting your search or filter criteria"
                 : "No products match your current filters"}
             </p>
-            {products.length === 0 && (
+            {/* {products.length === 0 && (
               <Button
                 onClick={handleAddProductClick}
                 className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
@@ -613,22 +601,10 @@ export default function MyProductsPage() {
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Product
               </Button>
-            )}
+            )} */}
           </CardContent>
         </Card>
       )}
-
-      {/* Add Product Modal */}
-      <AddProductModal
-        isOpen={isAddProductModalOpen}
-        onClose={() => setIsAddProductModalOpen(false)}
-      />
-
-      {/* Stripe Onboarding Modal */}
-      <StripeOnboardingModal
-        isOpen={isStripeOnboardingModalOpen}
-        onClose={() => setIsStripeOnboardingModalOpen(false)}
-      />
     </div>
   );
 }

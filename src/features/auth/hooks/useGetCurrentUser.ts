@@ -24,14 +24,8 @@ export function useGetCurrentUser() {
       
       return responseData.data.user
     },
-    enabled: !!token && typeof window !== 'undefined',
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
-    retry: (failureCount, error: any) => {
-      if (error?.response?.status === 401) return false
-      return failureCount < 3
-    },
-    refetchOnWindowFocus: false,
+    enabled: !!token,
+    
   })
 }
 

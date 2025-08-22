@@ -38,3 +38,14 @@ export function purchaseProduct(
 ) {
   return api.post(`marketplace/products/${id}/purchase`, data);
 }
+
+
+
+export function getProductCategories() {
+  return api
+    .get("/products/categories")
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err;
+    });
+}

@@ -13,6 +13,7 @@ import type { Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useCreateProduct } from "@/features/user/product/hooks/useCreateProduct";
+import { useGetProductCategory } from "@/features/user/product/hooks/useGetProductCategory";
 import toast from "react-hot-toast";
 import { uploadMultipleImages, uploadToStorage } from "@/lib/upload";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,7 +23,7 @@ import { supabase } from "@/lib/supabase";
 export interface NewProduct {
   title: string;
   description: string;
-  // categoryId: string; // Commented out for now
+  categoryId: string;
   thumbnailUrl: string;
   imagesUrls: string[];
   fileUrl: string;
@@ -47,7 +48,7 @@ const productSchema = yup.object({
     .string()
     .required("Description is required")
     .min(10, "Description must be at least 10 characters"),
-  // categoryId: yup.string().required("Category is required"), // Commented out for now
+  categoryId: yup.string().required("Category is required"),
   originalPrice: yup
     .string()
     .required("Price is required")
@@ -82,6 +83,11 @@ export default function AddProductModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { mutate: createProduct, isPending } = useCreateProduct();
+  const {
+    data: categoriesData,
+    isLoading: isCategoriesLoading,
+    isError: isCategoriesError,
+  } = useGetProductCategory();
 
   const {
     register,
@@ -97,7 +103,7 @@ export default function AddProductModal({
     defaultValues: {
       title: "",
       description: "",
-      // categoryId: "", // Commented out for now
+      categoryId: "",
       thumbnailUrl: "",
       imagesUrls: [],
       fileUrl: "",
@@ -300,35 +306,51 @@ export default function AddProductModal({
             <Input
               {...register("title")}
               placeholder="Enter product title"
-              className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+              className="border-border text-foreground placeholder:text-muted-foreground"
             />
             {errors.title && (
               <p className="text-sm text-destructive">{errors.title.message}</p>
             )}
           </div>
 
-          {/* Category selection commented out for now
-            <div className="space-y-2">
+          {/* Category Selection */}
+          <div className="space-y-2">
             <Label className="text-sm font-medium text-foreground">
-                Category *
-              </Label>
+              Category *
+            </Label>
+            {isCategoriesLoading ? (
+              <div className="w-full px-3 py-2 border border-border rounded-md bg-muted/50 text-muted-foreground">
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-flyverr-primary"></div>
+                  <span>Loading categories...</span>
+                </div>
+              </div>
+            ) : isCategoriesError ? (
+              <div className="w-full px-3 py-2 border border-red-200 rounded-md bg-red-50 text-red-600">
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Failed to load categories. Please try again.</span>
+                </div>
+              </div>
+            ) : (
               <select
-              {...register("categoryId")}
-              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-flyverr-primary focus:border-transparent"
+                {...register("categoryId")}
+                className="w-full bg-white dark:bg-gray-800 px-3 py-2 border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-flyverr-primary focus:border-transparent [&>option]:[&>option]:text-foreground"
               >
-                <option value="">Select category</option>
-              <option value="550e8400-e29b-41d4-a716-446655440001">E-book</option>
-              <option value="550e8400-e29b-41d4-a716-446655440002">PNG</option>
-              <option value="550e8400-e29b-41d4-a716-446655440003">JPG</option>
-              <option value="550e8400-e29b-41d4-a716-446655440004">MP4</option>
-              <option value="550e8400-e29b-41d4-a716-446655440005">ZIP</option>
-              <option value="550e8400-e29b-41d4-a716-446655440006">PDF</option>
+                <option value="">Select a category</option>
+                {categoriesData?.data?.categories?.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
               </select>
-            {errors.categoryId && (
-              <p className="text-sm text-destructive">{errors.categoryId.message}</p>
             )}
-            </div>
-          */}
+            {errors.categoryId && (
+              <p className="text-sm text-destructive">
+                {errors.categoryId.message}
+              </p>
+            )}
+          </div>
 
           <div className="space-y-2">
             <Label className="text-sm font-medium text-foreground">
@@ -338,7 +360,7 @@ export default function AddProductModal({
               {...register("description")}
               placeholder="Describe your product..."
               rows={4}
-              className="bg-background border-border text-foreground placeholder:text-muted-foreground resize-none"
+              className="border-border text-foreground placeholder:text-muted-foreground resize-none"
             />
             {errors.description && (
               <p className="text-sm text-destructive">
@@ -358,7 +380,7 @@ export default function AddProductModal({
                 placeholder="0.00"
                 min="0"
                 step="0.01"
-                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                className="border-border text-foreground placeholder:text-muted-foreground"
               />
               {errors.originalPrice && (
                 <p className="text-sm text-destructive">
@@ -377,7 +399,7 @@ export default function AddProductModal({
                 placeholder="1"
                 min="1"
                 max="1000"
-                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                className="border-border text-foreground placeholder:text-muted-foreground"
               />
               {errors.totalLicenses && (
                 <p className="text-sm text-destructive">

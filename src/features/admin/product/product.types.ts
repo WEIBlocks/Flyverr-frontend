@@ -96,6 +96,7 @@ export interface ProductApprovalRequest {
   approved: boolean;
   adminNotes: string;
   roundPricing: {
+    originalPrice?: number;
     blossomPrice: number;
     evergreenPrice: number;
     exitPrice: number;

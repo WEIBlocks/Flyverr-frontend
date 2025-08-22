@@ -39,11 +39,12 @@ import { useGetAllProducts } from "@/features/admin/product/hooks/useGetAllProdu
 import { AdminProduct } from "@/features/admin/product/product.types";
 import AdminProductsSkeleton from "@/components/AdminProductsSkeleton";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
+import PaginationControls from "@/components/ui/PaginationControls";
 
 export default function AdminAllProductsPage() {
   const router = useRouter();
   const [page, setPage] = useState(1);
-  const [limit] = useState(20);
+  const [limit, setLimit] = useState(5);
   const [status, setStatus] = useState<string>("");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -58,7 +59,7 @@ export default function AdminAllProductsPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const { data, isLoading, error } = useGetAllProducts(
+  const { data, isLoading, error, isFetching } = useGetAllProducts(
     page,
     limit,
     status,
@@ -166,6 +167,14 @@ export default function AdminAllProductsPage() {
   const handleStatusFilter = (newStatus: string) => {
     setStatus(newStatus === status ? "" : newStatus);
     setPage(1); // Reset to first page when filtering
+  };
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
+
+  const handleLimitChange = (limit: number) => {
+    setLimit(limit);
   };
 
   if (error) {
@@ -518,32 +527,18 @@ export default function AdminAllProductsPage() {
           </AdminTable>
 
           {/* Pagination */}
-          {pagination && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-700 dark:text-gray-300">
-                Showing {(page - 1) * limit + 1} to{" "}
-                {Math.min(page * limit, pagination.total)} of {pagination.total}{" "}
-                results
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(page + 1)}
-                  disabled={page === pagination.totalPages}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
+          {pagination && (
+            <PaginationControls
+              currentPage={page}
+              totalPages={pagination.totalPages}
+              totalCount={pagination.total}
+              pageSize={limit}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handleLimitChange}
+              disabled={isFetching}
+              entityLabel="records"
+              className="mt-4"
+            />
           )}
         </>
       )}

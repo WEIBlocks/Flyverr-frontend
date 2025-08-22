@@ -35,6 +35,7 @@ import AdminProductDetailSkeleton from "@/components/ui/AdminProductDetailSkelet
 import toast from "react-hot-toast";
 import Modal from "@/components/Modal";
 import Swal from "sweetalert2";
+import HotDealModal from "../../../../features/admin/product/components/HotDealModal";
 
 // Validation schema
 const editProductSchema = yup.object({
@@ -79,7 +80,6 @@ const editProductSchema = yup.object({
     .required(),
 });
 
-type EditProductFormData = yup.InferType<typeof editProductSchema>;
 
 // Types based on the API response
 interface RoundPricing {
@@ -163,6 +163,8 @@ export default function AdminProductDetailPage() {
   const { data, isLoading, error } = useGetProductById(productId);
   const editProductMutation = useEditProduct();
   const flagProductMutation = useFlagProduct();
+
+  const [showHotDealModal, setShowHotDealModal] = useState(false);
 
   const {
     register,
@@ -351,6 +353,13 @@ export default function AdminProductDetailPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
+  const shortenId = (value: string, width: number = 6) => {
+    if (!value) return "";
+    return value.length <= width * 2 + 1
+      ? value
+      : `${value.slice(0, width)}…${value.slice(-width)}`;
+  };
+
   if (isLoading) {
     return <AdminProductDetailSkeleton />;
   }
@@ -379,6 +388,7 @@ export default function AdminProductDetailPage() {
 
   const product = data.data.product;
   const statistics = data.data.statistics;
+  const recentActivity = data.data.recentActivity;
 
   return (
     <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
@@ -395,7 +405,7 @@ export default function AdminProductDetailPage() {
 
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Product Details
@@ -408,7 +418,12 @@ export default function AdminProductDetailPage() {
             </div>
 
             {/* Admin Actions */}
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3 justify-start md:justify-end w-full md:w-auto">
+              <HotDealModal
+                productId={productId}
+                buttonLabel="Mark Hot Deal"
+                buttonClassName="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20 shadow-sm"
+              />
               {product.status === "approved" && (
                 <Button
                   variant="outline"
@@ -516,7 +531,7 @@ export default function AdminProductDetailPage() {
                     <div className="w-full">
                       {watch("thumbnail_url") ? (
                         <div className="relative">
-                          <div className="w-full h-64 border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden relative">
+                          <div className="w-full h-48 sm:h-60 md:h-64 lg:h-72 border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden relative">
                             <ImageWithFallback
                               src={watch("thumbnail_url")}
                               alt="Product thumbnail"
@@ -524,7 +539,7 @@ export default function AdminProductDetailPage() {
                               fallbackIcon={
                                 <ImageIcon className="w-16 h-16 text-gray-400" />
                               }
-                              className="w-full h-full "
+                              className="w-full h-full object-cover"
                             />
                           </div>
 
@@ -557,7 +572,7 @@ export default function AdminProductDetailPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="w-full h-64 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-700">
+                        <div className="w-full h-48 sm:h-60 md:h-64 lg:h-72 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-700">
                           <ImageIcon className="w-12 h-12 text-gray-400 mb-2" />
                           <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
                             No thumbnail selected
@@ -802,7 +817,7 @@ export default function AdminProductDetailPage() {
                         Category
                       </span>
                       <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {product.category?.name}
+                        {product.category?.name || "Uncategorized"}
                       </span>
                     </div>
                   </div>
@@ -840,6 +855,14 @@ export default function AdminProductDetailPage() {
                     <p>{product.creator.email}</p>
                     <p>Status: {product.creator.status}</p>
                   </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Average Price
+                    </span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                      ${statistics.averagePrice}
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -876,6 +899,14 @@ export default function AdminProductDetailPage() {
                     </span>
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">
                       {product.remaining_licenses}/{product.total_licenses}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Product ID
+                    </span>
+                    <span className="text-xs font-mono text-gray-900 dark:text-white">
+                      {shortenId(product.id)}
                     </span>
                   </div>
                 </CardContent>
@@ -958,11 +989,103 @@ export default function AdminProductDetailPage() {
               </Card>
             </div>
           </div>
+          {/* Recent Activity */}
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="p-2 bg-flyverr-primary/10 rounded-lg">
+                  <BarChart3 className="w-5 h-5 text-flyverr-primary" />
+                </div>
+                Recent Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Licenses */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Licenses</h4>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-gray-600 dark:text-gray-400">
+                          <th className="py-2 pr-3">License ID</th>
+                          <th className="py-2 pr-3">Acquired</th>
+                          <th className="py-2 pr-3">Round</th>
+                          <th className="py-2 pr-3">Type</th>
+                          <th className="py-2 pr-3">Resale</th>
+                          <th className="py-2 pr-3">Owner</th>
+                          <th className="py-2">Listed</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recentActivity?.licenses?.length ? (
+                          recentActivity.licenses.map((lic: any) => (
+                            <tr key={lic.id} className="border-t border-gray-200 dark:border-gray-700">
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">{shortenId(lic.id)}</td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{lic.acquired_at ? formatDate(lic.acquired_at) : "—"}</td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{lic.current_round}</td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{lic.purchase_type || "—"}</td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{lic.resale_eligible ? "Yes" : "No"}</td>
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">{lic.current_owner_id ? shortenId(lic.current_owner_id) : "—"}</td>
+                              <td className="py-2 text-gray-700 dark:text-gray-300">{lic.is_listed_for_resale ? "Yes" : "No"}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={7} className="py-3 text-center text-gray-500 dark:text-gray-400">No license activity</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Transactions */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Transactions</h4>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-gray-600 dark:text-gray-400">
+                          <th className="py-2 pr-3">Tx ID</th>
+                          <th className="py-2 pr-3">Amount</th>
+                          <th className="py-2 pr-3">Status</th>
+                          <th className="py-2 pr-3">Type</th>
+                          <th className="py-2 pr-3">Buyer</th>
+                          <th className="py-2 pr-3">Seller</th>
+                          <th className="py-2">Created</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recentActivity?.transactions?.length ? (
+                          recentActivity.transactions.map((tx: any) => (
+                            <tr key={tx.id} className="border-t border-gray-200 dark:border-gray-700">
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">{shortenId(tx.id)}</td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">${tx.amount}</td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{tx.status}</td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{tx.transaction_type}</td>
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">{shortenId(tx.buyer_id)}</td>
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">{shortenId(tx.seller_id)}</td>
+                              <td className="py-2 text-gray-700 dark:text-gray-300">{formatDate(tx.created_at)}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={7} className="py-3 text-center text-gray-500 dark:text-gray-400">No transaction activity</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Update Button - Below the form */}
           {product.status !== "deleted" && (
             <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 rounded-full bg-flyverr-primary"></div>
@@ -981,7 +1104,7 @@ export default function AdminProductDetailPage() {
                 <Button
                   type="submit"
                   disabled={editProductMutation.isPending || !isDirty}
-                  className="bg-flyverr-primary hover:bg-flyverr-primary/90 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] h-10 shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="bg-flyverr-primary hover:bg-flyverr-primary/90 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] h-10 shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
                 >
                   {editProductMutation.isPending ? (
                     <>
@@ -1129,6 +1252,8 @@ export default function AdminProductDetailPage() {
             </div>
           </Modal>
         )}
+
+        {/* Hot Deal Modal handled by component's internal state */}
       </div>
     </div>
   );

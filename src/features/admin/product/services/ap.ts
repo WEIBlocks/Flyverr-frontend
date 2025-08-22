@@ -7,7 +7,7 @@ import { Product } from "@/features/user/product/product.types";
 
 export function getPendingProducts(page: number = 1, limit: number = 20) {
   return api
-    .get(`admin/products/pending?page=${page}&limit=${limit}`)
+    .get(`/admin/products/pending?page=${page}&limit=${limit}`)
     .then((res) => res.data)
     .catch((err) => {
       throw err;
@@ -19,7 +19,7 @@ export function approveProduct(
   approvalData: ProductApprovalRequest
 ) {
   return api
-    .put(`admin/products/${productId}/approve`, approvalData)
+    .put(`/admin/products/${productId}/approve`, approvalData)
     .then((res) => res.data)
     .catch((err) => {
       throw err;
@@ -45,7 +45,7 @@ export function getAllProducts(
   }
 
   return api
-    .get(`admin/products?${params.toString()}`)
+    .get(`/admin/products?${params.toString()}`)
     .then((res) => res.data)
     .catch((err) => {
       throw err;
@@ -54,7 +54,7 @@ export function getAllProducts(
 
 export function getProductById(id: string) {
   return api
-    .get(`admin/products/${id}`)
+    .get(`/admin/products/${id}`)
     .then((res) => res.data)
     .catch((err) => {
       throw err;
@@ -69,8 +69,12 @@ interface FlagProductRequest {
 }
 
 export function flagProduct(productId: string, flagData: FlagProductRequest) {
-  return api.put(`admin/products/${productId}/flag`, flagData);
+  return api.put(`/admin/products/${productId}/flag`, flagData);
 }
 export function editProduct(productId: string, product: Partial<Product>) {
-  return api.put(`admin/products/${productId}/edit`, product);
+  return api.put(`/admin/products/${productId}/edit`, product);
+}
+
+export function markProductAsHotDeal( data: any) {
+  return api.post(`/admin/deals`, data);
 }

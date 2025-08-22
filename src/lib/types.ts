@@ -1,10 +1,11 @@
 export interface ErrorResponse {
-  data: {
-    response: {
+  response: {
+    data: {
       message: string;
       success: boolean;
       error?: string[];
       code?: string;
+      link?: string;
     };
   };
 }

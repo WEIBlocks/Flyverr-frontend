@@ -325,7 +325,7 @@ export default function MarketplacePage() {
     sortBy: "created_at",
     sortOrder: "desc",
   });
-
+  
   // Pending filters state (only applied when Apply button is clicked)
   const [pendingFilters, setPendingFilters] = useState({
     selectedCategory: "all",
@@ -339,7 +339,7 @@ export default function MarketplacePage() {
       | "remaining_licenses",
     sortOrder: "desc" as "asc" | "desc",
   });
-
+  
   const [currentPage, setCurrentPage] = useState(1);
 
   // Debounce search term
@@ -554,7 +554,7 @@ export default function MarketplacePage() {
       sortBy: "created_at",
       sortOrder: "desc",
     };
-
+    
     setFilters(newFilters);
     setSearchTerm("");
     setDebouncedSearchTerm("");
@@ -667,7 +667,6 @@ export default function MarketplacePage() {
               />
             </div>
 
-
             {/* Clear Filters Button - Only show when filters are active */}
             {(filters.search ||
               filters.featured ||
@@ -769,7 +768,7 @@ export default function MarketplacePage() {
         {/* Results Count */}
         {!loading && (
           <div className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 md:mb-8">
-            {products.length > 0
+            {products.length > 0 
               ? `Showing ${products.length} of ${totalProducts} digital products`
               : "No products found"}
           </div>
@@ -817,147 +816,149 @@ export default function MarketplacePage() {
                 .filter((product: MarketplaceProduct) => {
                   // Hide products with current_stage "newboom" and remaining_licenses = 1
                   return !(
-                    product.current_stage === "exit" &&
-                    product.remaining_licenses === 0
+                    (product.current_stage === "exit" &&
+                      product.remaining_licenses === 0) ||
+                    (product.is_platform_product === true &&
+                      product.current_stage === "newboom")
                   );
                 })
                 .map((product: MarketplaceProduct) => {
-                  const currentImageIndex = imageIndices[product.id] || 0;
-                  const currentImage = product.thumbnail_url;
-                  const imageState = imageStates[product.id] || {
-                    loading: true,
-                    error: false,
-                    loaded: false,
-                  };
-                  const stage = resaleStages.find(
-                    (s) => s.id === product.current_stage
-                  );
+                const currentImageIndex = imageIndices[product.id] || 0;
+                const currentImage = product.thumbnail_url;
+                const imageState = imageStates[product.id] || {
+                  loading: true,
+                  error: false,
+                  loaded: false,
+                };
+                const stage = resaleStages.find(
+                  (s) => s.id === product.current_stage
+                );
 
-                  return (
-                    <Card
-                      key={product.id}
-                      className="group hover:shadow-xl transition-all duration-300 border-0 bg-white dark:bg-gray-800 overflow-hidden cursor-pointer rounded-lg shadow-md"
-                      onClick={() => handleCardClick(product.id)}
-                    >
-                      <div className="relative bg-gray-100 dark:bg-gray-700">
-                        {/* Image Container */}
-                        <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
-                          {/* Error State */}
-                          {imageState.error && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700">
+                return (
+                  <Card
+                    key={product.id}
+                    className="group hover:shadow-xl transition-all duration-300 border-0 bg-white dark:bg-gray-800 overflow-hidden cursor-pointer rounded-lg shadow-md"
+                    onClick={() => handleCardClick(product.id)}
+                  >
+                    <div className="relative bg-gray-100 dark:bg-gray-700">
+                      {/* Image Container */}
+                      <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
+                        {/* Error State */}
+                        {imageState.error && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700">
                               <div className="h-8 h-8 sm:h-10 sm:w-10 text-gray-400 dark:text-gray-500 mb-2 flex items-center justify-center">
-                                <svg
-                                  className="w-full h-full"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                                </svg>
-                              </div>
-                              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                Image unavailable
-                              </p>
+                              <svg
+                                className="w-full h-full"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                              </svg>
                             </div>
-                          )}
-
-                          {/* Next.js Optimized Image */}
-                          {!imageState.error && currentImage && (
-                            <Image
-                              src={currentImage}
-                              alt={product.title}
-                              fill
-                              className="object-cover transition-all duration-300 group-hover:scale-110"
-                              onLoad={() => handleImageLoad(product.id)}
-                              onError={() => handleImageError(product.id)}
-                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                              priority={false}
-                            />
-                          )}
-                        </div>
-
-                        {/* Resale Stage Badge */}
-                        {stage && (
-                          <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
-                            <Badge
-                              className={`${stage.color} text-white text-xs px-2 py-1`}
-                            >
-                              Stage{" "}
-                              {resaleStages.findIndex(
-                                (s) => s.id === product.current_stage
-                              ) + 1}
-                              : {stage.name}
-                            </Badge>
+                            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                              Image unavailable
+                            </p>
                           </div>
                         )}
 
-                        {/* Special Badges */}
-                        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5">
-                          {product.featured && (
-                            <Badge className="bg-flyverr-accent text-flyverr-text text-xs px-2 py-1">
-                              <Crown className="h-3 w-3 mr-1" />
-                              <span className="hidden sm:inline">Featured</span>
-                              <span className="sm:hidden">FT</span>
-                            </Badge>
-                          )}
+                        {/* Next.js Optimized Image */}
+                        {!imageState.error && currentImage && (
+                          <Image
+                            src={currentImage}
+                            alt={product.title}
+                            fill
+                            className="object-cover transition-all duration-300 group-hover:scale-110"
+                            onLoad={() => handleImageLoad(product.id)}
+                            onError={() => handleImageError(product.id)}
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                            priority={false}
+                          />
+                        )}
+                      </div>
+
+                      {/* Resale Stage Badge */}
+                      {stage && (
+                        <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                          <Badge
+                            className={`${stage.color} text-white text-xs px-2 py-1`}
+                          >
+                            Stage{" "}
+                            {resaleStages.findIndex(
+                              (s) => s.id === product.current_stage
+                            ) + 1}
+                            : {stage.name}
+                          </Badge>
+                        </div>
+                      )}
+
+                      {/* Special Badges */}
+                      <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5">
+                        {product.featured && (
+                          <Badge className="bg-flyverr-accent text-flyverr-text text-xs px-2 py-1">
+                            <Crown className="h-3 w-3 mr-1" />
+                            <span className="hidden sm:inline">Featured</span>
+                            <span className="sm:hidden">FT</span>
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+
+                    <CardContent className="p-4">
+                      {/* Title */}
+                      <div className="mb-3">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base md:text-lg lg:text-xl mb-1 line-clamp-2 group-hover:text-flyverr-primary transition-colors duration-300">
+                          {product.title}
+                        </h3>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+
+                      {/* Remaining Licenses */}
+                      <div className="mb-4">
+                        <div className="flex justify-between items-center text-xs sm:text-sm md:text-base">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Remaining:
+                          </span>
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {product.remaining_licenses} of{" "}
+                            {product.total_licenses}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                          <div
+                            className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
+                            style={{
+                              width: `${
+                                (product.remaining_licenses /
+                                  product.total_licenses) *
+                                100
+                              }%`,
+                            }}
+                          ></div>
                         </div>
                       </div>
 
-                      <CardContent className="p-4">
-                        {/* Title */}
-                        <div className="mb-3">
-                          <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base md:text-lg lg:text-xl mb-1 line-clamp-2 group-hover:text-flyverr-primary transition-colors duration-300">
-                            {product.title}
-                          </h3>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                          {product.description}
-                        </p>
-
-                        {/* Remaining Licenses */}
-                        <div className="mb-4">
-                          <div className="flex justify-between items-center text-xs sm:text-sm md:text-base">
-                            <span className="text-gray-600 dark:text-gray-400">
-                              Remaining:
-                            </span>
-                            <span className="font-medium text-gray-900 dark:text-white">
-                              {product.remaining_licenses} of{" "}
-                              {product.total_licenses}
-                            </span>
+                      {/* Price and Action */}
+                      <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                          <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white">
+                            ${product.current_price}
                           </div>
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
-                            <div
-                              className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
-                              style={{
-                                width: `${
-                                  (product.remaining_licenses /
-                                    product.total_licenses) *
-                                  100
-                                }%`,
-                              }}
-                            ></div>
-                          </div>
-                        </div>
-
-                        {/* Price and Action */}
-                        <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                          <div className="flex items-center justify-between">
-                            <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white">
-                              ${product.current_price}
-                            </div>
                             {product.original_price !==
                               product.current_price && (
-                              <div className="text-sm text-gray-500 line-through">
-                                ${product.original_price}
-                              </div>
-                            )}
-                          </div>
+                            <div className="text-sm text-gray-500 line-through">
+                              ${product.original_price}
+                            </div>
+                          )}
                         </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
             : // No products found message
               !loading && (
                 <div className="col-span-full text-center py-12">
@@ -977,12 +978,12 @@ export default function MarketplacePage() {
                       </>
                     ) : (
                       <>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                          No products found
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400 mb-4">
-                          {filters.search
-                            ? `No products match your search "${filters.search}"`
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      No products found
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      {filters.search 
+                        ? `No products match your search "${filters.search}"`
                             : filters.featured ||
                               filters.trending ||
                               filters.recommended ||
@@ -990,9 +991,9 @@ export default function MarketplacePage() {
                               filters.stage ||
                               filters.minPrice ||
                               filters.maxPrice
-                            ? "No products match your current filters. Try adjusting your search criteria."
+                        ? "No products match your current filters. Try adjusting your search criteria."
                             : "No products are currently available in this category."}
-                        </p>
+                    </p>
                       </>
                     )}
                     <Button
