@@ -29,6 +29,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { SignupData } from "@/features/auth/auth.types";
+import { useRouter } from "next/navigation";
 
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -47,14 +48,15 @@ export default function SignupPage() {
   const [agreedToTerms, setAgreedToTerms] = React.useState(false);
   const [passwordStrength, setPasswordStrength] = React.useState(0);
   const { register: registerForm, isRegistering } = useRegister();
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-    getValues
-    
+    getValues,
+    reset,
   } = useForm<SignupData>({
     resolver: yupResolver(schema),
   });
@@ -70,10 +72,14 @@ export default function SignupPage() {
     return strength;
   };
 
- 
-
   const onSubmit = (data: SignupData) => {
-    registerForm(data);
+    registerForm(data, {
+      onSuccess: () => {
+        reset();
+        // Redirect to email verification page
+        router.push(`/verify-email?from=registration&email=${encodeURIComponent(data.email)}`);
+      },
+    });
   };
 
   const handleSocialLogin = async (provider: "google" | "linkedin") => {
@@ -343,10 +349,15 @@ export default function SignupPage() {
                           {...register("firstName")}
                           type="text"
                           autoComplete="given-name"
-                          required
+                          // required
                           placeholder="First name"
                           className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
                         />
+                        {errors.firstName && (
+                          <p className="text-xs text-red-500">
+                            {errors.firstName.message}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div>
@@ -366,10 +377,15 @@ export default function SignupPage() {
                           {...register("lastName")}
                           type="text"
                           autoComplete="family-name"
-                          required
+                          // required
                           placeholder="Last name"
                           className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
                         />
+                        {errors.lastName && (
+                          <p className="text-xs text-red-500">
+                            {errors.lastName.message}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -391,11 +407,15 @@ export default function SignupPage() {
                         {...register("username")}
                         type="text"
                         autoComplete="username"
-                        required
                         placeholder="Choose a username"
                         className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
                       />
                     </div>
+                    {errors.username && (
+                      <p className="text-xs text-red-500">
+                        {errors.username.message}
+                      </p>
+                    )}
                     <p className="text-xs text-gray-500 mt-0.5">
                       This will be your public profile name
                     </p>
@@ -418,10 +438,14 @@ export default function SignupPage() {
                         {...register("email")}
                         type="email"
                         autoComplete="email"
-                        required
                         placeholder="you@example.com"
                         className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
                       />
+                      {errors.email && (
+                        <p className="text-xs text-red-500">
+                          {errors.email.message}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -445,7 +469,6 @@ export default function SignupPage() {
                         required
                         placeholder="Create a strong password"
                         className="pl-10 pr-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary"
-                     
                       />
                       <button
                         type="button"
@@ -463,10 +486,10 @@ export default function SignupPage() {
                         )}
                       </button>
                       {errors.password && (
-                      <p className="text-xs text-red-500">
-                        {errors.password.message}
-                      </p>
-                    )}
+                        <p className="text-xs text-red-500">
+                          {errors.password.message}
+                        </p>
+                      )}
                     </div>
 
                     {/* Password Strength Indicator */}
@@ -478,9 +501,12 @@ export default function SignupPage() {
                               key={i}
                               className={`h-1 flex-1 rounded-full ${
                                 i < checkPasswordStrength(watch("password"))
-                                  ? checkPasswordStrength(watch("password")) <= 2
+                                  ? checkPasswordStrength(watch("password")) <=
+                                    2
                                     ? "bg-red-500"
-                                    : checkPasswordStrength(watch("password")) <= 3
+                                    : checkPasswordStrength(
+                                        watch("password")
+                                      ) <= 3
                                     ? "bg-yellow-500"
                                     : "bg-green-500"
                                   : "bg-gray-200"
@@ -583,6 +609,21 @@ export default function SignupPage() {
                       <p className="text-xs text-muted-foreground mt-0.5">
                         We use industry-standard encryption and never share your
                         personal information.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Email Verification Note */}
+                <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <div className="flex items-start space-x-2">
+                    <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-blue-700 dark:text-blue-300 font-medium">
+                        Email verification required
+                      </p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+                        After registration, you'll need to verify your email address to activate your account.
                       </p>
                     </div>
                   </div>

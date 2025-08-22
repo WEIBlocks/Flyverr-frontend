@@ -15,12 +15,13 @@ import { User, Mail, Calendar, Shield, Crown, Ban, Edit, MoreVertical, Users, Ac
 import { useGetUsers } from "@/features/admin/user/hooks"
 import { AdminUser } from "@/features/admin/user/user.types"
 import Link from "next/link"
+import PaginationControls from "@/components/ui/PaginationControls"
 
 export default function AdminUsersPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [currentLimit, setCurrentLimit] = useState(20)
 
-  const { data, isLoading, error } = useGetUsers(currentPage, currentLimit)
+  const { data, isLoading, error, isFetching } = useGetUsers(currentPage, currentLimit)
   
   const users = data?.data?.users || []
   const pagination = data?.data?.pagination
@@ -348,67 +349,19 @@ export default function AdminUsersPage() {
       </AdminTable>
 
       {/* Pagination Controls - Always Visible */}
-      <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-600 dark:text-gray-400">Show:</span>
-          <select 
-            value={currentLimit} 
-            onChange={(e) => handleLimitChange(Number(e.target.value))}
-            className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-          >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            of {pagination?.total || 0} users
-          </span>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(1)}
-            disabled={currentPage === 1 || isLoading}
-          >
-            <ChevronsLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1 || isLoading}
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <span className="text-sm text-gray-600 dark:text-gray-400 px-3">
-            Page {currentPage} of {pagination?.totalPages || 1}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage >= (pagination?.totalPages || 1) || isLoading}
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(pagination?.totalPages || 1)}
-            disabled={currentPage >= (pagination?.totalPages || 1) || isLoading}
-          >
-            <ChevronsRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Bottom Pagination Info */}
-      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-        Showing {((currentPage - 1) * currentLimit) + 1} to {Math.min(currentPage * currentLimit, pagination?.total || 0)} of {pagination?.total || 0} users
-      </div>
+      {pagination && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={pagination.totalPages}
+          totalCount={pagination.total}
+          pageSize={currentLimit}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handleLimitChange}
+          disabled={isFetching}
+          entityLabel="records"
+          className="mt-4"
+        />
+      )}
     </div>
   )
 }

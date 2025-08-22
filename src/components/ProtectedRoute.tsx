@@ -49,9 +49,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       // Wait for user profile to load to determine role
       if (isUserLoading || !currentUser?.role) return;
       const userRole = currentUser.role;
-      if (!allowedRoles.includes(userRole)) {
+      // Allow admins to access routes that allow "user" as well
+      const isAllowed =
+        allowedRoles.includes(userRole) ||
+        (userRole === "admin" && allowedRoles.includes("user"));
+      if (!isAllowed) {
         // Redirect user to their default dashboard
-        const fallback = userRole === "admin" ? "/admin" : "/user/dashboard";
+        const fallback = userRole === "admin" ? "/admin/pending-products" : "/user/dashboard";
         router.replace(fallback);
         return;
       }
@@ -62,7 +66,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       // Wait for user profile to load to determine role
       if (isUserLoading || !currentUser?.role) return;
       const targetRoute =
-        redirectTo || (currentUser.role === "admin" ? "/admin" : "/user/dashboard");
+        redirectTo || (currentUser.role === "admin" ? "/admin/pending-products" : "/user/dashboard");
       router.replace(targetRoute);
     }
   }, [

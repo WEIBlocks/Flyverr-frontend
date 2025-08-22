@@ -116,7 +116,7 @@ export default function DashboardLayout({ children, navItems, headerTitle, profi
         return LayoutDashboard
     }
   }
- console.log("user", user);
+
  
   return (
     <div className="min-h-screen bg-background text-foreground">

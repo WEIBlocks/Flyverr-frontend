@@ -44,6 +44,8 @@ import Modal from "@/components/Modal";
 import { useGetCurrentUser } from "@/features/auth/hooks";
 import { useAuth } from "@/contexts/AuthContext";
 import { swal } from "@/lib/utils";
+import BuyToUseButton from "@/features/user/product/components/BuyToUseButton";
+import BuyToResellButton from "@/features/user/product/components/BuyToResellButton";
 
 // Types
 interface Review {
@@ -92,7 +94,7 @@ const mockReviews: Review[] = [
     helpful: 31,
   },
 ];
-    
+
 // Resale Stage Configuration
 const resaleStages = {
   newboom: {
@@ -120,7 +122,6 @@ const resaleStages = {
     earningPotential: "Low",
   },
 };
- 
 
 export default function ProductDetailPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -195,7 +196,6 @@ export default function ProductDetailPage() {
     );
   }
 
- 
   const stage = resaleStages[product.current_stage];
   const images =
     product.images_urls && product.images_urls.length > 0
@@ -205,116 +205,9 @@ export default function ProductDetailPage() {
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
-  
+
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
-    
-
-  const handleBuyToUse = () => {
-    if (!isAuthenticated) {
-      swal(
-        "Please login to purchase",
-        "You must be logged in to purchase this product",
-        "info",
-        () => {
-          router.push("/login");
-        }
-      );
-      return;
-    }
-    if (!canPurchaseProducts(currentUser)) {
-      setIsStripeOnboardingModalOpen(true);
-      return;
-    }
-    // Handle buy to use logic
-    console.log("Buy to Use clicked for product:", product.id);
-    setIsBuyingToUse(true);
-
-    purchaseProduct(
-      {
-        id: productId,
-        data: {
-          purchaseType: "use",
-          hasInsurance: false,
-          paymentMethod: "stripe",
-        },
-      },
-      {
-        onSuccess: () => {
-          setIsBuyingToUse(false);
-        },
-        onError: () => {
-          setIsBuyingToUse(false);
-        },
-      }
-    );
-
-    // Reset loading state after a delay (you can also handle this in onSuccess/onError)
-  };
-
-  const handleBuyToResell = () => {
-    if (!isAuthenticated) {
-      swal(
-        "Please login to purchase",
-        "You must be logged in to purchase this product",
-        "info",
-        () => {
-          router.push("/login");
-        }
-      );
-      return;
-    }
-    if (!canPurchaseProducts(currentUser)) {
-      setIsStripeOnboardingModalOpen(true);
-      return;
-    }
-    // Show insurance modal for resell
-    setSelectedPurchaseType("resell");
-    setIsInsuranceModalOpen(true);
-  };
-
-  const handleInsuranceChoice = (hasInsurance: boolean) => {
-    if (!selectedPurchaseType) return;
-
-    // Calculate insurance fee if applicable
-    // const basePrice = product.current_price;
-    // const insuranceFee = hasInsurance ? basePrice * 0.05 : 0;
-    // const totalPrice = basePrice + insuranceFee;
-
-    // console.log(`${selectedPurchaseType === 'resell' ? 'Buy to Resell' : 'Buy to Use'} clicked for product:`, product.id)
-    // console.log(`Insurance: ${hasInsurance ? 'Yes' : 'No'}, Fee: $${insuranceFee.toFixed(2)}, Total: $${totalPrice.toFixed(2)}`)
-
-    // Set loading state for resell
-    if (selectedPurchaseType === "resell") {
-      setIsBuyingToResell(true);
-    }
-
-    // Call purchase with insurance choice
-    purchaseProduct(
-      {
-        id: productId,
-        data: {
-          purchaseType: selectedPurchaseType,
-          hasInsurance,
-          paymentMethod: "stripe",
-        },
-      },
-      {
-        onSuccess: () => {
-          setIsBuyingToResell(false);
-        },
-        onError: () => {
-          setIsBuyingToResell(false);
-        },
-      }
-    );
-
-    // Close modal and reset
-    setIsInsuranceModalOpen(false);
-    setSelectedPurchaseType(null);
-
-    // Reset loading state after a delay
   };
 
   return (
@@ -590,21 +483,20 @@ export default function ProductDetailPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                     
                       <Badge
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
                       >
                         {product.current_stage}
                       </Badge>
-                    
+
                       <Badge
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
                       >
                         Round {product.current_round}
                       </Badge>
-                     
+
                       <Badge
                         variant="outline"
                         className="text-gray-600 dark:text-gray-400"
@@ -622,64 +514,63 @@ export default function ProductDetailPage() {
                         key={review.id}
                         className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
                       >
-                      <div
-                        key={review.id}
-                        className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
-                      >
-                        <div className="flex items-start gap-4">
-                          <Image
-                            src={review.avatar}
-                            alt={review.user}
-                            width={48}
-                            height={48}
-                            className="rounded-full"
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-semibold text-flyverr-text dark:text-white">
-                                {review.user}
-                              </h4>
-                              <span className="text-sm text-gray-500 dark:text-gray-400">
-                                {review.date}
-                              </span>
-                              <h4 className="font-semibold text-flyverr-text dark:text-white">
-                                {review.user}
-                              </h4>
-                              <span className="text-sm text-gray-500 dark:text-gray-400">
-                                {review.date}
-                              </span>
-                            </div>
-                            <div className="flex items-center mb-2">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`h-4 w-4 ${
-                                    i < review.rating
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300 dark:text-gray-600"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            <p className="text-gray-600 dark:text-gray-300">
-                              {review.comment}
-                            </p>
-                            <p className="text-gray-600 dark:text-gray-300">
-                              {review.comment}
-                            </p>
-                            <div className="mt-3">
-                          
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-gray-500 dark:text-gray-400"
-                              >
-                                Helpful ({review.helpful})
-                              </Button>
+                        <div
+                          key={review.id}
+                          className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
+                        >
+                          <div className="flex items-start gap-4">
+                            <Image
+                              src={review.avatar}
+                              alt={review.user}
+                              width={48}
+                              height={48}
+                              className="rounded-full"
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-2">
+                                <h4 className="font-semibold text-flyverr-text dark:text-white">
+                                  {review.user}
+                                </h4>
+                                <span className="text-sm text-gray-500 dark:text-gray-400">
+                                  {review.date}
+                                </span>
+                                <h4 className="font-semibold text-flyverr-text dark:text-white">
+                                  {review.user}
+                                </h4>
+                                <span className="text-sm text-gray-500 dark:text-gray-400">
+                                  {review.date}
+                                </span>
+                              </div>
+                              <div className="flex items-center mb-2">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`h-4 w-4 ${
+                                      i < review.rating
+                                        ? "text-yellow-400 fill-current"
+                                        : "text-gray-300 dark:text-gray-600"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                              <p className="text-gray-600 dark:text-gray-300">
+                                {review.comment}
+                              </p>
+                              <p className="text-gray-600 dark:text-gray-300">
+                                {review.comment}
+                              </p>
+                              <div className="mt-3">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-gray-500 dark:text-gray-400"
+                                >
+                                  Helpful ({review.helpful})
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
                       </div>
                     ))}
                   </div>
@@ -719,9 +610,9 @@ export default function ProductDetailPage() {
                       <p className="text-gray-600 dark:text-gray-300">
                         This creator has developed digital products available on
                         our marketplace. Their products go through our approval
-                        process to ensure quality and compliance.
-                        This creator has developed digital products available on
-                        our marketplace. Their products go through our approval
+                        process to ensure quality and compliance. This creator
+                        has developed digital products available on our
+                        marketplace. Their products go through our approval
                         process to ensure quality and compliance.
                       </p>
                     </div>
@@ -770,51 +661,18 @@ export default function ProductDetailPage() {
                   {/* Purchase Buttons */}
                   <div className="space-y-4 mb-6">
                     {/* Primary Action - Buy to Use */}
-                    <Button
-                      className="w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-white py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-                      onClick={handleBuyToUse}
-                      disabled={isBuyingToUse}
-                    >
-                      {isBuyingToUse ? (
-                        <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Buying...
-                        </div>
-                      ) : (
-                        <>
-                          <Download className="h-6 w-6 mr-3" />
-                          Buy to Use
-                        </>
-                      )}
-                    </Button>
+                    <BuyToUseButton />
 
                     {/* Secondary Action - Buy to Resell */}
-                    <Button
-                      variant="outline"
-                      className="w-full bg-transparent dark:bg-transparent border-2 border-flyverr-secondary text-flyverr-secondary dark:text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white dark:hover:bg-flyverr-secondary dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400 "
-                      onClick={handleBuyToResell}
-                      disabled={isBuyingToResell}
-                    >
-                      {isBuyingToResell ? (
-                        <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-flyverr-secondary mr-2"></div>
-                          Buying...
-                        </div>
-                      ) : (
-                        <>
-                          <TrendingUp className="h-6 w-6 mr-3" />
-                          Buy to Resell
-                        </>
-                      )}
-                    </Button>
+                    <BuyToResellButton product={product} />
 
                     {/* Tertiary Action - Buy with Insurance */}
                     {/* <Button 
                       variant="outline"
-                      className="w-full bg-transparent dark:bg-transparent border-2 border-flyverr-accent text-flyverr-accent dark:text-flyverr-accent hover:bg-flyverr-accent hover:text-white dark:hover:bg-flyverr-accent  py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-amber-400 dark:hover:text-white"
+                      className="w-full bg-transparent dark:bg-transparent border-2 border-flyverr-accent text-flyverr-accent dark:text-flyverr-accent hover:bg-flyverr-accent hover:text-white dark:hover:bg-flyverr-accent  py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-amber-400 dark:border-amber-400 dark:hover:bg-amber-400 dark:hover:text-white"
                       onClick={handleBuyWithInsurance}
                     >
-                      <Shield className="h-6 w-6 mr-3" />
+                      <Shield className="h-5 w-6 mr-3" />
                       Buy with Insurance
                     </Button> */}
                   </div>
@@ -860,86 +718,6 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
-      {/* Stripe Onboarding Modal */}
-      <StripeOnboardingModal
-        isOpen={isStripeOnboardingModalOpen}
-        onClose={() => setIsStripeOnboardingModalOpen(false)}
-      />
-
-      {/* Insurance Choice Modal */}
-      {isInsuranceModalOpen && (
-        <Modal size="sm">
-          <div className="p-6">
-            <div className="text-center mb-6">
-              <Shield className="h-16 w-16 text-flyverr-accent mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-flyverr-text dark:text-white mb-2">
-                Resell Protection Insurance
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
-                Protect your investment with our resell insurance. If the
-                product doesn't sell, we'll refund your fee.
-              </p>
-            </div>
-
-            <div className="bg-flyverr-accent/10 dark:bg-flyverr-accent/20 rounded-lg p-4 mb-6">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-flyverr-text dark:text-white">
-                  Base Price:
-                </span>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  ${product.current_price}
-                </span>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-flyverr-text dark:text-white">
-                  Insurance Fee (5%):
-                </span>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  ${(product.current_price * 0.05).toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-600 pt-2">
-                <span className="text-sm font-bold text-flyverr-text dark:text-white">
-                  Total Price:
-                </span>
-                <span className="text-sm font-bold text-flyverr-accent">
-                  ${(product.current_price * 1.05).toFixed(2)}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Button
-                className="w-full bg-flyverr-accent hover:bg-flyverr-accent/90 text-white py-3 font-semibold"
-                onClick={() => handleInsuranceChoice(true)}
-              >
-                <Shield className="h-5 w-5 mr-2" />
-                Yes, Add Insurance (+5%)
-              </Button>
-
-              <Button
-                variant="outline"
-                className="w-full text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white py-3 font-semibold border border-flyverr-secondary dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400 dark:hover:text-white"
-                onClick={() => handleInsuranceChoice(false)}
-              >
-                <TrendingUp className="h-5 w-5 mr-2" />
-                No Insurance, Proceed
-              </Button>
-
-              <Button
-                variant="ghost"
-                className="w-full text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                onClick={() => {
-                  setIsInsuranceModalOpen(false);
-                  setSelectedPurchaseType(null);
-                }}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }

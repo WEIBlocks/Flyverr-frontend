@@ -23,7 +23,7 @@ import {
 import type { PendingProduct } from "@/features/admin/product/product.types";
 import { useApproveProduct } from "@/features/admin/product/hooks/useApproveProduct";
 import toast from "react-hot-toast";
-import Modal from "./Modal";
+import Modal from "@/components/Modal";
 
 interface ProductApprovalModalProps {
   product: PendingProduct | null;
@@ -36,16 +36,23 @@ export default function ProductApprovalModal({
   isOpen,
   onClose,
 }: ProductApprovalModalProps) {
-  const [isApproved, setIsApproved] = useState<boolean | null>(null);
+  const [isApproved, setIsApproved] = useState<boolean | null>(true);
   const [adminNotes, setAdminNotes] = useState("");
   const [roundPricing, setRoundPricing] = useState({
+    originalPrice: 0,
     blossomPrice: 0,
     evergreenPrice: 0,
     exitPrice: 0,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({
+    blossomPrice: "",
+    evergreenPrice: "",
+    exitPrice: "",
+    adminNotes: "",
+  });
 
-  const approveProductMutation = useApproveProduct();
+  const { mutate, isPending } = useApproveProduct();
 
   // Initialize form when product changes
   useEffect(() => {
@@ -53,43 +60,84 @@ export default function ProductApprovalModal({
       // Set default round pricing based on original price
       const basePrice = product.original_price;
       setRoundPricing({
+        originalPrice: basePrice,
         blossomPrice: Math.round(basePrice * 1.2), // 20% increase
         evergreenPrice: Math.round(basePrice * 1.4), // 40% increase
         exitPrice: Math.round(basePrice * 1.6), // 60% increase
       });
       setAdminNotes("");
-      setIsApproved(null);
+      setIsApproved(true);
+      setErrors({
+        blossomPrice: "",
+        evergreenPrice: "",
+        exitPrice: "",
+        adminNotes: "",
+      });
     }
   }, [product]);
 
-  const handleSubmit = async () => {
-    if (isApproved === null) {
-      toast.error("Please select approve or reject");
+  const setFieldError = (field: keyof typeof errors, value: string) => {
+    const parsed = parseFloat(value);
+    const message =
+      value === "" || isNaN(parsed)
+        ? "This field is required"
+        : parsed <= 0
+        ? "Must be greater than 0"
+        : "";
+    setErrors((prev) => ({ ...prev, [field]: message }));
+  };
+
+  const handlePriceChange =
+    (field: keyof typeof roundPricing) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setFieldError(field as keyof typeof errors, value);
+      const numeric = parseFloat(value);
+      setRoundPricing((prev) => ({
+        ...prev,
+        [field]: isNaN(numeric) ? 0 : numeric,
+      }));
+    };
+
+  const validateFields = () => {
+    const newErrors = {
+      blossomPrice: "",
+      evergreenPrice: "",
+      exitPrice: "",
+      adminNotes: "",
+    };
+
+    // Admin notes are required for both approval and rejection
+    if (adminNotes.trim() === "") {
+      newErrors.adminNotes = "This field is required";
+    }
+
+    if (isApproved === true) {
+      if (roundPricing.blossomPrice <= 0) {
+        newErrors.blossomPrice = "This field is required";
+      }
+      if (roundPricing.evergreenPrice <= 0) {
+        newErrors.evergreenPrice = "This field is required";
+      }
+      if (roundPricing.exitPrice <= 0) {
+        newErrors.exitPrice = "This field is required";
+      }
+    }
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error !== "");
+  };
+
+  const handleSubmit = () => {
+    if (!validateFields()) {
       return;
     }
 
-    if (isApproved && adminNotes.trim() === "") {
-      toast.error("Please provide admin notes for approval");
-      return;
-    }
-
-    if (
-      isApproved &&
-      (roundPricing.blossomPrice <= 0 ||
-        roundPricing.evergreenPrice <= 0 ||
-        roundPricing.exitPrice <= 0)
-    ) {
-      toast.error("Please set valid round pricing");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await approveProductMutation.mutateAsync({
+    mutate(
+      {
         productId: product!.id,
         approvalData: {
-          approved: isApproved,
+          approved: isApproved as boolean,
           adminNotes: adminNotes.trim(),
           roundPricing: {
             blossomPrice: roundPricing.blossomPrice,
@@ -97,21 +145,17 @@ export default function ProductApprovalModal({
             exitPrice: roundPricing.exitPrice,
           },
         },
-      });
-
-      toast.success(
-        `Product ${isApproved ? "approved" : "rejected"} successfully!`
-      );
-      onClose();
-    } catch (error) {
-      console.error("Approval error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+      },
+      {
+        onSuccess: () => {
+          onClose();
+        },
+      }
+    );
   };
 
   const handleClose = () => {
-    if (!isSubmitting) {
+    if (!isPending) {
       onClose();
     }
   };
@@ -140,7 +184,7 @@ export default function ProductApprovalModal({
             variant="ghost"
             size="sm"
             onClick={handleClose}
-            disabled={isSubmitting}
+            disabled={isPending}
             className="text-gray-500 hover:text-flyverr-primary dark:text-gray-400 dark:hover:text-flyverr-secondary hover:bg-flyverr-primary/10 dark:hover:bg-flyverr-secondary/20 rounded-xl p-2"
           >
             <X className="w-5 h-5" />
@@ -279,11 +323,16 @@ export default function ProductApprovalModal({
                         $
                       </span>
                       <Input
-                        value={product.original_price}
-                        disabled
-                        className="pl-8 bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 font-semibold"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={roundPricing.originalPrice || ""}
+                        onChange={handlePriceChange("originalPrice")}
+                        className="pl-8 bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 font-semibold focus:border-flyverr-primary focus:ring-flyverr-primary/20"
+                        placeholder="100"
                       />
                     </div>
+
                     <p className="text-xs text-green-700 dark:text-green-300">
                       Never resold - Original licenses only
                     </p>
@@ -303,17 +352,17 @@ export default function ProductApprovalModal({
                         type="number"
                         min="0"
                         step="0.01"
-                        value={roundPricing.blossomPrice}
-                        onChange={(e) =>
-                          setRoundPricing((prev) => ({
-                            ...prev,
-                            blossomPrice: parseFloat(e.target.value) || 0,
-                          }))
-                        }
+                        value={roundPricing.blossomPrice || ""}
+                        onChange={handlePriceChange("blossomPrice")}
                         className="pl-8 bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-200 focus:border-flyverr-primary focus:ring-flyverr-primary/20"
                         placeholder="120"
                       />
                     </div>
+                    {errors.blossomPrice && (
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        {errors.blossomPrice}
+                      </p>
+                    )}
                     <p className="text-xs text-blue-700 dark:text-blue-300">
                       1st resale cycle - Growing demand
                     </p>
@@ -333,51 +382,51 @@ export default function ProductApprovalModal({
                         type="number"
                         min="0"
                         step="0.01"
-                        value={roundPricing.evergreenPrice}
-                        onChange={(e) =>
-                          setRoundPricing((prev) => ({
-                            ...prev,
-                            evergreenPrice: parseFloat(e.target.value) || 0,
-                          }))
-                        }
+                        value={roundPricing.evergreenPrice || ""}
+                        onChange={handlePriceChange("evergreenPrice")}
                         className="pl-8 bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-800 dark:text-purple-200 focus:border-flyverr-primary focus:ring-flyverr-primary/20"
                         placeholder="140"
                       />
                     </div>
+                    {errors.evergreenPrice && (
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        {errors.evergreenPrice}
+                      </p>
+                    )}
                     <p className="text-xs text-purple-700 dark:text-purple-300">
                       2nd resale cycle - Stable value
                     </p>
                   </div>
-                </div>
 
-                {/* Exit Round */}
-                <div className="space-y-3 p-4 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-200 dark:border-orange-800 max-w-md">
-                  <Label className="text-sm font-semibold flex items-center space-x-2 text-orange-800 dark:text-orange-400">
-                    <TrendingUp className="w-4 h-4" />
-                    <span>Exit</span>
-                  </Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-600 dark:text-orange-400 font-semibold">
-                      $
-                    </span>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={roundPricing.exitPrice}
-                      onChange={(e) =>
-                        setRoundPricing((prev) => ({
-                          ...prev,
-                          exitPrice: parseFloat(e.target.value) || 0,
-                        }))
-                      }
-                      className="pl-8 bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-orange-800 dark:text-orange-200 focus:border-flyverr-primary focus:ring-flyverr-primary/20"
-                      placeholder="160"
-                    />
+                  {/* Exit Round */}
+                  <div className="space-y-3 p-4 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-200 dark:border-orange-800 ">
+                    <Label className="text-sm font-semibold flex items-center space-x-2 text-orange-800 dark:text-orange-400">
+                      <TrendingUp className="w-4 h-4" />
+                      <span>Exit</span>
+                    </Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-600 dark:text-orange-400 font-semibold">
+                        $
+                      </span>
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={roundPricing.exitPrice || ""}
+                        onChange={handlePriceChange("exitPrice")}
+                        className="pl-8 bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-orange-800 dark:text-orange-200 focus:border-flyverr-primary focus:ring-flyverr-primary/20"
+                        placeholder="160"
+                      />
+                    </div>
+                    {errors.exitPrice && (
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        {errors.exitPrice}
+                      </p>
+                    )}
+                    <p className="text-xs text-orange-700 dark:text-orange-300">
+                      3rd resale cycle - Final opportunity
+                    </p>
                   </div>
-                  <p className="text-xs text-orange-700 dark:text-orange-300">
-                    3rd resale cycle - Final opportunity
-                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -393,25 +442,34 @@ export default function ProductApprovalModal({
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {isApproved === true
                   ? "Add notes about why this product was approved"
-                  : isApproved === false
-                  ? "Add notes about why this product was rejected"
-                  : "Add notes about your decision"}
+                  : "Add notes about why this product was rejected"}
               </p>
             </CardHeader>
             <CardContent className="p-6">
               <Textarea
                 value={adminNotes}
-                onChange={(e) => setAdminNotes(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setAdminNotes(value);
+                  setErrors((prev) => ({
+                    ...prev,
+                    adminNotes:
+                      value.trim() === "" ? "This field is required" : "",
+                  }));
+                }}
                 placeholder={
                   isApproved === true
                     ? "This product meets our quality standards because..."
-                    : isApproved === false
-                    ? "This product was rejected because..."
-                    : "Add your notes here..."
+                    : "This product was rejected because..."
                 }
                 className="min-h-[120px] border-2 border-gray-200 dark:border-gray-600 focus:border-flyverr-primary focus:ring-flyverr-primary/20 rounded-xl resize-none"
-                disabled={isSubmitting}
+                disabled={isPending}
               />
+              {errors.adminNotes && (
+                <p className="text-xs text-red-600 dark:text-red-400">
+                  {errors.adminNotes}
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -420,14 +478,14 @@ export default function ProductApprovalModal({
             <Button
               variant="outline"
               onClick={handleClose}
-              disabled={isSubmitting}
+              disabled={isPending}
               className="px-8 py-3 text-lg font-semibold rounded-xl border-2 border-gray-300 dark:border-gray-600 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-secondary dark:hover:text-flyverr-secondary transition-all duration-200"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={isSubmitting || isApproved === null}
+              disabled={isPending}
               className={`min-w-[140px] px-8 py-3 text-lg font-semibold rounded-xl transition-all duration-200 ${
                 isApproved === true
                   ? "bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl"
@@ -436,7 +494,7 @@ export default function ProductApprovalModal({
                   : "bg-gray-400 text-white cursor-not-allowed"
               }`}
             >
-              {isSubmitting ? (
+              {isPending ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
                   Processing...
@@ -448,13 +506,11 @@ export default function ProductApprovalModal({
                       <CheckCircle className="w-5 h-5 mr-2" />
                       Approve
                     </>
-                  ) : isApproved === false ? (
+                  ) : (
                     <>
                       <XCircle className="w-5 h-5 mr-2" />
                       Reject
                     </>
-                  ) : (
-                    "Submit"
                   )}
                 </>
               )}

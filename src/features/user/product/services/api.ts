@@ -54,3 +54,14 @@ export function sponsorProductApi(args: {
       throw err;
     });
 }
+
+
+
+export function getProductCategories() {
+  return api
+    .get("/products/categories")
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err;
+    });
+}

@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import { ErrorResponse } from "@/lib/types";
 import { createUserFriendlyError } from "@/lib/errorUtils";
+import { swal } from "@/lib/utils";
 
 export const useApproveProduct = () => {
   const queryClient = useQueryClient();
@@ -22,21 +23,17 @@ export const useApproveProduct = () => {
     },
     onSuccess: (data, variables) => {
       const action = variables.approvalData.approved ? "approved" : "rejected";
-      Swal.fire({
-        title: `Product ${action}`,
-        icon: "success",
-        text: `Product ${action} successfully`,
-      }).then(async () => {
-        // Invalidate and refetch pending products
-        queryClient.invalidateQueries({ queryKey: ["pending-products"] });
-      });
+      swal(
+        `Product ${action}`,
+        `Product ${action} successfully`,
+        "success",
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["pending-products"] });
+        }
+      );
     },
     onError: (error: ErrorResponse) => {
-      Swal.fire({
-        title: "Error",
-        icon: "error",
-        text: createUserFriendlyError(error),
-      });
+      swal("Error", createUserFriendlyError(error), "error");
     },
   });
 };

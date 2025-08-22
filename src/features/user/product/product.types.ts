@@ -20,6 +20,7 @@ export interface UserProduct {
   thumbnail_url: string;
   file_type: string;
   original_price: number;
+  current_price: number;
   total_licenses: number;
   remaining_licenses: number;
   status: string;

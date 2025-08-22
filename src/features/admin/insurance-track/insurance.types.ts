@@ -1,3 +1,12 @@
+export type InsuranceStatusFilter = "active" | "expired" | "all";
+
+export interface InsuranceQueryParams {
+	status?: InsuranceStatusFilter;
+	includeResold?: boolean;
+	page?: number;
+	limit?: number;
+}
+
 export interface InsuranceUser {
   id: string;
   email: string;
