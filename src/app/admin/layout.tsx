@@ -38,6 +38,21 @@ export default function AdminLayout({
       iconName: "stale",
     },
     { name: "Reviews", href: "/admin/reviews", iconName: "reviews" },
+    {
+      name: "Sponsored Products",
+      href: "/admin/sponsored-products",
+      iconName: "sponsored",
+    },
+    {
+      name: "Platform Revenue",
+      href: "/admin/platform-revenue",
+      iconName: "revenue",
+    },
+    {
+      name: "Payout Requests",
+      href: "/admin/payout-requests",
+      iconName: "payout",
+    },
   ];
 
   return (
