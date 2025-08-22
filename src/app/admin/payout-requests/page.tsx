@@ -22,10 +22,6 @@ import {
   Clock,
   XCircle,
   AlertCircle,
-  Eye,
-  BarChart3,
-  Filter,
-  Download,
   RefreshCw,
   ThumbsUp,
   ThumbsDown,
@@ -247,17 +243,6 @@ export default function AdminPayoutRequestsPage() {
               className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
             />
             Refresh
-          </Button>
-          <Button
-            variant="outline"
-            className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-          <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white">
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Analytics
           </Button>
         </div>
       </div>
@@ -564,13 +549,6 @@ export default function AdminPayoutRequestsPage() {
                           <RotateCcw className="w-3 h-3" />
                         </Button>
                       )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="hover:bg-purple-50 dark:hover:bg-purple-900/20 border-purple-200 dark:border-purple-700 text-purple-600 dark:text-purple-400"
-                      >
-                        <Eye className="w-3 h-3" />
-                      </Button>
                     </div>
                   </AdminTableCell>
                 </AdminTableRow>

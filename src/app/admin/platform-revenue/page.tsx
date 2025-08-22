@@ -28,7 +28,6 @@ import {
   BarChart3,
   Filter,
   Search,
-  Download,
   RefreshCw,
   Shield,
   ArrowUpDown,
@@ -276,19 +275,6 @@ export default function AdminPlatformRevenuePage() {
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             Monitor platform earnings and transaction analytics
           </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="outline"
-            className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-          <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white">
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Analytics
-          </Button>
         </div>
       </div>
 
@@ -641,15 +627,12 @@ export default function AdminPlatformRevenuePage() {
                     {getSortIcon("created_at")}
                   </button>
                 </AdminTableHeaderCell>
-                <AdminTableHeaderCell align="center">
-                  Actions
-                </AdminTableHeaderCell>
               </tr>
             </AdminTableHeader>
             <AdminTableBody>
               {transactions.length === 0 ? (
                 <AdminTableRow>
-                  <td colSpan={6} className="text-center py-8">
+                  <td colSpan={5} className="text-center py-8">
                     <div className="text-gray-500 dark:text-gray-400">
                       <Package className="w-12 h-12 mx-auto mb-2 opacity-50" />
                       <p>No transactions found</p>
@@ -783,26 +766,6 @@ export default function AdminPlatformRevenuePage() {
                         <div className="text-xs text-gray-500 dark:text-gray-400">
                           ID: {transaction.id.slice(0, 8)}...
                         </div>
-                      </div>
-                    </AdminTableCell>
-
-                    {/* Actions Cell */}
-                    <AdminTableCell align="center">
-                      <div className="flex items-center justify-center space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="hover:bg-blue-50 dark:hover:bg-blue-900/20 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400"
-                        >
-                          <Eye className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="hover:bg-purple-50 dark:hover:bg-purple-900/20 border-purple-200 dark:border-purple-700 text-purple-600 dark:text-purple-400"
-                        >
-                          <BarChart3 className="w-3 h-3" />
-                        </Button>
                       </div>
                     </AdminTableCell>
                   </AdminTableRow>
