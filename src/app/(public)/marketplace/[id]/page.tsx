@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -24,6 +23,7 @@ import {
   Flame,
   Zap,
   Gift,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,54 +46,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { swal } from "@/lib/utils";
 import BuyToUseButton from "@/features/user/product/components/BuyToUseButton";
 import BuyToResellButton from "@/features/user/product/components/BuyToResellButton";
-
-// Types
-interface Review {
-  id: string;
-  user: string;
-  avatar: string;
-  rating: number;
-  date: string;
-  comment: string;
-  helpful: number;
-}
-
-// Mock reviews (you can replace this with real API data later)
-const mockReviews: Review[] = [
-  {
-    id: "1",
-    user: "Sarah Johnson",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face",
-    rating: 5,
-    date: "2024-01-10",
-    comment:
-      "Amazing course! The instructor explains complex concepts in a very clear way. I went from knowing nothing about web development to building my first full-stack application.",
-    helpful: 24,
-  },
-  {
-    id: "2",
-    user: "Mike Chen",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
-    rating: 4,
-    date: "2024-01-08",
-    comment:
-      "Great content and well-structured. The practical projects really help reinforce the learning. Would recommend to anyone starting their web development journey.",
-    helpful: 18,
-  },
-  {
-    id: "3",
-    user: "Emily Rodriguez",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face",
-    rating: 5,
-    date: "2024-01-05",
-    comment:
-      "Excellent course! The instructor is very knowledgeable and the community support is fantastic. Already started working on my portfolio.",
-    helpful: 31,
-  },
-];
+import { useGetMyLicenses } from "@/features/user/licenses/hooks/useGetMyLicenses";
+import AddReview from "@/features/user/reviews/components/AddReview";
+import { useGetProductReviews } from "@/features/user/reviews/hooks/useGetProductReviews";
+import type {
+  ProductReview,
+  ReviewSummary,
+} from "@/features/user/reviews/review.types";
 
 // Resale Stage Configuration
 const resaleStages = {
@@ -141,7 +100,6 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const productId = params.id as string;
-  // Get product ID from params
 
   // Fetch product data using the hook
   const {
@@ -149,14 +107,36 @@ export default function ProductDetailPage() {
     isLoading,
     error,
   } = useGetMarketplaceProductDetail(productId);
-  const { data: licenseData } = useGetAvailableLicenses(productId) as {
-    data: AvailableLicensesResponse;
-  };
+  const {
+    data: licenseData ,
+    isLoading: isLoadingLicense,
+    error: licenseError,
+  } = useGetAvailableLicenses(productId);
+  const {
+    data: reviewsData,
+    isLoading: isLoadingReviews,
+    error: reviewsError,
+  } = useGetProductReviews(productId);
   const { mutate: trackProductView } = useTrackProductView();
   const { recordView } = useCategoryPreferences();
-  const { mutate: purchaseProduct, isPending: isPurchasing } =
-    usePurchaseProduct();
+  const {
+    data: myLicenses,
+    isLoading: isLoadingMyLicenses,
+    error: myLicensesError,
+  } = useGetMyLicenses(1, 100);
+
   const { data: currentUser } = useGetCurrentUser();
+
+  // Extract reviews and summary data
+  const reviews = (reviewsData as any)?.data?.reviews || [];
+  const summary = (reviewsData as any)?.data?.summary;
+  const totalReviews = summary?.total_reviews || 0;
+  const averageRating = summary?.average_rating || 0;
+
+  // Extract license data
+  const availableLicenses = (licenseData as any)?.data?.available_licenses || [];
+  const licenseProduct = (licenseData as any)?.data?.product;
+  const totalAvailable = (licenseData as any)?.data?.total_available || 0;
 
   // Track product view when product is loaded
   useEffect(() => {
@@ -172,7 +152,7 @@ export default function ProductDetailPage() {
   }
 
   // Show error state
-  if (error || !product) {
+  if (error || !product || licenseError || reviewsError || myLicensesError) {
     return (
       <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
@@ -201,6 +181,12 @@ export default function ProductDetailPage() {
     product.images_urls && product.images_urls.length > 0
       ? product.images_urls
       : [product.thumbnail_url];
+  const ownsLicense = !!(myLicenses as any)?.data?.licenses?.some(
+    (group: any) =>
+      group?.product?.id === productId &&
+      Array.isArray(group.licenses) &&
+      group.licenses.length > 0
+  );
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -208,6 +194,30 @@ export default function ProductDetailPage() {
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  // Helper function to render star rating
+  const renderStars = (rating: number, size: "sm" | "md" | "lg" = "md") => {
+    const sizeClasses = {
+      sm: "h-3 w-3",
+      md: "h-4 w-4",
+      lg: "h-5 w-5",
+    };
+
+    return (
+      <div className="flex items-center">
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            className={`${sizeClasses[size]} ${
+              i < rating
+                ? "text-yellow-400 fill-current"
+                : "text-gray-300 dark:text-gray-600"
+            }`}
+          />
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -316,25 +326,22 @@ export default function ProductDetailPage() {
               {/* Rating and Reviews */}
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center">
-                  <div className="flex items-center mr-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-5 w-5 ${
-                          i < 4 // You can replace this with actual rating when available
-                            ? "text-yellow-400 fill-current"
-                            : "text-gray-300 dark:text-gray-600"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-flyverr-text dark:text-white font-medium">
-                    4.0 (0 reviews)
+                  {renderStars(averageRating, "lg")}
+                  <span className="text-flyverr-text dark:text-white font-medium ml-2">
+                    {averageRating.toFixed(1)} ({totalReviews} reviews)
                   </span>
                 </div>
                 <Badge className="bg-flyverr-secondary/20 dark:bg-flyverr-secondary/30 text-flyverr-secondary dark:text-flyverr-secondary">
                   Digital Product
                 </Badge>
+                {ownsLicense && (
+                  <AddReview
+                    productId={productId}
+                    buttonVariant="outline"
+                    buttonClassName="border-2 border-flyverr-primary dark:border-flyverr-primary text-flyverr-primary dark:text-white hover:bg-flyverr-primary hover:text-white dark:hover:bg-flyverr-primary dark:hover:text-white px-6 py-2.5 font-semibold shadow-md hover:shadow-lg"
+                    onSuccess={() => setSelectedTab("reviews")}
+                  />
+                )}
               </div>
 
               {/* Special Badges */}
@@ -373,7 +380,7 @@ export default function ProductDetailPage() {
                   <div className="flex items-center gap-2">
                     <span className="text-gray-600 dark:text-gray-400">
                       Remaining:{" "}
-                      {licenseData?.data?.product?.remaining_licenses ??
+                      {licenseProduct?.remaining_licenses ??
                         product.remaining_licenses}{" "}
                       of {product.total_licenses} licenses
                     </span>
@@ -391,7 +398,7 @@ export default function ProductDetailPage() {
                       className="bg-flyverr-primary h-2 rounded-full"
                       style={{
                         width: `${
-                          ((licenseData?.data?.product?.remaining_licenses ??
+                          ((licenseProduct?.remaining_licenses ??
                             product.remaining_licenses) /
                             product.total_licenses) *
                           100
@@ -407,7 +414,7 @@ export default function ProductDetailPage() {
                 <div className="flex space-x-8">
                   {[
                     { id: "description", label: "Description" },
-                    { id: "reviews", label: "Reviews (0)" },
+                    { id: "reviews", label: `Reviews (${totalReviews})` },
                     { id: "creator", label: "Creator" },
                   ].map((tab) => (
                     <button
@@ -463,9 +470,6 @@ export default function ProductDetailPage() {
                         <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">
                           Stage Pricing
                         </h4>
-                        <h4 className="font-semibold text-flyverr-text dark:text-white mb-3">
-                          Stage Pricing
-                        </h4>
                         <ul className="space-y-2">
                           {Object.entries(product.stage_pricing).map(
                             ([stage, price]) => (
@@ -509,70 +513,72 @@ export default function ProductDetailPage() {
 
                 {selectedTab === "reviews" && (
                   <div className="space-y-6">
-                    {mockReviews.map((review) => (
-                      <div
-                        key={review.id}
-                        className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
-                      >
-                        <div
-                          key={review.id}
-                          className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
-                        >
-                          <div className="flex items-start gap-4">
-                            <Image
-                              src={review.avatar}
-                              alt={review.user}
-                              width={48}
-                              height={48}
-                              className="rounded-full"
-                            />
-                            <div className="flex-1">
-                              <div className="flex items-center justify-between mb-2">
-                                <h4 className="font-semibold text-flyverr-text dark:text-white">
-                                  {review.user}
-                                </h4>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                  {review.date}
-                                </span>
-                                <h4 className="font-semibold text-flyverr-text dark:text-white">
-                                  {review.user}
-                                </h4>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                  {review.date}
-                                </span>
-                              </div>
-                              <div className="flex items-center mb-2">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`h-4 w-4 ${
-                                      i < review.rating
-                                        ? "text-yellow-400 fill-current"
-                                        : "text-gray-300 dark:text-gray-600"
-                                    }`}
+                    {/* Reviews List */}
+                    {reviews.length === 0 ? (
+                      <div className="text-center py-12">
+                        <div className="text-gray-400 dark:text-gray-600 mb-4">
+                          <Star className="h-16 w-16 mx-auto" />
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                          No reviews yet
+                        </h3>
+                        <p className="text-gray-500 dark:text-gray-400">
+                          Be the first to review this product!
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {reviews.map((review: any) => (
+                          <div
+                            key={review.id}
+                            className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700 flex-shrink-0">
+                                {review.user.avatar_url ? (
+                                  <Image
+                                    src={review.user.avatar_url}
+                                    alt={review.user.username}
+                                    width={48}
+                                    height={48}
+                                    className="w-full h-full object-cover"
                                   />
-                                ))}
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600">
+                                    <Users className="h-6 w-6" />
+                                  </div>
+                                )}
                               </div>
-                              <p className="text-gray-600 dark:text-gray-300">
-                                {review.comment}
-                              </p>
-                              <p className="text-gray-600 dark:text-gray-300">
-                                {review.comment}
-                              </p>
-                              <div className="mt-3">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-gray-500 dark:text-gray-400"
-                                >
-                                  Helpful ({review.helpful})
-                                </Button>
+                              <div className="flex-1">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <h4 className="font-semibold text-flyverr-text dark:text-white">
+                                      {review.user.username}
+                                    </h4>
+                                    {review.is_verified && (
+                                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-200 text-xs">
+                                        Verified
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                                    {new Date(
+                                      review.created_at
+                                    ).toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <div className="flex items-center mb-2">
+                                  {renderStars(review.rating, "sm")}
+                                </div>
+                                <p className="text-gray-600 dark:text-gray-300">
+                                  {review.comment}
+                                </p>
                               </div>
                             </div>
                           </div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
 
@@ -586,13 +592,7 @@ export default function ProductDetailPage() {
                         <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">
                           Creator ID: {product.creator_id}
                         </h3>
-                        <h3 className="text-xl font-semibold text-flyverr-text dark:text-white">
-                          Creator ID: {product.creator_id}
-                        </h3>
                         <div className="flex items-center gap-4 mt-2">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Digital Creator
-                          </span>
                           <span className="text-gray-600 dark:text-gray-400">
                             Digital Creator
                           </span>
@@ -604,15 +604,9 @@ export default function ProductDetailPage() {
                       <h4 className="font-semibold text-flyverr-text dark:text-white mb-2">
                         About the creator
                       </h4>
-                      <h4 className="font-semibold text-flyverr-text dark:text-white mb-2">
-                        About the creator
-                      </h4>
                       <p className="text-gray-600 dark:text-gray-300">
                         This creator has developed digital products available on
                         our marketplace. Their products go through our approval
-                        process to ensure quality and compliance. This creator
-                        has developed digital products available on our
-                        marketplace. Their products go through our approval
                         process to ensure quality and compliance.
                       </p>
                     </div>
@@ -638,7 +632,7 @@ export default function ProductDetailPage() {
                         Available Licenses
                       </span>
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {licenseData?.data?.product?.remaining_licenses ??
+                        {licenseProduct?.remaining_licenses ??
                           product.remaining_licenses}{" "}
                         of {product.total_licenses}
                       </span>
@@ -648,7 +642,7 @@ export default function ProductDetailPage() {
                         className="bg-flyverr-primary h-2 rounded-full transition-all duration-300"
                         style={{
                           width: `${
-                            ((licenseData?.data?.product?.remaining_licenses ??
+                            ((licenseProduct?.remaining_licenses ??
                               product.remaining_licenses) /
                               product.total_licenses) *
                             100
@@ -665,16 +659,6 @@ export default function ProductDetailPage() {
 
                     {/* Secondary Action - Buy to Resell */}
                     <BuyToResellButton product={product} />
-
-                    {/* Tertiary Action - Buy with Insurance */}
-                    {/* <Button 
-                      variant="outline"
-                      className="w-full bg-transparent dark:bg-transparent border-2 border-flyverr-accent text-flyverr-accent dark:text-flyverr-accent hover:bg-flyverr-accent hover:text-white dark:hover:bg-flyverr-accent  py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-amber-400 dark:border-amber-400 dark:hover:bg-amber-400 dark:hover:text-white"
-                      onClick={handleBuyWithInsurance}
-                    >
-                      <Shield className="h-5 w-6 mr-3" />
-                      Buy with Insurance
-                    </Button> */}
                   </div>
 
                   {/* Product Details */}
@@ -718,6 +702,105 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Available Licenses Section */}
+      {availableLicenses.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 pb-16">
+          <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ShoppingCart className="h-5 w-5 text-flyverr-primary" />
+                Available Licenses for Resale ({totalAvailable})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {availableLicenses.map((license: any) => (
+                  <div
+                    key={license.license_id}
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200">
+                            {license.purchase_details.purchase_type === 'resell' ? 'Resale License' : 'Use License'}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            Round {license.purchase_details.current_round}
+                          </Badge>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <span className="text-gray-600 dark:text-gray-400">Owner:</span>
+                            <p className="font-medium text-gray-900 dark:text-white">
+                              {license.owner.name}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {license.owner.email}
+                            </p>
+                          </div>
+                          
+                          <div>
+                            <span className="text-gray-600 dark:text-gray-400">Purchase Type:</span>
+                            <p className="font-medium text-gray-900 dark:text-white capitalize">
+                              {license.purchase_details.purchase_type}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Round {license.purchase_details.current_round}
+                            </p>
+                          </div>
+                          
+                          <div>
+                            <span className="text-gray-600 dark:text-gray-400">Original Price:</span>
+                            <p className="font-medium text-gray-900 dark:text-white">
+                              ${license.purchase_details.original_purchase_price}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {new Date(license.purchase_details.acquired_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col items-end gap-2">
+                        <div className="text-right">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">License ID</p>
+                          <p className="text-xs font-mono text-gray-500 dark:text-gray-400">
+                            {license.license_id.slice(0, 8)}...
+                          </p>
+                        </div>
+                        
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary hover:text-white"
+                        >
+                          Contact Owner
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="mt-6 p-4 bg-flyverr-primary/5 dark:bg-flyverr-primary/10 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Info className="h-4 w-4 text-flyverr-primary" />
+                    <span className="text-sm font-medium text-flyverr-text dark:text-white">
+                      Resale Information
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    These licenses are available for purchase from their current owners. 
+                    Contact the license owner directly to negotiate pricing and complete the transaction.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

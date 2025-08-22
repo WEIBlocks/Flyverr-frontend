@@ -41,14 +41,7 @@ export function purchaseProduct(
 
 
 
-export function getProductCategories() {
-  return api
-    .get("/products/categories")
-    .then((res) => res.data)
-    .catch((err) => {
-      throw err;
-    });
-}
+
 
 export function sponsorProductApi(args: {
   productId: string;
@@ -60,6 +53,17 @@ export function sponsorProductApi(args: {
   };
   return api
     .post(`/marketplace/sponsor-product`, body)
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err;
+    });
+}
+
+
+
+export function getProductCategories() {
+  return api
+    .get("/products/categories")
     .then((res) => res.data)
     .catch((err) => {
       throw err;
