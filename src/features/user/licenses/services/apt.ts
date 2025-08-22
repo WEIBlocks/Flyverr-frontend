@@ -8,3 +8,12 @@ export function getMyLicenses() {
       throw err;
     });
 }
+
+export function enableResale(licenseId: string) {
+  return api
+    .post(`/licenses/${licenseId}/enable-resale`)
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err;
+    });
+}

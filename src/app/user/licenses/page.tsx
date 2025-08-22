@@ -5,21 +5,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Search,
-  RefreshCw,
-  Eye,
-  DollarSign,
-  Package,
-  AlertCircle,
-} from "lucide-react";
+import { Search, RefreshCw, Eye, Package, AlertCircle } from "lucide-react";
 import { useGetMyLicenses } from "@/features/user/licenses/hooks/useGetMyLicenses";
+import { useEnableResale } from "@/features/user/licenses/hooks/useEnableResale";
 
 export default function MyLicensesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [enablingId, setEnablingId] = useState<string | null>(null);
 
   const { data, isLoading, error } = useGetMyLicenses();
+  const { mutate: enableResale } = useEnableResale();
 
   type GetMyLicensesResponse = {
     success: boolean;
@@ -80,6 +76,8 @@ export default function MyLicensesPage() {
     isListed: boolean;
     isEnabledForResale: boolean;
     resaleEligible: boolean;
+    currentRound: number;
+    purchasedRound: number;
   };
 
   const licenses: FlattenedLicense[] = useMemo(() => {
@@ -98,8 +96,13 @@ export default function MyLicensesPage() {
         const isEnabledForResale = !!lic.is_enabled_by_user_for_resale;
         const resaleEligible = !!lic.resale_eligible;
         let resaleStatus = "inactive";
-        if (isListed) resaleStatus = "active";
-        else if (!resaleEligible) resaleStatus = "expired";
+        if (lic.purchase_type === "use") {
+          resaleStatus = "use";
+        } else if (isListed || isEnabledForResale) {
+          resaleStatus = "active";
+        } else if (!resaleEligible) {
+          resaleStatus = "expired";
+        }
         const row: FlattenedLicense = {
           id: lic.id,
           productTitle: product?.title || "Untitled",
@@ -114,6 +117,8 @@ export default function MyLicensesPage() {
           isListed,
           isEnabledForResale,
           resaleEligible,
+          currentRound: Number(lic.current_round || 0),
+          purchasedRound: Number(lic.purchased_round || 0),
         };
         flattened.push(row);
       }
@@ -130,18 +135,12 @@ export default function MyLicensesPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleResellNow = (licenseId: string) => {
-    // Handle resell action
-    console.log("Reselling license:", licenseId);
-  };
-
-  const handleRenewResale = (licenseId: string) => {
-    // Handle resale renewal
-    console.log("Renewing resale for license:", licenseId);
-  };
+  // Renew resale removed in favor of enable resale
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "use":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800";
       case "active":
         return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800";
       case "completed":
@@ -157,6 +156,8 @@ export default function MyLicensesPage() {
 
   const getStatusText = (status: string) => {
     switch (status) {
+      case "use":
+        return "USE";
       case "active":
         return "Active";
       case "completed":
@@ -339,20 +340,25 @@ export default function MyLicensesPage() {
                               Resales
                             </span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              {license.productSold}/{license.productTotal}
+                              {license.purchasedRound < license.currentRound
+                                ? license.productTotal
+                                : license.productSold}
+                              /{license.productTotal}
                             </span>
                           </div>
                           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                             <div
                               className="bg-gradient-to-r from-flyverr-primary to-flyverr-secondary h-2 rounded-full transition-all duration-300"
                               style={{
-                                width: `${
-                                  license.productTotal
-                                    ? (license.productSold /
-                                        license.productTotal) *
-                                      100
-                                    : 0
-                                }%`,
+                                width: `${(() => {
+                                  const numerator =
+                                    license.purchasedRound <
+                                    license.currentRound
+                                      ? license.productTotal
+                                      : license.productSold;
+                                  const denominator = license.productTotal || 1;
+                                  return (numerator / denominator) * 100;
+                                })()}%`,
                               }}
                             ></div>
                           </div>
@@ -360,28 +366,26 @@ export default function MyLicensesPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
-                          {license.resaleStatus === "active" &&
-                            !license.isCompleted && (
+                          {license.currentRound > license.purchasedRound &&
+                            !license.isEnabledForResale && (
                               <Button
+                                variant="outline"
                                 size="sm"
-                                className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                                onClick={() => handleResellNow(license.id)}
+                                disabled={enablingId === license.id}
+                                className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-500"
+                                onClick={() => {
+                                  setEnablingId(license.id);
+                                  enableResale(license.id, {
+                                    onSettled: () => setEnablingId(null),
+                                  });
+                                }}
                               >
-                                <DollarSign className="w-4 h-4 mr-1" />
-                                Resell Now
+                                <RefreshCw className="w-4 h-4 mr-1" />
+                                {enablingId === license.id
+                                  ? "Enabling..."
+                                  : "Enable Resale"}
                               </Button>
                             )}
-                          {license.resaleStatus === "inactive" && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-500"
-                              onClick={() => handleRenewResale(license.id)}
-                            >
-                              <RefreshCw className="w-4 h-4 mr-1" />
-                              Renew Resale
-                            </Button>
-                          )}
                           <Button
                             variant="outline"
                             size="sm"
