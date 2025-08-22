@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllProducts } from "../services/ap";
+import { getAllProducts } from "../services/api";
 import { AdminProductsResponse } from "../product.types";
 
 export function useGetAllProducts(page: number = 1, limit: number = 20, status?: string, search?: string) {

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createPlatformProduct } from "../services/ap";
+import { createPlatformProduct } from "../services/api";
 import toast from "react-hot-toast";
 
 export function useCreatePlatformProduct() {

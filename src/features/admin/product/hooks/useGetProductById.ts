@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProductById } from "../services/ap";
+import { getProductById } from "../services/api";
 
 // Types based on the API response
 interface RoundPricing {

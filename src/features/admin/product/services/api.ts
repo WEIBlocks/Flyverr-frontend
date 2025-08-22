@@ -81,3 +81,24 @@ export function markProductAsHotDeal(data: any) {
 export function createPlatformProduct(product: Product) {
   return api.post(`/admin/platform-products`, product);
 }
+
+export function getPlatformProducts(
+  page: number = 1,
+  limit: number = 20,
+  status?: string,
+  search?: string
+) {
+  const params = new URLSearchParams();
+  params.append("is_platform_product", "true");
+  if (page) params.append("page", String(page));
+  if (limit) params.append("limit", String(limit));
+  if (status) params.append("status", status);
+  if (search) params.append("search", search);
+
+  return api
+    .get(`/admin/products?${params.toString()}`)
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err;
+    });
+}

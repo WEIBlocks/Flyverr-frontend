@@ -1,4 +1,4 @@
-import { markProductAsHotDeal } from "../services/ap";
+import { markProductAsHotDeal } from "../services/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useMarkProductAsHotDeal = () => {

@@ -182,7 +182,7 @@ export default function MyProductsPage() {
 
   const handleSponsorProduct = async (productId: string) => {
     try {
-      const response = await sponsorProductApi({
+      const response:any = await sponsorProductApi({
         productId,
         paymentMethod: "stripe",
       });

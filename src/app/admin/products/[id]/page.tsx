@@ -64,15 +64,15 @@ const editProductSchema = yup.object({
   adminNotes: yup.string().optional(),
   roundPricing: yup
     .object({
-      exit_price: yup
+      exitPrice: yup
         .number()
         .positive("Exit price must be positive")
         .required("Exit price is required"),
-      blossom_price: yup
+        blossomPrice: yup
         .number()
         .positive("Blossom price must be positive")
         .required("Blossom price is required"),
-      evergreen_price: yup
+        evergreenPrice: yup
         .number()
         .positive("Evergreen price must be positive")
         .required("Evergreen price is required"),
@@ -184,9 +184,9 @@ export default function AdminProductDetailPage() {
       featured: false,
       adminNotes: "",
       roundPricing: {
-        exit_price: 0,
-        blossom_price: 0,
-        evergreen_price: 0,
+        exitPrice: 0,
+        blossomPrice: 0,
+        evergreenPrice: 0,
       },
     },
   });
@@ -204,9 +204,9 @@ export default function AdminProductDetailPage() {
         featured: product.featured,
         adminNotes: product.admin_notes || "",
         roundPricing: {
-          exit_price: product.round_pricing?.exit_price || 0,
-          blossom_price: product.round_pricing?.blossom_price || 0,
-          evergreen_price: product.round_pricing?.evergreen_price || 0,
+          exitPrice: product.round_pricing?.exit_price || 0,
+          blossomPrice: product.round_pricing?.blossom_price || 0,
+          evergreenPrice: product.round_pricing?.evergreen_price || 0,
         },
       });
     }
@@ -702,18 +702,18 @@ export default function AdminProductDetailPage() {
                       <Input
                         type="number"
                         step="0.01"
-                        {...register("roundPricing.exit_price", {
+                        {...register("roundPricing.exitPrice", {
                           valueAsNumber: true,
                         })}
                         className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 ${
-                          errors.roundPricing?.exit_price
+                          errors.roundPricing?.exitPrice
                             ? "border-red-500 focus:border-red-500"
                             : ""
                         }`}
                       />
-                      {errors.roundPricing?.exit_price && (
+                      {errors.roundPricing?.exitPrice && (
                         <p className="text-sm text-red-600 dark:text-red-400">
-                          {errors.roundPricing.exit_price.message}
+                          {errors.roundPricing.exitPrice.message}
                         </p>
                       )}
                     </div>
@@ -724,18 +724,18 @@ export default function AdminProductDetailPage() {
                       <Input
                         type="number"
                         step="0.01"
-                        {...register("roundPricing.blossom_price", {
+                        {...register("roundPricing.blossomPrice", {
                           valueAsNumber: true,
                         })}
                         className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 ${
-                          errors.roundPricing?.blossom_price
+                          errors.roundPricing?.blossomPrice
                             ? "border-red-500 focus:border-red-500"
                             : ""
                         }`}
                       />
-                      {errors.roundPricing?.blossom_price && (
+                      {errors.roundPricing?.blossomPrice && (
                         <p className="text-sm text-red-600 dark:text-red-400">
-                          {errors.roundPricing.blossom_price.message}
+                          {errors.roundPricing.blossomPrice.message}
                         </p>
                       )}
                     </div>
@@ -746,18 +746,18 @@ export default function AdminProductDetailPage() {
                       <Input
                         type="number"
                         step="0.01"
-                        {...register("roundPricing.evergreen_price", {
+                        {...register("roundPricing.evergreenPrice", {
                           valueAsNumber: true,
                         })}
                         className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 ${
-                          errors.roundPricing?.evergreen_price
+                          errors.roundPricing?.evergreenPrice
                             ? "border-red-500 focus:border-red-500"
                             : ""
                         }`}
                       />
-                      {errors.roundPricing?.evergreen_price && (
+                      {errors.roundPricing?.evergreenPrice && (
                         <p className="text-sm text-red-600 dark:text-red-400">
-                          {errors.roundPricing.evergreen_price.message}
+                          {errors.roundPricing.evergreenPrice.message}
                         </p>
                       )}
                     </div>
