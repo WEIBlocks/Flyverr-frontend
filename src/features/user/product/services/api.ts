@@ -49,3 +49,19 @@ export function getProductCategories() {
       throw err;
     });
 }
+
+export function sponsorProductApi(args: {
+  productId: string;
+  paymentMethod?: "stripe";
+}) {
+  const body = {
+    productId: args.productId,
+    paymentMethod: args.paymentMethod || "stripe",
+  };
+  return api
+    .post(`/marketplace/sponsor-product`, body)
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err;
+    });
+}

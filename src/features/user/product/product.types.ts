@@ -1,16 +1,16 @@
 export type Product = {
-    id?: string;
-    title: string;
-    description: string;
-    // categoryId: string;
-    thumbnailUrl: string;
-    imagesUrls: string[];
-    fileUrl: string;
-    fileType: string;
-    fileSize: number;
-    originalPrice: string;
-    totalLicenses: string;
-}
+  id?: string;
+  title: string;
+  description: string;
+  // categoryId: string;
+  thumbnailUrl: string;
+  imagesUrls: string[];
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  originalPrice: string;
+  totalLicenses: string;
+};
 
 // API Response types for user products
 export interface UserProduct {
@@ -29,6 +29,7 @@ export interface UserProduct {
   admin_notes: string | null;
   created_at: string;
   approved_at: string | null;
+  isSponsored?: boolean;
   category: {
     id: string;
     name: string;

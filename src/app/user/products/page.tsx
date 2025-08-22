@@ -35,6 +35,8 @@ import { UserProduct } from "@/features/user/product/product.types";
 import { useRouter } from "next/navigation";
 import { canCreateProducts } from "@/lib/stripeHelpers";
 import AddProduct from "@/features/user/product/components/AddProuduct";
+import { sponsorProductApi } from "@/features/user/product/services/api";
+import toast from "react-hot-toast";
 
 // Skeleton loading components
 const ProductTableSkeleton = () => (
@@ -149,6 +151,7 @@ export default function MyProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedSponsored, setSelectedSponsored] = useState("all");
 
   // Get products from API
   const { data: productsData, isLoading, error } = useGetMyProducts();
@@ -162,13 +165,40 @@ export default function MyProductsPage() {
       selectedCategory === "all" || product.category?.slug === selectedCategory;
     const matchesStatus =
       selectedStatus === "all" || product.status === selectedStatus;
-    return matchesSearch && matchesCategory && matchesStatus;
+      const isSponsored = !!product.isSponsored;
+      const matchesSponsorship =
+        selectedSponsored === "all" ||
+        (selectedSponsored === "sponsored" ? isSponsored : !isSponsored);
+      return (
+        matchesSearch && matchesCategory && matchesStatus && matchesSponsorship
+      );
   });
 
   
 
   const handleEditProduct = (productId: string) => {
     router.push(`/user/products/${productId}`);
+  };
+
+  const handleSponsorProduct = async (productId: string) => {
+    try {
+      const response = await sponsorProductApi({
+        productId,
+        paymentMethod: "stripe",
+      });
+      const paymentUrl = response?.data?.payment_url;
+      if (paymentUrl) {
+        window.location.href = paymentUrl as string;
+      } else {
+        toast.error("Failed to initiate sponsorship. Try again.");
+      }
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to initiate sponsorship";
+      toast.error(msg);
+    }
   };
 
   const handleDeleteProduct = (productId: string) => {
@@ -419,6 +449,17 @@ export default function MyProductsPage() {
                 <option value="draft">Draft</option>
               </select>
             </div>
+            <div className="sm:w-48">
+              <select
+                value={selectedSponsored}
+                onChange={(e) => setSelectedSponsored(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-flyverr-primary dark:focus:ring-flyverr-secondary focus:border-transparent"
+              >
+                <option value="all">All Products</option>
+                <option value="sponsored">Sponsored Only</option>
+                <option value="not_sponsored">Not Sponsored</option>
+              </select>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -548,22 +589,30 @@ export default function MyProductsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEditProduct(product.id)}
-                              className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-500"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            {/* <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleDeleteProduct(product.id)}
-                              className="border-red-200 dark:border-red-600 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-800 hover:border-red-300 dark:hover:border-red-500"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button> */}
+                            {/* {product.status === "pending" && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEditProduct(product.id)}
+                                className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-500"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                            )} */}
+                            {product.status === "approved" &&
+                              !product.isSponsored && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    handleSponsorProduct(product.id)
+                                  }
+                                  className="border-yellow-200 dark:border-yellow-600 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-800 hover:border-yellow-300 dark:hover:border-yellow-500"
+                                >
+                                  <Star className="w-4 h-4" />
+                                  <span className="ml-1">Sponsor product</span>
+                                </Button>
+                              )}
                           </div>
                         </td>
                       </tr>

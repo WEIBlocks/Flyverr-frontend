@@ -276,11 +276,18 @@ export default function AddProductModal({
   const onSubmit = async (data: NewProduct) => {
     // Clear any previous API errors
     setApiError(null);
+
+    // Validate that required files are uploaded
     setIsLoading(true);
     try {
       // Prefer Supabase Auth user id for RLS policies
       const { data: authData } = await supabase.auth.getUser();
       const supabaseUserId = authData?.user?.id;
+      if (!supabaseUserId) {
+        toast.error("Session expired. Please log in again to upload files.");
+        return;
+      }
+   
       const pathUserId = supabaseUserId || user?.id;
       // Upload assets in parallel
       const [thumb, images, file] = await Promise.all([
