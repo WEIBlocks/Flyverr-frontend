@@ -25,13 +25,18 @@ export default function UserLayout({
   children: React.ReactNode;
 }>) {
   const navItems = [
-    { name: 'Dashboard', href: '/user/dashboard', iconName: 'overview' },
-    { name: 'My Products', href: '/user/products', iconName: 'products' },
-    { name: 'My Licenses', href: '/user/licenses', iconName: 'licenses' },
-  ]
+    { name: "Dashboard", href: "/user/dashboard", iconName: "overview" },
+    { name: "My Products", href: "/user/products", iconName: "products" },
+    { name: "My Licenses", href: "/user/licenses", iconName: "licenses" },
+    { name: "My Listings", href: "/user/user-listings", iconName: "resale" },
+  ];
   return (
-    <ProtectedRoute requireAuth allowedRoles={['user']}>
-      <DashboardLayout navItems={navItems} headerTitle="Dashboard" profileHref="/user/profile">
+    <ProtectedRoute requireAuth allowedRoles={["user"]}>
+      <DashboardLayout
+        navItems={navItems}
+        headerTitle="Dashboard"
+        profileHref="/user/profile"
+      >
         {children}
       </DashboardLayout>
     </ProtectedRoute>
