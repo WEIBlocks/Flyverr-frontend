@@ -156,6 +156,23 @@ export default function AdminAllProductsPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
+  const formatDealType = (t: string) =>
+    t
+      .split("_")
+      .map((s) => (s ? s[0].toUpperCase() + s.slice(1) : s))
+      .join(" ");
+
+  const getDealBadgeClasses = (t: string) => {
+    switch (t) {
+      case "hot_deals":
+        return "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200 dark:border-rose-800";
+      case "sponsored":
+        return "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400 border-gray-200 dark:border-gray-800";
+    }
+  };
+
   const handleProductClick = (productId: string) => {
     router.push(`/admin/products/${productId}`);
   };
@@ -464,6 +481,15 @@ export default function AdminAllProductsPage() {
                           {product.remaining_licenses}/{product.total_licenses}{" "}
                           licenses
                         </div>
+                        {Array.isArray(product.dealTypes) && product.dealTypes.length > 0 && (
+                          <div className="flex flex-wrap gap-1 pt-1">
+                            {product.dealTypes.map((dt: string) => (
+                              <Badge key={dt} className={getDealBadgeClasses(dt)}>
+                                {formatDealType(dt)}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </AdminTableCell>
 

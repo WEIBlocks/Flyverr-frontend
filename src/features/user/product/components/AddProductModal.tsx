@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { Upload, ImageIcon, AlertCircle, X, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,12 +13,17 @@ import type { Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useCreateProduct } from "@/features/user/product/hooks/useCreateProduct";
+import { useCreatePlatformProduct } from "@/features/admin/product/hooks/useCreatePlatformProduct";
 import { useGetProductCategory } from "@/features/user/product/hooks/useGetProductCategory";
 import toast from "react-hot-toast";
 import { uploadMultipleImages, uploadToStorage } from "@/lib/upload";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Product } from "@/features/user/product/product.types";
 import { supabase } from "@/lib/supabase";
+import Swal from "sweetalert2";
+import { swal } from "@/lib/utils";
+import { createUserFriendlyError } from "@/lib/errorUtils";
+import { ErrorResponse } from "@/lib/types";
 
 export interface NewProduct {
   title: string;
@@ -31,11 +36,16 @@ export interface NewProduct {
   fileSize: number;
   originalPrice: string;
   totalLicenses: string;
+  // Platform-only fields (validated when isPlatformProduct=true)
+  blossomPrice?: string;
+  evergreenPrice?: string;
+  exitPrice?: string;
 }
 
 interface AddProductModalProps {
   isOpen: boolean;
   onClose: () => void;
+  isPlatformProduct?: boolean;
 }
 
 // Yup validation schema
@@ -68,26 +78,82 @@ const productSchema = yup.object({
   fileSize: yup.number().required("File size is required"), // Always required for now
 });
 
+// Platform product schema (roundPricing required; limit totalLicenses to 100)
+const platformProductSchema = yup.object({
+  title: yup
+    .string()
+    .required("Product title is required")
+    .min(3, "Title must be at least 3 characters"),
+  description: yup
+    .string()
+    .required("Description is required")
+    .min(10, "Description must be at least 10 characters"),
+  // Category is not required for platform products
+  categoryId: yup.string().optional(),
+  originalPrice: yup
+    .string()
+    .required("Price is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Price must be a valid number"),
+  totalLicenses: yup
+    .string()
+    .required("Total licenses is required")
+    .matches(/^\d+$/, "Must be a valid number")
+    .test("max-100", "Max 100", (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) && n >= 1 && n <= 100;
+    }),
+  thumbnailUrl: yup.string().required("Thumbnail is required"),
+  imagesUrls: yup
+    .array()
+    .of(yup.string().required())
+    .min(2, "At least 2 additional images are required")
+    .required(),
+  fileUrl: yup.string().required("Digital product file is required"),
+  fileType: yup.string().required("File type is required"),
+  fileSize: yup.number().required("File size is required"),
+  blossomPrice: yup
+    .string()
+    .required("Blossom price is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Must be a valid number"),
+  evergreenPrice: yup
+    .string()
+    .required("Evergreen price is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Must be a valid number"),
+  exitPrice: yup
+    .string()
+    .required("Exit price is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Must be a valid number"),
+});
+
 export default function AddProductModal({
   isOpen,
   onClose,
+  isPlatformProduct = false,
 }: AddProductModalProps) {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [mainFile, setMainFile] = useState<File | null>(null);
   const [apiError, setApiError] = useState<unknown>(null);
   const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const imagesInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { mutate: createProduct, isPending } = useCreateProduct();
+  const { mutate: createPlatform, isPending: isPlatformPending } =
+    useCreatePlatformProduct();
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
     isError: isCategoriesError,
   } = useGetProductCategory();
+
+  const schema = useMemo(
+    () => (isPlatformProduct ? platformProductSchema : productSchema),
+    [isPlatformProduct]
+  );
 
   const {
     register,
@@ -99,7 +165,7 @@ export default function AddProductModal({
     clearErrors,
     setError,
   } = useForm<NewProduct>({
-    resolver: yupResolver(productSchema) as Resolver<NewProduct>,
+    resolver: yupResolver(schema as any) as any,
     defaultValues: {
       title: "",
       description: "",
@@ -111,6 +177,9 @@ export default function AddProductModal({
       fileSize: 0,
       originalPrice: "",
       totalLicenses: "1",
+      blossomPrice: "",
+      evergreenPrice: "",
+      exitPrice: "",
     },
   });
 
@@ -207,25 +276,7 @@ export default function AddProductModal({
   const onSubmit = async (data: NewProduct) => {
     // Clear any previous API errors
     setApiError(null);
-
-    // Validate that required files are uploaded
-    if (!thumbnailFile) {
-      toast.error("Please upload a thumbnail image");
-      return;
-    }
-
-    if (imageFiles.length < 2) {
-      toast.error("Please upload at least 2 additional product images");
-      return;
-    }
-
-    // Main file is always required for now
-    if (!mainFile) {
-      toast.error("Please upload a digital product file");
-      return;
-    }
-
-    const dismiss = toast.loading("Uploading assets...");
+    setIsLoading(true);
     try {
       // Prefer Supabase Auth user id for RLS policies
       const { data: authData } = await supabase.auth.getUser();
@@ -233,39 +284,71 @@ export default function AddProductModal({
       const pathUserId = supabaseUserId || user?.id;
       // Upload assets in parallel
       const [thumb, images, file] = await Promise.all([
-        uploadToStorage("thumbnails", thumbnailFile, pathUserId),
+        uploadToStorage("thumbnails", thumbnailFile as File, pathUserId),
         uploadMultipleImages(imageFiles, pathUserId),
-        uploadToStorage("files", mainFile, pathUserId),
+        uploadToStorage("files", mainFile as File, pathUserId),
       ]);
 
-      const payload = {
-        ...data,
+      const basePayload = {
+        title: data.title,
+        description: data.description,
         thumbnailUrl: thumb.url || "",
         imagesUrls: images.map((i) => i.url || "").filter(Boolean),
-        fileUrl: file.path, // store storage path; backend will create signed URL for downloads
-        fileType: mainFile.type || data.fileType,
-        fileSize: mainFile.size || data.fileSize,
-      };
+        fileUrl: file.path,
+        fileType: (mainFile as File).type || data.fileType,
+        fileSize: (mainFile as File).size || data.fileSize,
+        originalPrice: parseFloat(data.originalPrice),
+        totalLicenses: parseInt(data.totalLicenses, 10),
+      } as any;
 
-      toast.dismiss(dismiss);
-      createProduct(payload as Product, {
-        onSuccess: () => {
-          toast.success("Product submitted for review successfully!");
-          handleClose();
-        },
-        onError: (error: unknown) => {
-          setApiError(error);
-          toast.error(
-            "Failed to create product. Please check the errors below."
-          );
-        },
-      });
+      if (isPlatformProduct) {
+        // Platform: call admin create endpoint with roundPricing
+        const roundPricing = {
+          blossomPrice: parseFloat(data.blossomPrice || "0"),
+          evergreenPrice: parseFloat(data.evergreenPrice || "0"),
+          exitPrice: parseFloat(data.exitPrice || "0"),
+        };
+        createPlatform(
+          { ...basePayload, roundPricing },
+          {
+            onSuccess: () => {
+              setIsLoading(false);
+              swal(
+                "Created",
+                "Platform product created successfully",
+                "success",
+                () => handleClose()
+              );
+              setIsLoading(false);
+            },
+            onError: (error: any) => {
+              setIsLoading(false);
+              swal("Error", createUserFriendlyError(error), "error");
+            },
+          }
+        );
+      } else {
+        // User product flow
+        createProduct(basePayload as Product, {
+          onSuccess: () => {
+            setIsLoading(false);
+            swal(
+              "Submitted",
+              "Product submitted for review successfully",
+              "success",
+              () => handleClose()
+            );
+          },
+          onError: (error: any) => {
+            setIsLoading(false);
+            swal("Error", createUserFriendlyError(error), "error");
+          },
+        });
+      }
     } catch (err: unknown) {
-      toast.dismiss(dismiss);
-      const message =
-        err instanceof Error ? err.message : "Failed to upload assets";
       setApiError(err);
-      toast.error(message);
+      setIsLoading(false);
+      swal("Error", createUserFriendlyError(err), "error");
     }
   };
 
@@ -286,10 +369,12 @@ export default function AddProductModal({
         {/* Header */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-foreground">
-            Add New Product
+            {isPlatformProduct ? "Add Platform Product" : "Add New Product"}
           </h2>
           <p className="text-muted-foreground mt-2">
-            Upload your digital product and set up your listing
+            {isPlatformProduct
+              ? "Create a Flyverr-owned product. These are auto-approved and require round pricing."
+              : "Upload your digital product and set up your listing"}
           </p>
         </div>
 
@@ -313,10 +398,10 @@ export default function AddProductModal({
             )}
           </div>
 
-          {/* Category Selection */}
+          {/* Category Selection (optional for platform products) */}
           <div className="space-y-2">
             <Label className="text-sm font-medium text-foreground">
-              Category *
+              {isPlatformProduct ? "Category (optional)" : "Category *"}
             </Label>
             {isCategoriesLoading ? (
               <div className="w-full px-3 py-2 border border-border rounded-md bg-muted/50 text-muted-foreground">
@@ -345,7 +430,7 @@ export default function AddProductModal({
                 ))}
               </select>
             )}
-            {errors.categoryId && (
+            {!isPlatformProduct && errors.categoryId && (
               <p className="text-sm text-destructive">
                 {errors.categoryId.message}
               </p>
@@ -408,6 +493,65 @@ export default function AddProductModal({
               )}
             </div>
           </div>
+
+          {isPlatformProduct && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-foreground">
+                  Blossom Price ($) *
+                </Label>
+                <Input
+                  {...register("blossomPrice")}
+                  type="number"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  className="border-border text-foreground placeholder:text-muted-foreground"
+                />
+                {errors.blossomPrice && (
+                  <p className="text-sm text-destructive">
+                    {errors.blossomPrice.message as string}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-foreground">
+                  Evergreen Price ($) *
+                </Label>
+                <Input
+                  {...register("evergreenPrice")}
+                  type="number"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  className="border-border text-foreground placeholder:text-muted-foreground"
+                />
+                {errors.evergreenPrice && (
+                  <p className="text-sm text-destructive">
+                    {errors.evergreenPrice.message as string}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-foreground">
+                  Exit Price ($) *
+                </Label>
+                <Input
+                  {...register("exitPrice")}
+                  type="number"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  className="border-border text-foreground placeholder:text-muted-foreground"
+                />
+                {errors.exitPrice && (
+                  <p className="text-sm text-destructive">
+                    {errors.exitPrice.message as string}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Thumbnail Upload */}
           <div className="space-y-2">
@@ -648,12 +792,7 @@ export default function AddProductModal({
             </div>
           </div>
 
-          {/* Error Alert */}
-          <ErrorAlert
-            error={apiError}
-            errors={Object.keys(errors).length > 0 ? errors : undefined}
-            title="Please fix the following errors:"
-          />
+          {/* Inline field errors are shown below inputs; no global error alert */}
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
@@ -662,16 +801,20 @@ export default function AddProductModal({
               variant="outline"
               onClick={handleClose}
               className="flex-1  border-border text-foreground hover:bg-accent hover:text-accent-foreground"
-              disabled={isPending}
+              disabled={isPending || isPlatformPending || isLoading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               className="flex-1 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={isPending}
+              disabled={isPending || isPlatformPending || isLoading}
             >
-              {isPending ? "Submitting..." : "Add Product"}
+              {isPlatformPending || isPending || isLoading
+                ? "Submitting..."
+                : isPlatformProduct
+                ? "Create Platform Product"
+                : "Add Product"}
             </Button>
           </div>
         </form>

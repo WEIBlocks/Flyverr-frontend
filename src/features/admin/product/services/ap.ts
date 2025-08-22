@@ -75,6 +75,9 @@ export function editProduct(productId: string, product: Partial<Product>) {
   return api.put(`/admin/products/${productId}/edit`, product);
 }
 
-export function markProductAsHotDeal( data: any) {
+export function markProductAsHotDeal(data: any) {
   return api.post(`/admin/deals`, data);
+}
+export function createPlatformProduct(product: Product) {
+  return api.post(`/admin/platform-products`, product);
 }
