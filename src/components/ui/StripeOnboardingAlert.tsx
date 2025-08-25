@@ -28,9 +28,9 @@ export default function StripeOnboardingAlert() {
     dismissStripeAlert();
   };
 
-  // if (!showAlert || !isAuthenticated) {
-  //   return null;
-  // }
+  if (!showAlert || !isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20 rounded-md p-4 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 my-4">
