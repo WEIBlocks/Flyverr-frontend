@@ -21,11 +21,16 @@ export default function PublicLayout({
   const { isAuthenticated, isLoading, mounted } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [shouldRender, setShouldRender] = useState(false);
+
 
   useEffect(() => {
     // Wait for auth to be determined before making decisions
     if (isLoading || !mounted) return;
+
+    // Don't redirect if user is trying to access auth pages (login, signup, etc.)
+    if (pathname.includes("/auth")) {
+      return;
+    }
 
     // Only protect the home page (/) - require login for access
     // All other pages in this layout are public (faq, marketplace, blog)
@@ -34,15 +39,11 @@ export default function PublicLayout({
       return;
     }
 
-    // Log successful access for debugging
-    // Optional logging removed in production
-
     // Allow rendering if auth check is complete
-    setShouldRender(true);
   }, [isAuthenticated, isLoading, pathname, router, mounted]);
 
   // Don't render until we've determined auth status and mounted
-  if (isLoading || !shouldRender || !mounted) {
+  if (isLoading  || !mounted) {
     return (
       <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">

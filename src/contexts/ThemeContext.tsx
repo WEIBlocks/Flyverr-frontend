@@ -1,6 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { Sun, Moon, Monitor } from 'lucide-react'
 
 type Theme = 'light' | 'dark' | 'system'
 
@@ -25,9 +26,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (savedTheme) {
       setThemeState(savedTheme)
     } else {
-      // Check system preference
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      setThemeState(systemPrefersDark ? 'dark' : 'light')
+      // Always default to light theme, don't check system preference
+      setThemeState('light')
     }
   }, [])
 
@@ -36,12 +36,29 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (!mounted) return // Don't apply theme until mounted
     
     const root = document.documentElement
+    // When system is selected, actually follow OS preference
     const actualTheme = theme === 'system' 
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
       : theme
     
     root.classList.remove('light', 'dark')
     root.classList.add(actualTheme)
+  }, [theme, mounted])
+
+  // Listen for system theme changes when 'system' is selected
+  useEffect(() => {
+    if (!mounted || theme !== 'system') return
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = () => {
+      const root = document.documentElement
+      const actualTheme = mediaQuery.matches ? 'dark' : 'light'
+      root.classList.remove('light', 'dark')
+      root.classList.add(actualTheme)
+    }
+
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
   }, [theme, mounted])
 
   const setTheme = (newTheme: Theme) => {
@@ -57,19 +74,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   const getThemeIcon = () => {
-    if (!mounted) return '💻' // Default icon until mounted
+    if (!mounted) return <Monitor className="h-5 w-5" /> // Default icon until mounted
     
-    const actualTheme = theme === 'system' 
-      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-      : theme
+    // For system theme, show the actual current theme icon
+    if (theme === 'system') {
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      return systemPrefersDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />
+    }
     
-    switch (actualTheme) {
+    // For explicit light/dark themes, show the selected theme icon
+    switch (theme) {
       case 'light':
-        return '🌞'
+        return <Sun className="h-5 w-5" />
       case 'dark':
-        return '🌙'
+        return <Moon className="h-5 w-5" />
       default:
-        return '💻'
+        return <Sun className="h-5 w-5" /> // Default to light icon
     }
   }
 

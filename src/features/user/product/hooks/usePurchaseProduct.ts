@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { createUserFriendlyError } from "@/lib/errorUtils";
 import { ErrorResponse } from "@/lib/types";
 import { log } from "console";
+import { swal } from "@/lib/utils";
 
 export function usePurchaseProduct() {
   const queryClient = useQueryClient();
@@ -30,8 +31,7 @@ export function usePurchaseProduct() {
           text: `Transaction ID: ${data?.data?.data?.transaction_id}`,
           icon: "success",
           confirmButtonText: "Continue to Payment",
-          showCancelButton: true,
-          cancelButtonText: "Close",
+          allowOutsideClick: false,
         }).then(async (result) => {
           if (result.isConfirmed) {
             await queryClient.invalidateQueries({
@@ -43,11 +43,7 @@ export function usePurchaseProduct() {
         });
       } else {
         // Fallback success message
-        Swal.fire({
-          title: "Success!",
-          text: "Purchase initiated successfully",
-          icon: "success",
-        });
+        swal("Success", "Purchase initiated successfully", "success");
       }
     },
     onError: (error: ErrorResponse) => {

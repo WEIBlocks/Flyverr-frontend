@@ -267,33 +267,45 @@ export default function ProductApprovalModal({
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="flex space-x-4">
-                <Button
-                  variant={isApproved === true ? "default" : "outline"}
-                  onClick={() => setIsApproved(true)}
-                  disabled={isSubmitting}
-                  className={`flex-1 h-14 text-lg font-semibold rounded-xl transition-all duration-200 ${
-                    isApproved === true
-                      ? "bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg"
-                      : "border-2 border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 dark:hover:bg-flyverr-primary/20"
-                  }`}
-                >
-                  <CheckCircle className="w-6 h-6 mr-2" />
-                  Approve Product
-                </Button>
-                <Button
-                  variant={isApproved === false ? "destructive" : "outline"}
-                  onClick={() => setIsApproved(false)}
-                  disabled={isSubmitting}
-                  className={`flex-1 h-14 text-lg font-semibold rounded-xl transition-all duration-200 ${
-                    isApproved === false
-                      ? "bg-red-600 hover:bg-red-700 text-white shadow-lg"
-                      : "border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                  }`}
-                >
-                  <XCircle className="w-6 h-6 mr-2" />
-                  Reject Product
-                </Button>
+              <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-1">
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsApproved(true)}
+                    disabled={isSubmitting}
+                    className={`relative flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg transition-all duration-300 ease-out focus:outline-none ${
+                      isApproved === true
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 shadow-sm border border-green-200 dark:border-green-700"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 hover:border hover:border-green-200/50 dark:hover:border-green-700/50"
+                    }`}
+                  >
+                    <CheckCircle className={`w-5 h-5 transition-colors duration-300 ${isApproved === true ? "text-green-600 dark:text-green-400" : "text-gray-400 dark:text-gray-500 group-hover:text-green-500"}`} />
+                    <span className="text-sm sm:text-base font-semibold transition-colors duration-300">Approve</span>
+                    <span
+                      className={`pointer-events-none absolute bottom-0 inset-x-6 h-0.5 rounded-full transition-all duration-300 ${
+                        isApproved === true ? "bg-green-500" : "bg-transparent"
+                      }`}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsApproved(false)}
+                    disabled={isSubmitting}
+                    className={`relative flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg transition-all duration-300 ease-out focus:outline-none ${
+                      isApproved === false
+                        ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 shadow-sm border border-red-200 dark:border-red-700"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border hover:border-red-200/50 dark:hover:border-red-700/50"
+                    }`}
+                  >
+                    <XCircle className={`w-5 h-5 transition-colors duration-300 ${isApproved === false ? "text-red-600 dark:text-red-400" : "text-gray-400 dark:text-gray-500 group-hover:text-red-500"}`} />
+                    <span className="text-sm sm:text-base font-semibold transition-colors duration-300">Reject</span>
+                    <span
+                      className={`pointer-events-none absolute bottom-0 inset-x-6 h-0.5 rounded-full transition-all duration-300 ${
+                        isApproved === false ? "bg-red-500" : "bg-transparent"
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -318,8 +330,8 @@ export default function ProductApprovalModal({
                       <Package className="w-4 h-4" />
                       <span>Newboom (Original)</span>
                     </Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 dark:text-green-400 font-semibold">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-green-600 dark:text-green-400 font-bold text-lg">
                         $
                       </span>
                       <Input
@@ -328,7 +340,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={roundPricing.originalPrice || ""}
                         onChange={handlePriceChange("originalPrice")}
-                        className="pl-8 bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 font-semibold focus:border-flyverr-primary focus:ring-flyverr-primary/20"
+                        className="flex-1 bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-white font-semibold  focus:ring-green-500/20 dark:focus:ring-green-500/20 placeholder:text-green-300 dark:placeholder:text-green-400"
                         placeholder="100"
                       />
                     </div>
@@ -344,8 +356,8 @@ export default function ProductApprovalModal({
                       <Zap className="w-4 h-4" />
                       <span>Blossom</span>
                     </Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400 font-semibold">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-blue-600 dark:text-blue-400 font-bold text-lg">
                         $
                       </span>
                       <Input
@@ -354,7 +366,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={roundPricing.blossomPrice || ""}
                         onChange={handlePriceChange("blossomPrice")}
-                        className="pl-8 bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-200 focus:border-flyverr-primary focus:ring-flyverr-primary/20"
+                        className="flex-1 bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-white font-semibold  focus:ring-blue-500/20 dark:focus:ring-blue-500/20 placeholder:text-blue-300 dark:placeholder:text-blue-400"
                         placeholder="120"
                       />
                     </div>
@@ -369,13 +381,13 @@ export default function ProductApprovalModal({
                   </div>
 
                   {/* Evergreen */}
-                  <div className="space-y-3 p-4 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
+                  <div className="space-y-3 p-4 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
                     <Label className="text-sm font-semibold flex items-center space-x-2 text-purple-800 dark:text-purple-400">
                       <Crown className="w-4 h-4" />
                       <span>Evergreen</span>
                     </Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-600 dark:text-purple-400 font-semibold">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-purple-600 dark:text-purple-400 font-bold text-lg">
                         $
                       </span>
                       <Input
@@ -384,7 +396,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={roundPricing.evergreenPrice || ""}
                         onChange={handlePriceChange("evergreenPrice")}
-                        className="pl-8 bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-800 dark:text-purple-200 focus:border-flyverr-primary focus:ring-flyverr-primary/20"
+                        className="flex-1 bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-white font-semibold focus:ring-purple-500 dark:focus:ring-purple-500 placeholder:text-purple-300 dark:placeholder:text-purple-400"
                         placeholder="140"
                       />
                     </div>
@@ -404,8 +416,8 @@ export default function ProductApprovalModal({
                       <TrendingUp className="w-4 h-4" />
                       <span>Exit</span>
                     </Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-600 dark:text-orange-400 font-semibold">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-orange-600 dark:text-orange-400 font-bold text-lg">
                         $
                       </span>
                       <Input
@@ -414,7 +426,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={roundPricing.exitPrice || ""}
                         onChange={handlePriceChange("exitPrice")}
-                        className="pl-8 bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-orange-800 dark:text-orange-200 focus:border-flyverr-primary focus:ring-flyverr-primary/20"
+                        className="flex-1 bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-white font-semibold  focus:ring-orange-500 dark:focus:ring-orange-500  placeholder:text-orange-300 dark:placeholder:text-orange-400"
                         placeholder="160"
                       />
                     </div>

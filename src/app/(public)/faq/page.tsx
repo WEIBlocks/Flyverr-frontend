@@ -42,7 +42,7 @@ export default function FAQPage() {
     const handleThemeChange = () => {
       // Force re-render when theme changes
       setMounted(false);
-      setTimeout(() => setMounted(true), 0);
+
     };
 
     // Listen for storage changes (theme changes)
