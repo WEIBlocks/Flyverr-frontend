@@ -104,7 +104,7 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20">
         {/* Page Header */}
         <div className="text-center mb-12 sm:mb-16 md:mb-20 lg:mb-24 xl:mb-28 animate-fade-in">
