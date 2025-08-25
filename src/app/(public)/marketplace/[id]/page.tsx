@@ -384,7 +384,9 @@ export default function ProductDetailPage() {
               {/* Resale Stage Info */}
               <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-2">
-                  <Badge className={`${stage.color} text-white text-xs sm:text-sm`}>
+                  <Badge
+                    className={`${stage.color} text-white text-xs sm:text-sm`}
+                  >
                     Stage{" "}
                     {Object.keys(resaleStages).indexOf(product.current_stage) +
                       1}
@@ -658,7 +660,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Right Column - Purchase Options */}
-          <div className="xl:col-span-1 lg:col-span-1 md:col-span-1 order-first lg:order-last">
+          <div className="xl:col-span-1 lg:col-span-1 md:col-span-1">
             <div className="sticky top-4 sm:top-6 md:top-8">
               <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
                 <CardContent className="p-4 sm:p-6">
@@ -718,8 +720,7 @@ export default function ProductDetailPage() {
                           Resale-Only Mode
                         </p>
                         <p className="text-xs text-blue-600 dark:text-blue-400">
-                          New licenses not available. Check resale licenses
-                          below.
+                          Check resale licenses below.
                         </p>
                       </div>
                     ) : canPurchaseNew ? (
