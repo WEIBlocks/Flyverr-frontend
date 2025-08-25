@@ -1,8 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { approveProduct } from "../services/ap";
+import { approveProduct } from "../services/api";
 import type { ProductApprovalRequest } from "../product.types";
-import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 import { ErrorResponse } from "@/lib/types";
 import { createUserFriendlyError } from "@/lib/errorUtils";
 import { swal } from "@/lib/utils";

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPendingProducts } from "../services/ap";
+import { getPendingProducts } from "../services/api";
 import type { PendingProductsResponse } from "../product.types";
 import { storage } from "@/lib/utils";
 

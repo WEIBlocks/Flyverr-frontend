@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { flagProduct } from "../services/ap";
+import { flagProduct } from "../services/api";
 
 interface FlagProductRequest {
   action: 'flag' | 'unflag' | 'delete';

@@ -6,8 +6,7 @@ export function useGetAvailableLicenses(productId: string) {
   return useQuery({
     queryKey: ['available-licenses', productId],
     queryFn: async () => {
-      const response = await getAvailableLicenses(productId);
-      return response;
+      return await getAvailableLicenses(productId);
     },
     enabled: !!productId,
     staleTime: 2 * 60 * 1000, // 2 minutes (licenses change frequently)

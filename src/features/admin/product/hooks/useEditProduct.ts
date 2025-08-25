@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { editProduct } from "../services/ap";
+import { editProduct } from "../services/api";
 import { Product } from "@/features/user/product/product.types";
 import { createUserFriendlyError } from "@/lib/errorUtils";
 import Swal from "sweetalert2";

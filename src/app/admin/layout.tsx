@@ -31,13 +31,14 @@ export default function AdminLayout({
       iconName: "pending",
     },
     { name: "All Products", href: "/admin/products", iconName: "products" },
+    { name: "Platform Products", href: "/admin/platform-products", iconName: "products" },
     { name: "Users", href: "/admin/users", iconName: "users" },
     {
       name: "Stale Resales (30d)",
       href: "/admin/stale-resales",
       iconName: "stale",
     },
-    { name: "Reviews", href: "/admin/reviews", iconName: "reviews" },
+    { name: "Pending Reviews", href: "/admin/pending-review", iconName: "reviews" },
     {
       name: "Sponsored Products",
       href: "/admin/sponsored-products",

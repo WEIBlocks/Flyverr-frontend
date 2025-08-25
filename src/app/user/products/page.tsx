@@ -34,9 +34,9 @@ import { useGetMyProducts } from "@/features/user/product/hooks/useGetMyProducts
 import { UserProduct } from "@/features/user/product/product.types";
 import { useRouter } from "next/navigation";
 import { canCreateProducts } from "@/lib/stripeHelpers";
+import AddProduct from "@/features/user/product/components/AddProuduct";
 import { sponsorProductApi } from "@/features/user/product/services/api";
 import toast from "react-hot-toast";
-import AddProduct from "@/features/user/product/components/AddProuduct";
 
 // Skeleton loading components
 const ProductTableSkeleton = () => (
@@ -182,7 +182,7 @@ export default function MyProductsPage() {
 
   const handleSponsorProduct = async (productId: string) => {
     try {
-      const response = await sponsorProductApi({
+      const response:any = await sponsorProductApi({
         productId,
         paymentMethod: "stripe",
       });

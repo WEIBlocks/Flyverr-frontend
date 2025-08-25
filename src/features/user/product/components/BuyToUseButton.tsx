@@ -7,9 +7,10 @@ import withStripeOnboarding from "./withStripeOnboarding";
 
 interface BuyToUseButtonProps {
   requireReady?: (action: () => void) => void; // injected by HOC
+  licenseId?: string;
 }
 
-function BuyToUseButton({ requireReady }: BuyToUseButtonProps) {
+function BuyToUseButton({ requireReady, licenseId }: BuyToUseButtonProps) {
   const params = useParams();
   const productId = params.id as string;
   const [isBuyingToUse, setIsBuyingToUse] = useState(false);
@@ -17,32 +18,42 @@ function BuyToUseButton({ requireReady }: BuyToUseButtonProps) {
 
   const handleBuyToUse = () => {
     console.log("Buy to Use clicked for product:", productId);
+    if (licenseId) {
+      console.log("Buy to Use - License ID:", licenseId);
+    }
     setIsBuyingToUse(true);
 
-    purchaseProduct(
-      {
-        id: productId,
-        data: {
-          purchaseType: "use",
-          hasInsurance: false,
-          paymentMethod: "stripe",
-        },
+    const purchaseData: any = {
+      purchaseType: "use",
+      hasInsurance: false,
+      paymentMethod: "stripe",
+    };
+
+    if (licenseId) {
+      purchaseData.licenseId = licenseId;
+    }
+
+    const data = {
+      id: productId,
+      data: purchaseData,
+    };
+
+    purchaseProduct(data, {
+      onSuccess: () => {
+        setIsBuyingToUse(false);
       },
-      {
-        onSuccess: () => {
-          setIsBuyingToUse(false);
-        },
-        onError: () => {
-          setIsBuyingToUse(false);
-        },
-      }
-    );
+      onError: () => {
+        setIsBuyingToUse(false);
+      },
+    });
   };
 
   return (
     <Button
       className="w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-white py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-      onClick={() => (requireReady ? requireReady(handleBuyToUse) : handleBuyToUse())}
+      onClick={() =>
+        requireReady ? requireReady(handleBuyToUse) : handleBuyToUse()
+      }
       disabled={isBuyingToUse}
     >
       {isBuyingToUse ? (

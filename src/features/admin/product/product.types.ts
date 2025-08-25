@@ -42,6 +42,7 @@ export interface AdminProduct {
   approved_by_admin: Creator | null;
   category: Category | null;
   round_pricing: RoundPricing | null;
+  dealTypes?: string[];
 }
 
 export interface PendingProduct {

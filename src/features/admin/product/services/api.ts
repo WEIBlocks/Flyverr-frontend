@@ -75,6 +75,30 @@ export function editProduct(productId: string, product: Partial<Product>) {
   return api.put(`/admin/products/${productId}/edit`, product);
 }
 
-export function markProductAsHotDeal( data: any) {
+export function markProductAsHotDeal(data: any) {
   return api.post(`/admin/deals`, data);
+}
+export function createPlatformProduct(product: Product) {
+  return api.post(`/admin/platform-products`, product);
+}
+
+export function getPlatformProducts(
+  page: number = 1,
+  limit: number = 20,
+  status?: string,
+  search?: string
+) {
+  const params = new URLSearchParams();
+  params.append("is_platform_product", "true");
+  if (page) params.append("page", String(page));
+  if (limit) params.append("limit", String(limit));
+  if (status) params.append("status", status);
+  if (search) params.append("search", search);
+
+  return api
+    .get(`/admin/products?${params.toString()}`)
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err;
+    });
 }

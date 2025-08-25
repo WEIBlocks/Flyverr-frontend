@@ -39,6 +39,10 @@ export function purchaseProduct(
   return api.post(`marketplace/products/${id}/purchase`, data);
 }
 
+
+
+
+
 export function sponsorProductApi(args: {
   productId: string;
   paymentMethod?: "stripe";
