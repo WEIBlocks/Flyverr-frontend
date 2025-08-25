@@ -9,9 +9,11 @@ export function updateProduct(id: string, product: Product) {
   return api.put(`/products/${id}`, product);
 }
 
-export function getMyProducts() {
+export function getMyProducts(page = 1, limit = 10, status?: string) {
+  const params: Record<string, any> = { page, limit };
+  if (status) params.status = status;
   return api
-    .get("/products/my-products")
+    .get("/products/my-products", { params })
     .then((res) => res.data)
     .catch((err) => {
       throw err;
@@ -39,10 +41,6 @@ export function purchaseProduct(
   return api.post(`marketplace/products/${id}/purchase`, data);
 }
 
-
-
-
-
 export function sponsorProductApi(args: {
   productId: string;
   paymentMethod?: "stripe";
@@ -58,8 +56,6 @@ export function sponsorProductApi(args: {
       throw err;
     });
 }
-
-
 
 export function getProductCategories() {
   return api

@@ -1,19 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import Modal from "@/components/Modal";
 import {
-  Plus,
   Search,
-  Filter,
-  Edit,
-  Trash2,
   Star,
   Upload,
   FileText,
@@ -25,17 +18,13 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import DashboardLayout from "@/components/DashboardLayout";
 
-import StripeOnboardingModal from "@/components/ui/StripeOnboardingModal";
 import { useGetMyProducts } from "@/features/user/product/hooks/useGetMyProducts";
 import { UserProduct } from "@/features/user/product/product.types";
-import { useRouter } from "next/navigation";
-import { canCreateProducts } from "@/lib/stripeHelpers";
+
 import AddProduct from "@/features/user/product/components/AddProuduct";
 import { sponsorProductApi } from "@/features/user/product/services/api";
+import PaginationControls from "@/components/ui/PaginationControls";
 import toast from "react-hot-toast";
 
 // Skeleton loading components
@@ -143,75 +132,85 @@ const ProductImage = ({
 };
 
 export default function MyProductsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
+  // const router = useRouter();
   // Add Product Modal state
-  const [isStripeOnboardingModalOpen, setIsStripeOnboardingModalOpen] =
-    useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  // Category filtering not wired to backend paging yet
+  // Note: selectedCategory reserved for future backend support
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedCategory] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedSponsored, setSelectedSponsored] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Get products from API
-  const { data: productsData, isLoading, error } = useGetMyProducts();
+  const statusFilter = selectedStatus === "all" ? undefined : selectedStatus;
+  const {
+    data: productsData,
+    isLoading,
+    error,
+  } = useGetMyProducts(currentPage, itemsPerPage, statusFilter);
   const products: UserProduct[] = productsData?.data?.products || [];
+  const pagination = productsData?.data?.pagination;
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "all" || product.category?.slug === selectedCategory;
+    const matchesCategory = true;
     const matchesStatus =
       selectedStatus === "all" || product.status === selectedStatus;
-      const isSponsored = !!product.isSponsored;
-      const matchesSponsorship =
-        selectedSponsored === "all" ||
-        (selectedSponsored === "sponsored" ? isSponsored : !isSponsored);
-      return (
-        matchesSearch && matchesCategory && matchesStatus && matchesSponsorship
-      );
+    const isSponsored = !!product.isSponsored;
+    const matchesSponsorship =
+      selectedSponsored === "all" ||
+      (selectedSponsored === "sponsored" ? isSponsored : !isSponsored);
+    return (
+      matchesSearch && matchesCategory && matchesStatus && matchesSponsorship
+    );
   });
 
-  
-
-  const handleEditProduct = (productId: string) => {
-    router.push(`/user/products/${productId}`);
-  };
+  // const handleEditProduct = (productId: string) => {
+  //   router.push(`/user/products/${productId}`);
+  // };
 
   const handleSponsorProduct = async (productId: string) => {
     try {
-      const response:any = await sponsorProductApi({
+      const response = await sponsorProductApi({
         productId,
         paymentMethod: "stripe",
       });
-      const paymentUrl = response?.data?.payment_url;
+      const paymentUrl = (response as { data?: { payment_url?: string } })?.data
+        ?.payment_url;
       if (paymentUrl) {
         window.location.href = paymentUrl as string;
       } else {
         toast.error("Failed to initiate sponsorship. Try again.");
       }
-    } catch (err: any) {
+    } catch (err) {
+      const e = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
       const msg =
-        err?.response?.data?.message ||
-        err?.message ||
+        e?.response?.data?.message ||
+        e?.message ||
         "Failed to initiate sponsorship";
       toast.error(msg);
     }
   };
 
-  const handleDeleteProduct = (productId: string) => {
-    // TODO: Implement delete confirmation modal and API call
-    if (
-      confirm(
-        "Are you sure you want to delete this product? This action cannot be undone."
-      )
-    ) {
-      console.log("Delete product:", productId);
-      // Add delete API call here
-    }
-  };
+  // const handleDeleteProduct = (productId: string) => {
+  //   // TODO: Implement delete confirmation modal and API call
+  //   if (
+  //     confirm(
+  //       "Are you sure you want to delete this product? This action cannot be undone."
+  //     )
+  //   ) {
+  //     console.log("Delete product:", productId);
+  //     // Add delete API call here
+  //   }
+  // };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -623,6 +622,23 @@ export default function MyProductsPage() {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && (
+        <PaginationControls
+          currentPage={pagination.page}
+          totalPages={pagination.totalPages}
+          totalCount={pagination.total}
+          pageSize={pagination.limit}
+          onPageChange={(p) => setCurrentPage(p)}
+          onPageSizeChange={(s) => {
+            setItemsPerPage(s);
+            setCurrentPage(1);
+          }}
+          entityLabel="products"
+          className="mt-6"
+        />
       )}
 
       {/* Empty State */}

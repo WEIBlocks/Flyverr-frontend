@@ -22,6 +22,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import PaginationControls from "@/components/ui/PaginationControls";
 import Modal from "@/components/Modal";
 import {
   AlertCircle,
@@ -51,7 +52,12 @@ export default function RoyaltyPage() {
     useState<string>("");
   const [selectedGroupLicenses, setSelectedGroupLicenses] = useState<any[]>([]);
 
-  const { data: licensesRes, isLoading: isLicensesLoading } = useMyLicenses();
+  const [licensesPage, setLicensesPage] = useState(1);
+  const [licensesLimit, setLicensesLimit] = useState(20);
+  const { data: licensesRes, isLoading: isLicensesLoading } = useMyLicenses(
+    licensesPage,
+    licensesLimit
+  );
   const {
     data: eligibilityRes,
     isFetching: isEligibilityLoading,
@@ -59,8 +65,15 @@ export default function RoyaltyPage() {
   } = useEligibility(selectedLicenseId || undefined);
   const { data: platformRes, isLoading: isPlatformLoading } =
     usePlatformProducts();
-  const { data: historyRes } = useRoyaltyHistory();
-  const { data: acquiredRes } = useAcquiredRoyaltyLicenses();
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyLimit, setHistoryLimit] = useState(10);
+  const { data: historyRes } = useRoyaltyHistory(historyPage, historyLimit);
+  const [acquiredPage, setAcquiredPage] = useState(1);
+  const [acquiredLimit, setAcquiredLimit] = useState(10);
+  const { data: acquiredRes } = useAcquiredRoyaltyLicenses(
+    acquiredPage,
+    acquiredLimit
+  );
   const claimMutation = useClaimRoyalty();
 
   const groupedLicenses = licensesRes?.data?.licenses || [];
@@ -203,6 +216,21 @@ export default function RoyaltyPage() {
               )}
             </AdminTableBody>
           </AdminTable>
+          {licensesRes?.data?.pagination && (
+            <PaginationControls
+              currentPage={licensesRes.data.pagination.page}
+              totalPages={licensesRes.data.pagination.totalPages}
+              totalCount={licensesRes.data.pagination.total}
+              pageSize={licensesRes.data.pagination.limit}
+              onPageChange={(p) => setLicensesPage(p)}
+              onPageSizeChange={(s) => {
+                setLicensesLimit(s);
+                setLicensesPage(1);
+              }}
+              entityLabel="licenses"
+              className="mt-4"
+            />
+          )}
         </CardContent>
       </Card>
 
@@ -268,6 +296,21 @@ export default function RoyaltyPage() {
               )}
             </AdminTableBody>
           </AdminTable>
+          {historyRes?.data?.pagination && (
+            <PaginationControls
+              currentPage={historyRes.data.pagination.page}
+              totalPages={historyRes.data.pagination.totalPages}
+              totalCount={historyRes.data.pagination.total}
+              pageSize={historyRes.data.pagination.limit}
+              onPageChange={(p) => setHistoryPage(p)}
+              onPageSizeChange={(s) => {
+                setHistoryLimit(s);
+                setHistoryPage(1);
+              }}
+              entityLabel="claims"
+              className="mt-4"
+            />
+          )}
         </CardContent>
       </Card>
 
@@ -329,6 +372,21 @@ export default function RoyaltyPage() {
               )}
             </AdminTableBody>
           </AdminTable>
+          {acquiredRes?.data?.pagination && (
+            <PaginationControls
+              currentPage={acquiredRes.data.pagination.page}
+              totalPages={acquiredRes.data.pagination.totalPages}
+              totalCount={acquiredRes.data.pagination.total}
+              pageSize={acquiredRes.data.pagination.limit}
+              onPageChange={(p) => setAcquiredPage(p)}
+              onPageSizeChange={(s) => {
+                setAcquiredLimit(s);
+                setAcquiredPage(1);
+              }}
+              entityLabel="royalty licenses"
+              className="mt-4"
+            />
+          )}
         </CardContent>
       </Card>
 

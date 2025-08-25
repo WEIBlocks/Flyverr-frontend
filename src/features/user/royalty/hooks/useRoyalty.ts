@@ -10,10 +10,10 @@ import {
 } from "../services/api";
 import type { ClaimRoyaltyRequest } from "../royalty.types";
 
-export function useMyLicenses() {
+export function useMyLicenses(page = 1, limit = 20) {
   return useQuery({
-    queryKey: ["royalty", "my-licenses"],
-    queryFn: getMyLicenses,
+    queryKey: ["royalty", "my-licenses", page, limit],
+    queryFn: () => getMyLicenses(page, limit),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
@@ -54,18 +54,18 @@ export function useClaimRoyalty() {
   });
 }
 
-export function useRoyaltyHistory() {
+export function useRoyaltyHistory(page = 1, limit = 10) {
   return useQuery({
-    queryKey: ["royalty", "history"],
-    queryFn: getRoyaltyHistory,
+    queryKey: ["royalty", "history", page, limit],
+    queryFn: () => getRoyaltyHistory(page, limit),
     staleTime: 60 * 1000,
   });
 }
 
-export function useAcquiredRoyaltyLicenses() {
+export function useAcquiredRoyaltyLicenses(page = 1, limit = 10) {
   return useQuery({
-    queryKey: ["royalty", "acquired-licenses"],
-    queryFn: getAcquiredRoyaltyLicenses,
+    queryKey: ["royalty", "acquired-licenses", page, limit],
+    queryFn: () => getAcquiredRoyaltyLicenses(page, limit),
     staleTime: 60 * 1000,
   });
 }

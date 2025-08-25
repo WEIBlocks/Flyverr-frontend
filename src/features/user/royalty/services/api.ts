@@ -9,9 +9,9 @@ import {
   AcquiredRoyaltyLicensesResponse,
 } from "../royalty.types";
 
-export function getMyLicenses() {
+export function getMyLicenses(page = 1, limit = 20) {
   return api
-    .get("/licenses/my-licenses")
+    .get("/licenses/my-licenses", { params: { page, limit } })
     .then((res) => res.data as MyLicensesResponse);
 }
 
@@ -33,14 +33,14 @@ export function claimRoyalty(data: ClaimRoyaltyRequest) {
     .then((res) => res.data as ClaimRoyaltyResponse);
 }
 
-export function getRoyaltyHistory() {
+export function getRoyaltyHistory(page = 1, limit = 10) {
   return api
-    .get("/royalty/history")
+    .get("/royalty/history", { params: { page, limit } })
     .then((res) => res.data as RoyaltyHistoryResponse);
 }
 
-export function getAcquiredRoyaltyLicenses() {
+export function getAcquiredRoyaltyLicenses(page = 1, limit = 10) {
   return api
-    .get("/royalty/acquired-licenses")
+    .get("/royalty/acquired-licenses", { params: { page, limit } })
     .then((res) => res.data as AcquiredRoyaltyLicensesResponse);
 }

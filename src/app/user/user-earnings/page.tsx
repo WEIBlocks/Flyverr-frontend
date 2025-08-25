@@ -16,7 +16,11 @@ import {
   Activity,
 } from "lucide-react";
 import { useEarnings } from "@/features/user/earnings/hooks/useEarnings";
-import { Earning } from "@/features/user/earnings/earnings.types";
+import {
+  Earning,
+  EarningsResponse,
+} from "@/features/user/earnings/earnings.types";
+import PaginationControls from "@/components/ui/PaginationControls";
 import { useRouter } from "next/navigation";
 import {
   AdminTable,
@@ -30,11 +34,17 @@ import {
 export default function UserEarningsPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
-  const { data, isLoading, error, refetch } = useEarnings();
+  const { data, isLoading, error, refetch } = useEarnings(
+    currentPage,
+    itemsPerPage
+  );
+  const typed = (data as EarningsResponse) || undefined;
 
-  const earnings = data?.data?.earnings || [];
-  const earningsOverview = data?.data?.summary;
+  const earnings = typed?.data?.earnings || [];
+  const earningsOverview = typed?.data?.summary;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -243,11 +253,7 @@ export default function UserEarningsPage() {
             className="pl-10 border-gray-300 dark:border-gray-600"
           />
         </div>
-        <div className="flex items-center space-x-3">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            Total: {earnings.length} earnings
-          </span>
-        </div>
+        <div className="flex items-center space-x-3"></div>
       </div>
 
       {/* Earnings Table */}
@@ -362,6 +368,23 @@ export default function UserEarningsPage() {
           )}
         </AdminTableBody>
       </AdminTable>
+
+      {/* Pagination */}
+      {typed?.data?.pagination && (
+        <PaginationControls
+          currentPage={typed.data.pagination.currentPage}
+          totalPages={typed.data.pagination.totalPages}
+          totalCount={typed.data.pagination.totalItems}
+          pageSize={typed.data.pagination.itemsPerPage}
+          onPageChange={(p) => setCurrentPage(p)}
+          onPageSizeChange={(s) => {
+            setItemsPerPage(s);
+            setCurrentPage(1);
+          }}
+          entityLabel="earnings"
+          className="mt-6"
+        />
+      )}
     </div>
   );
 }
