@@ -26,7 +26,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               }
               return failureCount < 3;
             },
-            refetchOnWindowFocus: false,
           },
           mutations: {
             retry: false,

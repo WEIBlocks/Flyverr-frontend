@@ -23,10 +23,7 @@ export default function StripeOnboardingAlert() {
     dismissStripeAlert();
   };
 
-  const handleOnboardingSuccess = () => {
-    // Hide the alert after successful onboarding initiation
-    setShowAlert(false);
-  };
+
 
   if (!showAlert || !isAuthenticated) {
     return null;
