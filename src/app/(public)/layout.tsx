@@ -35,7 +35,7 @@ export default function PublicLayout({
     // Only protect the home page (/) - require login for access
     // All other pages in this layout are public (faq, marketplace, blog)
     if (!isAuthenticated && pathname === "/") {
-      router.push("/marketplace");
+      router.push("/login");
       return;
     }
 
