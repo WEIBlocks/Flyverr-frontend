@@ -4,10 +4,12 @@ import toast from "react-hot-toast";
 
 import { login } from "../services/api";
 import type { LoginData } from "../auth.types";
-import { storage } from "@/lib/utils";
+import { storage, swal } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import Swal from "sweetalert2";
+import { ErrorResponse } from "@/lib/types";
+import { createUserFriendlyError } from "@/lib/errorUtils";
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -25,16 +27,14 @@ export function useLogin() {
 
       const user = responseData.data?.user;
       const session = responseData.data?.session;
-
+   
+      
       if (!user || !session?.accessToken) {
         throw new Error("Invalid login response - missing user or token");
       }
+      
 
-      // Store tokens and user data in localStorage
-      storage.setToken(session.accessToken);
-      storage.setRefreshToken(session.refreshToken);
-      storage.setUser(user);
-      setIsAuthenticated(true);
+    
 
       // Establish Supabase client session on the browser so Storage RLS sees authenticated role
       try {
@@ -53,6 +53,7 @@ export function useLogin() {
         text: "Welcome back!",
         icon: "success",
         confirmButtonText: "OK",
+        allowOutsideClick: false,
       }).then(async (result) => {
         if (result.isConfirmed) {
           storage.setToken(session.accessToken);
@@ -60,17 +61,20 @@ export function useLogin() {
           storage.setUser(user);
           setIsAuthenticated(true);
           await queryClient.invalidateQueries({ queryKey: ["auth", "user"] });
-          // No direct router navigation here; ProtectedRoute will handle role-based redirect
+
+          // Handle role-based redirect after confirmation
+          if (user.profile.role === "admin") {
+            router.push("/admin/pending-products");
+          } else {
+            router.push("/user/dashboard");
+          }
         }
       });
 
       console.log("🔐 Login successful - tokens stored and user redirected");
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.message || error?.message || "Login failed";
-      toast.error(message);
-      console.error("Login error:", error);
+    onError: (error: ErrorResponse) => {
+      swal("Error", createUserFriendlyError(error), "error");
     },
   });
 

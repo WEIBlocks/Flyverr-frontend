@@ -7,5 +7,6 @@ export interface StripeConnectStatusResponse {
   data: {
     account_id: string;
     charges_enabled: boolean;
+    link: string;
   };
 }

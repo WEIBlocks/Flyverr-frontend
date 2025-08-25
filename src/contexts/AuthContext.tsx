@@ -65,7 +65,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     } catch (error) {
       console.error("Error checking auth:", error);
+      
       logout();
+
     } finally {
       setIsLoading(false);
     }

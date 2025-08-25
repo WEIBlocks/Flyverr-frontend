@@ -252,9 +252,9 @@ export default function ProductDetailPage() {
           Back to Marketplace
         </Button>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-1 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
           {/* Left Column - Images and Info */}
-          <div className="xl:col-span-3 lg:col-span-2 md:col-span-1">
+          <div className="lg:col-span-3 xl:col-span-4">
             {/* Image Gallery */}
             <div className="relative bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden mb-4 sm:mb-6 md:mb-8">
               <div className="relative aspect-video sm:aspect-video">
@@ -660,7 +660,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Right Column - Purchase Options */}
-          <div className="xl:col-span-1 lg:col-span-1 md:col-span-1">
+          <div className="lg:col-span-1 xl:col-span-2">
             <div className="sticky top-4 sm:top-6 md:top-8">
               <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
                 <CardContent className="p-4 sm:p-6">
@@ -724,40 +724,45 @@ export default function ProductDetailPage() {
                         </p>
                       </div>
                     ) : canPurchaseNew ? (
-                      // Normal Mode: Show purchase buttons
+                      // Normal Mode: Show purchase buttons for all users
                       <>
                         <BuyToUseButton />
                         <BuyToResellButton product={product} />
                       </>
                     ) : (
-                      // No Licenses Available or Wrong Round
-                      <div className="text-center p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div className="text-gray-400 dark:text-gray-500 mb-2">
-                          <svg
-                            className="h-6 w-6 sm:h-8 sm:w-8 mx-auto"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
+                      // Show purchase buttons even when licenses not available (for non-logged users to see options)
+                      <>
+                        <BuyToUseButton />
+                        <BuyToResellButton product={product} />
+                        {/* Info about why purchase might not work */}
+                        <div className="text-center p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                          <div className="text-yellow-500 dark:text-yellow-400 mb-2">
+                            <svg
+                              className="h-6 w-6 sm:h-8 sm:w-8 mx-auto"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                              />
+                            </svg>
+                          </div>
+                          <p className="text-xs sm:text-sm text-yellow-700 dark:text-yellow-200 mb-1 font-medium">
+                            {currentRound === 0
+                              ? "No Licenses Available"
+                              : "Licenses Not Available in This Round"}
+                          </p>
+                          <p className="text-xs text-yellow-600 dark:text-yellow-400">
+                            {currentRound === 0
+                              ? "This product has no available licenses for purchase."
+                              : `Licenses can only be purchased in Round 0. Current round: ${currentRound}`}
+                          </p>
                         </div>
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">
-                          {currentRound === 0
-                            ? "No Licenses Available"
-                            : "Licenses Not Available in This Round"}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {currentRound === 0
-                            ? "This product has no available licenses for purchase."
-                            : `Licenses can only be purchased in Round 0. Current round: ${currentRound}`}
-                        </p>
-                      </div>
+                      </>
                     )}
                   </div>
 

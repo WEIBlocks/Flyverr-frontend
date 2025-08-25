@@ -12,7 +12,16 @@ import {
   AdminTableCell,
   AdminTableHeaderCell,
 } from "@/components/ui/admin-table";
-import { Plus, Package, User, Calendar, Star, Search, Loader2, Edit } from "lucide-react";
+import {
+  Plus,
+  Package,
+  User,
+  Calendar,
+  Star,
+  Search,
+  Loader2,
+  Edit,
+} from "lucide-react";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import AddProductModal from "@/features/user/product/components/AddProductModal";
 import PaginationControls from "@/components/ui/PaginationControls";
@@ -117,13 +126,20 @@ export default function PlatformProductsPage() {
             Create and manage Flyverr-owned products
           </p>
         </div>
-        <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white" onClick={() => setOpen(true)}>
+        <Button
+          className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
+          onClick={() => setOpen(true)}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Create Product
         </Button>
       </div>
 
-      <AddProductModal isOpen={open} onClose={() => setOpen(false)} isPlatformProduct />
+      <AddProductModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        isPlatformProduct
+      />
 
       {/* Search and Filters */}
       <div className="flex flex-col gap-4">
@@ -198,120 +214,141 @@ export default function PlatformProductsPage() {
           </tr>
         </AdminTableHeader>
         <AdminTableBody>
-          {isLoading ? (
+          {!isLoading ? (
             <AdminTableRow>
-              <td colSpan={4} className="py-8 text-center text-gray-500 dark:text-gray-400">
-                <span className="inline-flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading...</span>
+              <td
+                colSpan={7}
+                className="py-8 text-center text-gray-500 dark:text-gray-400"
+              >
+                {" "}
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Loading...
+                </span>
               </td>
             </AdminTableRow>
           ) : products.length === 0 ? (
             <AdminTableRow>
-              <td colSpan={4} className="py-8 text-center text-gray-500 dark:text-gray-400">No platform products found</td>
+              <td
+                colSpan={999}
+                className="py-8 text-center text-gray-500 dark:text-gray-400"
+              >
+                No platform products found
+              </td>
             </AdminTableRow>
-          ) : products.map((product: any) => (
-            <AdminTableRow key={product.id} hoverable={true}>
-              {/* Product Cell - Thumbnail + Title */}
-              <AdminTableCell>
-                <div className="flex items-center space-x-3">
-                  <ImageWithFallback
-                    src={product.thumbnail_url}
-                    alt={product.title}
-                    width={48}
-                    height={48}
-                    className="flex-shrink-0"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-sm">
-                      {product.title}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
-                      {product.category?.name || "Uncategorized"}
+          ) : (
+            products.map((product: any) => (
+              <AdminTableRow key={product.id} hoverable={true}>
+                {/* Product Cell - Thumbnail + Title */}
+                <AdminTableCell>
+                  <div className="flex items-center space-x-3">
+                    <ImageWithFallback
+                      src={product.thumbnail_url}
+                      alt={product.title}
+                      width={48}
+                      height={48}
+                      className="flex-shrink-0"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-sm">
+                        {product.title}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+                        {product.category?.name || "Uncategorized"}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </AdminTableCell>
+                </AdminTableCell>
 
-              {/* Creator & Stage Cell */}
-              <AdminTableCell>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                    <span className="text-sm text-gray-900 dark:text-white">
-                      {product.creator.first_name} {product.creator.last_name}
-                    </span>
+                {/* Creator & Stage Cell */}
+                <AdminTableCell>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                      <span className="text-sm text-gray-900 dark:text-white">
+                        {product.creator.first_name} {product.creator.last_name}
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      {getStageBadge(product.current_stage)}
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Round {product.current_round}
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    {getStageBadge(product.current_stage)}
+                </AdminTableCell>
+
+                {/* Price */}
+                <AdminTableCell>
+                  <div className="space-y-2">
+                    <div className="text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
+                      ${product.original_price}
+                    </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      Round {product.current_round}
+                      {product.remaining_licenses}/{product.total_licenses}{" "}
+                      licenses
                     </div>
                   </div>
-                </div>
-              </AdminTableCell>
+                </AdminTableCell>
 
-              {/* Price */}
-              <AdminTableCell>
-                <div className="space-y-2">
-                  <div className="text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
-                    ${product.original_price}
+                {/* Status */}
+                <AdminTableCell>
+                  {getStatusBadge(product.status)}
+                </AdminTableCell>
+
+                {/* Featured */}
+                <AdminTableCell>
+                  <div className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
+                    <Star className="w-3 h-3" />
+                    {product.featured ? "Featured" : "Standard"}
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {product.remaining_licenses}/{product.total_licenses} licenses
-                  </div>
-                </div>
-              </AdminTableCell>
+                </AdminTableCell>
 
-              {/* Status */}
-              <AdminTableCell>
-                {getStatusBadge(product.status)}
-              </AdminTableCell>
-
-              {/* Featured */}
-              <AdminTableCell>
-                <div className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
-                  <Star className="w-3 h-3" />
-                  {product.featured ? "Featured" : "Standard"}
-                </div>
-              </AdminTableCell>
-
-              {/* Submission Cell */}
-              <AdminTableCell>
-                <div className="space-y-1">
-                  <div className="text-sm text-gray-900 dark:text-white flex items-center">
-                    <Calendar className="w-3 h-3 mr-1 text-gray-500" />
-                    {new Date(product.created_at).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {product.approved_at
-                      ? `Approved: ${new Date(product.approved_at).toLocaleDateString("en-US", {
+                {/* Submission Cell */}
+                <AdminTableCell>
+                  <div className="space-y-1">
+                    <div className="text-sm text-gray-900 dark:text-white flex items-center">
+                      <Calendar className="w-3 h-3 mr-1 text-gray-500" />
+                      {new Date(product.created_at).toLocaleDateString(
+                        "en-US",
+                        {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
-                        })}`
-                      : "Not approved yet"}
+                        }
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {product.approved_at
+                        ? `Approved: ${new Date(
+                            product.approved_at
+                          ).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}`
+                        : "Not approved yet"}
+                    </div>
                   </div>
-                </div>
-              </AdminTableCell>
+                </AdminTableCell>
 
-              {/* Actions */}
-              <AdminTableCell align="center">
-                <div className="flex items-center justify-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="hover:bg-green-50 dark:hover:bg-green-900/20 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400"
-                    onClick={() => router.push(`/admin/products/${product.id}`)}
-                  >
-                    <Edit className="w-3 h-3" />
-                  </Button>
-                </div>
-              </AdminTableCell>
-            </AdminTableRow>
-          ))}
+                {/* Actions */}
+                <AdminTableCell align="center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="hover:bg-green-50 dark:hover:bg-green-900/20 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400"
+                      onClick={() =>
+                        router.push(`/admin/products/${product.id}`)
+                      }
+                    >
+                      <Edit className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </AdminTableCell>
+              </AdminTableRow>
+            ))
+          )}
         </AdminTableBody>
       </AdminTable>
 
@@ -331,5 +368,3 @@ export default function PlatformProductsPage() {
     </div>
   );
 }
-
-

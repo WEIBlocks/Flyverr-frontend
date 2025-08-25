@@ -94,13 +94,16 @@ export default function withStripeOnboarding<T extends object>(
           text: "Please complete your Stripe onboarding to add a product",
           icon: "info",
           confirmButtonText: "Complete Stripe Onboarding",
-          showCancelButton: true,
-          cancelButtonText: "Cancel",
+          allowOutsideClick: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.open(stripeConnectStatus?.data?.link, "_blank");
+          }
         });
 
         return;
       }
-      console.log("sdfsdfsdf");
+      
       // User can proceed, run the provided action
       action();
     };

@@ -38,7 +38,7 @@ const schema = yup.object().shape({
 
 type FormData = yup.InferType<typeof schema>;
 
-export default function LoginPage() {
+export default function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showEmailReminder, setShowEmailReminder] = React.useState(false);
   const [isSocialLoading, setIsSocialLoading] = React.useState(false);
@@ -70,6 +70,7 @@ export default function LoginPage() {
   }, []);
 
   const onSubmit = (data: FormData) => {
+    // Login will now handle the redirect based on user role after confirmation
     login(data);
   };
 
