@@ -10,12 +10,14 @@ import withStripeOnboarding from "./withStripeOnboarding";
 interface BuyToResellButtonProps {
   product: ProductDetail;
   requireReady?: (action: () => void) => void; // injected by HOC
+  licenseId?: string;
 }
 
-function BuyToResellButton({ product, requireReady }: BuyToResellButtonProps) {
-
-   
-
+function BuyToResellButton({
+  product,
+  requireReady,
+  licenseId,
+}: BuyToResellButtonProps) {
   const params = useParams();
   const productId = params.id as string;
   const [selectedPurchaseType, setSelectedPurchaseType] = useState<
@@ -27,6 +29,9 @@ function BuyToResellButton({ product, requireReady }: BuyToResellButtonProps) {
 
   const handleBuyToResell = () => {
     // Show insurance modal for resell
+    if (licenseId) {
+      console.log("Buy to Resell - License ID:", licenseId);
+    }
     setSelectedPurchaseType("resell");
     setIsInsuranceModalOpen(true);
   };
@@ -39,15 +44,22 @@ function BuyToResellButton({ product, requireReady }: BuyToResellButtonProps) {
       setIsBuyingToResell(true);
     }
 
+    // Prepare purchase data with license ID if available
+    const purchaseData: any = {
+      purchaseType: selectedPurchaseType,
+      hasInsurance,
+      paymentMethod: "stripe",
+    };
+
+    if (licenseId) {
+      purchaseData.licenseId = licenseId;
+    }
+
     // Call purchase with insurance choice
     purchaseProduct(
       {
         id: productId,
-        data: {
-          purchaseType: selectedPurchaseType,
-          hasInsurance,
-          paymentMethod: "stripe",
-        },
+        data: purchaseData,
       },
       {
         onSuccess: () => {
@@ -69,7 +81,9 @@ function BuyToResellButton({ product, requireReady }: BuyToResellButtonProps) {
       <Button
         variant="outline"
         className="w-full bg-transparent dark:bg-transparent border-2 border-flyverr-secondary text-flyverr-secondary dark:text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white dark:hover:bg-flyverr-secondary dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400"
-        onClick={() => (requireReady ? requireReady(handleBuyToResell) : handleBuyToResell())}
+        onClick={() =>
+          requireReady ? requireReady(handleBuyToResell) : handleBuyToResell()
+        }
         disabled={isBuyingToResell}
       >
         {isBuyingToResell ? (
