@@ -40,6 +40,7 @@ export function canPurchaseProducts(user?: UserProfile | null): boolean {
  * @returns boolean - true if alert should be shown, false otherwise
  */
 export function shouldShowStripeAlert(user?: UserProfile | null): boolean {
+  if (!user) return false;
   const isOnboarded = getStripeOnboardingStatus(user);
   const isDismissed = storage.get('stripe-alert-dismissed');
   

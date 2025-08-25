@@ -10,12 +10,12 @@ import CompleteSetupButton from "./CompleteSetupButton";
 
 export default function StripeOnboardingAlert() {
   const [showAlert, setShowAlert] = useState(false);
-  const { data: currentUser, isRefetching } = useGetCurrentUser();
+  const { data: currentUser, isRefetching , isLoading } = useGetCurrentUser();
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     // Use helper function to determine if alert should be shown
-    setShowAlert(shouldShowStripeAlert(currentUser));
+    setShowAlert(shouldShowStripeAlert(isLoading ? null : currentUser));
   }, [currentUser, isRefetching]);
 
   const handleDismiss = () => {
@@ -33,7 +33,7 @@ export default function StripeOnboardingAlert() {
   }
 
   return (
-    <div className="border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20 rounded-md p-4">
+    <div className="border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20 rounded-md p-4 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 my-2">
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-3">
           <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
