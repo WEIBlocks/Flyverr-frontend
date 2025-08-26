@@ -357,8 +357,8 @@ export default function ProductDetailPage() {
                   {ownsLicense && (
                     <AddReview
                       productId={productId}
-                      buttonVariant="outline"
-                      buttonClassName="border-2 border-flyverr-primary dark:border-flyverr-primary text-flyverr-primary dark:text-white hover:bg-flyverr-primary hover:text-white dark:hover:bg-flyverr-primary dark:hover:text-white px-3 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg"
+                      buttonVariant="default"
+                      buttonClassName="bg-amber-500 dark:bg-amber-400 text-white hover:bg-amber-600 dark:hover:bg-amber-500 px-3 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg"
                       onSuccess={() => setSelectedTab("reviews")}
                     />
                   )}

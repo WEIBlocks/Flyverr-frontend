@@ -163,22 +163,22 @@ export default function AdminReviewsPage() {
       </div>
 
       {/* Search and Filters Section - Always visible */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-        {/* Section Header */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Search & Filters
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Find specific reviews by searching content or applying filters
-          </p>
-        </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+            {/* Section Header */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Search & Filters
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Find specific reviews by searching content or applying filters
+              </p>
+            </div>
 
         {/* Status Tabs - Enhanced Design */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Review Status
-          </label>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Review Status
+              </label>
           <div className="flex flex-wrap gap-2">
             {statusTabs.map((tab) => {
               const isActive = status === tab.key;
@@ -227,13 +227,13 @@ export default function AdminReviewsPage() {
               };
 
               return (
-                <button
-                  key={tab.key}
-                  onClick={() => {
-                    setStatus(tab.key);
-                    setCurrentPage(1);
-                  }}
-                  disabled={isLoading}
+                    <button
+                      key={tab.key}
+                      onClick={() => {
+                        setStatus(tab.key);
+                        setCurrentPage(1);
+                      }}
+                      disabled={isLoading}
                   className={`
                     flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 font-medium text-sm transition-all duration-200 
                     disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95
@@ -246,140 +246,140 @@ export default function AdminReviewsPage() {
                   {isActive && (
                     <div className="ml-1 w-2 h-2 bg-current rounded-full animate-pulse"></div>
                   )}
-                </button>
+                    </button>
               );
             })}
-          </div>
-        </div>
-        
-        <div className="flex flex-col lg:flex-row gap-4">
-          {/* Search Section */}
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Search Reviews
-            </label>
-            <div className="flex gap-2">
-              <input
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && applyFilters()}
-                placeholder="Search by comment, product title, or username..."
-                className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200"
-                disabled={isLoading}
-              />
-              <button
-                onClick={applyFilters}
-                disabled={isLoading || !searchInput.trim()}
-                className="px-6 py-2.5 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Searching...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    Search
-                  </>
-                )}
-              </button>
+              </div>
             </div>
-          </div>
+            
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search Section */}
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Search Reviews
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && applyFilters()}
+                    placeholder="Search by comment, product title, or username..."
+                    className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200"
+                    disabled={isLoading}
+                  />
+                  <button
+                    onClick={applyFilters}
+                    disabled={isLoading || !searchInput.trim()}
+                    className="px-6 py-2.5 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Searching...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        Search
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
 
-          {/* Filters Section */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Rating Filter */}
-            <div className="min-w-[140px]">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Rating Filter
-              </label>
-              <select
-                value={rating ?? ""}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setRating(value ? Number(value) : null);
-                  setCurrentPage(1);
-                }}
-                disabled={isLoading}
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <option value="">All Ratings</option>
-                <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
-                <option value="4">⭐⭐⭐⭐ 4 Stars</option>
-                <option value="3">⭐⭐⭐ 3 Stars</option>
-                <option value="2">⭐⭐ 2 Stars</option>
-                <option value="1">⭐ 1 Star</option>
-              </select>
-            </div>
+              {/* Filters Section */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                {/* Rating Filter */}
+                <div className="min-w-[140px]">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Rating Filter
+                  </label>
+                  <select
+                    value={rating ?? ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setRating(value ? Number(value) : null);
+                      setCurrentPage(1);
+                    }}
+                    disabled={isLoading}
+                    className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">All Ratings</option>
+                    <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                    <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                    <option value="3">⭐⭐⭐ 3 Stars</option>
+                    <option value="2">⭐⭐ 2 Stars</option>
+                    <option value="1">⭐ 1 Star</option>
+                  </select>
+                </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
-              <button
-                onClick={clearFilters}
-                disabled={isLoading}
-                className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 justify-center"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Reset
-              </button>
-              <button
-                onClick={() => refetch()}
-                disabled={isLoading || isRefetching}
-                className="px-4 py-2.5 border border-flyverr-primary/30 text-flyverr-primary text-sm font-medium rounded-lg hover:bg-flyverr-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 justify-center"
-              >
-                {isRefetching ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-flyverr-primary border-t-transparent rounded-full animate-spin"></div>
-                    Refreshing...
-                  </>
-                ) : (
-                  <>
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
+                  <button
+                    onClick={clearFilters}
+                    disabled={isLoading}
+                    className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 justify-center"
+                  >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Refresh
-                  </>
-                )}
-              </button>
+                    Reset
+                  </button>
+                  <button
+                    onClick={() => refetch()}
+                    disabled={isLoading || isRefetching}
+                    className="px-4 py-2.5 border border-flyverr-primary/30 text-flyverr-primary text-sm font-medium rounded-lg hover:bg-flyverr-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 justify-center"
+                  >
+                    {isRefetching ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-flyverr-primary border-t-transparent rounded-full animate-spin"></div>
+                        Refreshing...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Refresh
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Active Filters Display */}
-        {(status !== "pending" || rating !== null || search) && (
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <span className="font-medium">Active Filters:</span>
-              {status !== "pending" && (
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200">
-                  Status: {status.charAt(0).toUpperCase() + status.slice(1)}
-                </Badge>
-              )}
-              {rating !== null && (
-                <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-200">
-                  Rating: {rating} ⭐
-                </Badge>
-              )}
-              {search && (
-                <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-200">
-                  Search: "{search}"
-                </Badge>
-              )}
-              <button
-                onClick={clearFilters}
-                className="ml-2 text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline"
-              >
-                Clear All
-              </button>
-            </div>
+            {/* Active Filters Display */}
+            {(status !== "pending" || rating !== null || search) && (
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-medium">Active Filters:</span>
+                  {status !== "pending" && (
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200">
+                      Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </Badge>
+                  )}
+                  {rating !== null && (
+                    <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-200">
+                      Rating: {rating} ⭐
+                    </Badge>
+                  )}
+                  {search && (
+                    <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-200">
+                      Search: "{search}"
+                    </Badge>
+                  )}
+                  <button
+                    onClick={clearFilters}
+                    className="ml-2 text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline"
+                  >
+                    Clear All
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
       {/* Enhanced Reviews Table */}
       <Card className="border-0 bg-white dark:bg-gray-800 shadow-lg">

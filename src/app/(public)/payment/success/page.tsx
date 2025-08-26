@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { CheckCircle2, Download, ArrowRight } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { CheckCircle2, Download, ArrowRight, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -13,11 +14,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { storage } from "@/lib/utils";
+import { useGetMyLicenses } from "@/features/user/licenses/hooks/useGetMyLicenses";
 
 export default function PaymentSuccessPage() {
   const search = useSearchParams();
   const licenseId = search.get("licenseId");
+  const productId = search.get("productId");
   const [downloading, setDownloading] = useState(false);
+  const router = useRouter();
+  const {
+    data: myLicenses,
+    isLoading: isLoadingMyLicenses,
+    error: myLicensesError,
+  } = useGetMyLicenses(1, 100);
 
   const handleDownload = async () => {
     if (!licenseId) {
@@ -47,6 +57,7 @@ export default function PaymentSuccessPage() {
       setDownloading(false);
     }
   };
+
   return (
     <main className="min-h-[80vh] bg-flyverr-neutral dark:bg-gray-950">
       {/* Decorative background */}
@@ -92,6 +103,16 @@ export default function PaymentSuccessPage() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
+
+                <Button
+                  variant="outline"
+                  disabled={downloading || !licenseId}
+                  onClick={() => router.push(`/marketplace/${productId}`)}
+                  className="w-full sm:w-auto border-amber-500 dark:border-amber-400 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-400 dark:hover:text-white"
+                >
+                  <Star className="mr-2 h-4 w-4" />
+                  Leave a Review
+                </Button>
               </div>
 
               <div className="text-center text-sm text-gray-600 dark:text-gray-400">
