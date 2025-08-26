@@ -114,40 +114,6 @@ export default function AdminReviewsPage() {
     );
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-8">
-        {/* Header Section - Always visible */}
-        <div className="bg-gradient-to-r from-flyverr-primary/5 to-flyverr-secondary/5 dark:from-flyverr-primary/10 dark:to-flyverr-secondary/10 rounded-2xl p-4 sm:p-6 border border-flyverr-primary/10 dark:border-flyverr-primary/20">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <div className="p-2 sm:p-3 bg-flyverr-primary/10 dark:bg-flyverr-primary/20 rounded-xl">
-                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-flyverr-primary" />
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                  Reviews
-                </h1>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
-                  Review moderation with filters and search
-                </p>
-              </div>
-            </div>
-            <Badge
-              variant="secondary"
-              className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold self-start sm:self-center"
-            >
-              Loading...
-            </Badge>
-          </div>
-        </div>
-
-        {/* Enhanced Table Skeleton - Only table shows loading */}
-     
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="space-y-6">
@@ -191,234 +157,229 @@ export default function AdminReviewsPage() {
             variant="secondary"
             className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200 px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold self-start sm:self-center"
           >
-            {pagination?.total || 0} total
+            {isLoading ? "Loading..." : `${pagination?.total || 0} total`}
           </Badge>
         </div>
       </div>
 
-      {/* Search and Filters Section - Only show when data is loaded */}
-      {!isLoading && data && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-            {/* Section Header */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Search & Filters
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Find specific reviews by searching content or applying filters
-              </p>
-            </div>
+      {/* Search and Filters Section - Always visible */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+        {/* Section Header */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            Search & Filters
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Find specific reviews by searching content or applying filters
+          </p>
+        </div>
 
-          {/* Status Tabs - Enhanced Design */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Review Status
+        {/* Status Tabs - Enhanced Design */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            Review Status
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {statusTabs.map((tab) => {
+              const isActive = status === tab.key;
+              const getStatusIcon = (key: string) => {
+                switch (key) {
+                  case 'pending':
+                    return <Clock className="w-4 h-4" />;
+                  case 'active':
+                    return <Star className="w-4 h-4" />;
+                  case 'rejected':
+                    return <X className="w-4 h-4" />;
+                  case 'deleted':
+                    return <Trash2 className="w-4 h-4" />;
+                  case 'all':
+                    return <List className="w-4 h-4" />;
+                  default:
+                    return null;
+                }
+              };
+
+              const getStatusColor = (key: string) => {
+                switch (key) {
+                  case 'pending':
+                    return isActive 
+                      ? 'bg-yellow-500 text-white border-yellow-500' 
+                      : 'text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:border-yellow-300 dark:text-yellow-400 dark:border-yellow-700 dark:hover:bg-yellow-900/20 dark:hover:border-yellow-600';
+                  case 'active':
+                    return isActive 
+                      ? 'bg-green-500 text-white border-green-500' 
+                      : 'text-green-600 border-green-200 hover:bg-green-50 hover:border-green-300 dark:text-green-400 dark:border-green-700 dark:hover:bg-green-900/20 dark:hover:border-green-600';
+                  case 'rejected':
+                    return isActive 
+                      ? 'bg-red-500 text-white border-red-500' 
+                      : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-yellow-300 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-900/20 dark:hover:border-red-600';
+                  case 'deleted':
+                    return isActive 
+                      ? 'bg-gray-500 text-white border-gray-500' 
+                      : 'text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-900/20 dark:hover:border-gray-600';
+                  case 'all':
+                    return isActive 
+                      ? 'bg-blue-500 text-white border-blue-500' 
+                      : 'text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 dark:text-blue-400 dark:border-blue-700 dark:hover:bg-blue-900/20 dark:hover:border-blue-600';
+                  default:
+                    return '';
+                }
+              };
+
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => {
+                    setStatus(tab.key);
+                    setCurrentPage(1);
+                  }}
+                  disabled={isLoading}
+                  className={`
+                    flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 font-medium text-sm transition-all duration-200 
+                    disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95
+                    ${getStatusColor(tab.key)}
+                    ${isActive ? 'shadow-lg ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800' : ''}
+                  `}
+                >
+                  {getStatusIcon(tab.key)}
+                  <span className="font-semibold">{tab.label}</span>
+                  {isActive && (
+                    <div className="ml-1 w-2 h-2 bg-current rounded-full animate-pulse"></div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search Section */}
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Search Reviews
+            </label>
+            <div className="flex gap-2">
+              <input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && applyFilters()}
+                placeholder="Search by comment, product title, or username..."
+                className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200"
+                disabled={isLoading}
+              />
+              <button
+                onClick={applyFilters}
+                disabled={isLoading || !searchInput.trim()}
+                className="px-6 py-2.5 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Search
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Filters Section */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* Rating Filter */}
+            <div className="min-w-[140px]">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Rating Filter
               </label>
-            <div className="flex flex-wrap gap-2">
-              {statusTabs.map((tab) => {
-                const isActive = status === tab.key;
-                const getStatusIcon = (key: string) => {
-                  switch (key) {
-                    case 'pending':
-                      return <Clock className="w-4 h-4" />;
-                    case 'active':
-                      return <Star className="w-4 h-4" />;
-                    case 'rejected':
-                      return <X className="w-4 h-4" />;
-                    case 'deleted':
-                      return <Trash2 className="w-4 h-4" />;
-                    case 'all':
-                      return <List className="w-4 h-4" />;
-                    default:
-                      return null;
-                  }
-                };
-
-                const getStatusColor = (key: string) => {
-                  switch (key) {
-                    case 'pending':
-                      return isActive 
-                        ? 'bg-yellow-500 text-white border-yellow-500' 
-                        : 'text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:border-yellow-300 dark:text-yellow-400 dark:border-yellow-700 dark:hover:bg-yellow-900/20 dark:hover:border-yellow-600';
-                    case 'active':
-                      return isActive 
-                        ? 'bg-green-500 text-white border-green-500' 
-                        : 'text-green-600 border-green-200 hover:bg-green-50 hover:border-green-300 dark:text-green-400 dark:border-green-700 dark:hover:bg-green-900/20 dark:hover:border-green-600';
-                    case 'rejected':
-                      return isActive 
-                        ? 'bg-red-500 text-white border-red-500' 
-                        : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-900/20 dark:hover:border-red-600';
-                    case 'deleted':
-                      return isActive 
-                        ? 'bg-gray-500 text-white border-gray-500' 
-                        : 'text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-900/20 dark:hover:border-gray-600';
-                    case 'all':
-                      return isActive 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 dark:text-blue-400 dark:border-blue-700 dark:hover:bg-blue-900/20 dark:hover:border-blue-600';
-                    default:
-                      return '';
-                  }
-                };
-
-                return (
-                    <button
-                      key={tab.key}
-                      onClick={() => {
-                        setStatus(tab.key);
-                        setCurrentPage(1);
-                      }}
-                      disabled={isLoading}
-                    className={`
-                      flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 font-medium text-sm transition-all duration-200 
-                      disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95
-                      ${getStatusColor(tab.key)}
-                      ${isActive ? 'shadow-lg ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800' : ''}
-                    `}
-                  >
-                    {getStatusIcon(tab.key)}
-                    <span className="font-semibold">{tab.label}</span>
-                    {isActive && (
-                      <div className="ml-1 w-2 h-2 bg-current rounded-full animate-pulse"></div>
-                    )}
-                    </button>
-                );
-              })}
+              <select
+                value={rating ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setRating(value ? Number(value) : null);
+                  setCurrentPage(1);
+                }}
+                disabled={isLoading}
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">All Ratings</option>
+                <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                <option value="3">⭐⭐⭐ 3 Stars</option>
+                <option value="2">⭐⭐ 2 Stars</option>
+                <option value="1">⭐ 1 Star</option>
+              </select>
             </div>
-            </div>
-            
-            <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search Section */}
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Search Reviews
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && applyFilters()}
-                    placeholder="Search by comment, product title, or username..."
-                    className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200"
-                    disabled={isLoading}
-                  />
-                  <button
-                    onClick={applyFilters}
-                    disabled={isLoading || !searchInput.trim()}
-                    className="px-6 py-2.5 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Searching...
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        Search
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
 
-              {/* Filters Section */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                {/* Rating Filter */}
-                <div className="min-w-[140px]">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Rating Filter
-                  </label>
-                  <select
-                    value={rating ?? ""}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setRating(value ? Number(value) : null);
-                      setCurrentPage(1);
-                    }}
-                    disabled={isLoading}
-                    className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <option value="">All Ratings</option>
-                    <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
-                    <option value="4">⭐⭐⭐⭐ 4 Stars</option>
-                    <option value="3">⭐⭐⭐ 3 Stars</option>
-                    <option value="2">⭐⭐ 2 Stars</option>
-                    <option value="1">⭐ 1 Star</option>
-                  </select>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
-                  <button
-                    onClick={clearFilters}
-                    disabled={isLoading}
-                    className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 justify-center"
-                  >
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
+              <button
+                onClick={clearFilters}
+                disabled={isLoading}
+                className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 justify-center"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset
+              </button>
+              <button
+                onClick={() => refetch()}
+                disabled={isLoading || isRefetching}
+                className="px-4 py-2.5 border border-flyverr-primary/30 text-flyverr-primary text-sm font-medium rounded-lg hover:bg-flyverr-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 justify-center"
+              >
+                {isRefetching ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-flyverr-primary border-t-transparent rounded-full animate-spin"></div>
+                    Refreshing...
+                  </>
+                ) : (
+                  <>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Reset
-                  </button>
-                  <button
-                    onClick={() => refetch()}
-                    disabled={isLoading || isRefetching}
-                    className="px-4 py-2.5 border border-flyverr-primary/30 text-flyverr-primary text-sm font-medium rounded-lg hover:bg-flyverr-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 justify-center"
-                  >
-                    {isRefetching ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-flyverr-primary border-t-transparent rounded-full animate-spin"></div>
-                        Refreshing...
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Refresh
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
+                    Refresh
+                  </>
+                )}
+              </button>
             </div>
-
-            {/* Active Filters Display */}
-            {(status !== "pending" || rating !== null || search) && (
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-medium">Active Filters:</span>
-                  {status !== "pending" && (
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200">
-                      Status: {status.charAt(0).toUpperCase() + status.slice(1)}
-                    </Badge>
-                  )}
-                  {rating !== null && (
-                    <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-200">
-                      Rating: {rating} ⭐
-                    </Badge>
-                  )}
-                  {search && (
-                    <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-200">
-                      Search: "{search}"
-                    </Badge>
-                  )}
-                  <button
-                    onClick={clearFilters}
-                    className="ml-2 text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline"
-                  >
-                    Clear All
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
-      )}
-     
+        </div>
 
-
+        {/* Active Filters Display */}
+        {(status !== "pending" || rating !== null || search) && (
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="font-medium">Active Filters:</span>
+              {status !== "pending" && (
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200">
+                  Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+                </Badge>
+              )}
+              {rating !== null && (
+                <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-200">
+                  Rating: {rating} ⭐
+                </Badge>
+              )}
+              {search && (
+                <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-200">
+                  Search: "{search}"
+                </Badge>
+              )}
+              <button
+                onClick={clearFilters}
+                className="ml-2 text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Enhanced Reviews Table */}
       <Card className="border-0 bg-white dark:bg-gray-800 shadow-lg">
@@ -431,7 +392,68 @@ export default function AdminReviewsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {reviews.length === 0 ? (
+          {isLoading ? (
+            // Table Loading Skeleton
+            <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 md:p-6">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg sm:rounded-xl"
+                >
+                  {/* Review ID and Image - Mobile Stack, Desktop Row */}
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 sm:min-w-[200px]">
+                    <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gray-200 dark:bg-gray-700 rounded-lg sm:rounded-xl animate-pulse flex-shrink-0"></div>
+                    <div className="space-y-1 sm:space-y-2 flex-1 min-w-0">
+                      <div className="h-3 sm:h-4 w-16 sm:w-20 md:w-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                      <div className="h-2 sm:h-3 w-12 sm:w-16 md:w-20 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                    </div>
+                  </div>
+
+                  {/* Product Title - Responsive Width */}
+                  <div className="flex-1 min-w-0 sm:min-w-[150px] md:min-w-[200px] space-y-1 sm:space-y-2">
+                    <div className="h-3 sm:h-4 w-24 sm:w-32 md:w-40 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                    <div className="h-2 sm:h-3 w-16 sm:w-24 md:w-32 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  </div>
+
+                  {/* User Info - Responsive Layout */}
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 sm:min-w-[140px] md:min-w-[180px]">
+                    <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse flex-shrink-0"></div>
+                    <div className="space-y-1 sm:space-y-2 flex-1 min-w-0">
+                      <div className="h-3 sm:h-4 w-16 sm:w-20 md:w-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                      <div className="h-2 sm:h-3 w-20 sm:w-24 md:w-28 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                    </div>
+                  </div>
+
+                  {/* Rating - Responsive Layout */}
+                  <div className="min-w-0 sm:min-w-[80px] md:min-w-[100px] space-y-1 sm:space-y-2">
+                    <div className="h-3 sm:h-4 w-6 sm:w-8 md:w-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                    <div className="flex gap-0.5 sm:gap-1">
+                      {[...Array(5)].map((_, starIndex) => (
+                        <div
+                          key={starIndex}
+                          className="h-3 w-3 sm:h-4 sm:w-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                        ></div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Comment - Responsive Width */}
+                  <div className="flex-1 min-w-0 sm:min-w-[200px] md:min-w-[250px] space-y-1 sm:space-y-2">
+                    <div className="h-3 sm:h-4 w-full bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                    <div className="h-2 sm:h-3 w-3/4 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  </div>
+
+                  {/* Date - Responsive Layout */}
+                  <div className="min-w-0 sm:min-w-[100px] md:min-w-[120px] space-y-1 sm:space-y-2">
+                    <div className="h-3 sm:h-4 w-16 sm:w-20 md:w-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                    <div className="h-2 sm:h-3 w-12 sm:w-16 md:w-20 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  </div>
+
+                  {/* Actions - Responsive Layout */}
+                </div>
+              ))}
+            </div>
+          ) : reviews.length === 0 ? (
             <div className="p-12 text-center text-gray-500 dark:text-gray-400">
               <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                 <Clock className="h-10 w-10 text-gray-300 dark:text-gray-600" />

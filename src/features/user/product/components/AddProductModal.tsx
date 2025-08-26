@@ -302,6 +302,7 @@ export default function AddProductModal({
         thumbnailUrl: thumb.url || "",
         imagesUrls: images.map((i) => i.url || "").filter(Boolean),
         fileUrl: file.path,
+        categoryId: data.categoryId,
         fileType: (mainFile as File).type || data.fileType,
         fileSize: (mainFile as File).size || data.fileSize,
         originalPrice: parseFloat(data.originalPrice),
