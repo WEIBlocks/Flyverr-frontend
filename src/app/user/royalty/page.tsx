@@ -516,7 +516,7 @@ export default function RoyaltyPage() {
                                     {isSelected ? "Selected" : "Select"}
                                   </Button>
                                   <Link
-                                    href={`/marketplace/${p.product_id}`}
+                                    href={`/marketplace/${p.product_id}-rv153F2`}
                                     target="_blank"
                                     className="text-sm text-flyverr-primary hover:underline"
                                   >

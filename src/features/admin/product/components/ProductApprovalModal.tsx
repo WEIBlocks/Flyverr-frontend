@@ -279,8 +279,16 @@ export default function ProductApprovalModal({
                         : "text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 hover:border hover:border-green-200/50 dark:hover:border-green-700/50"
                     }`}
                   >
-                    <CheckCircle className={`w-5 h-5 transition-colors duration-300 ${isApproved === true ? "text-green-600 dark:text-green-400" : "text-gray-400 dark:text-gray-500 group-hover:text-green-500"}`} />
-                    <span className="text-sm sm:text-base font-semibold transition-colors duration-300">Approve</span>
+                    <CheckCircle
+                      className={`w-5 h-5 transition-colors duration-300 ${
+                        isApproved === true
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-gray-400 dark:text-gray-500 group-hover:text-green-500"
+                      }`}
+                    />
+                    <span className="text-sm sm:text-base font-semibold transition-colors duration-300">
+                      Approve
+                    </span>
                     <span
                       className={`pointer-events-none absolute bottom-0 inset-x-6 h-0.5 rounded-full transition-all duration-300 ${
                         isApproved === true ? "bg-green-500" : "bg-transparent"
@@ -297,8 +305,16 @@ export default function ProductApprovalModal({
                         : "text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border hover:border-red-200/50 dark:hover:border-red-700/50"
                     }`}
                   >
-                    <XCircle className={`w-5 h-5 transition-colors duration-300 ${isApproved === false ? "text-red-600 dark:text-red-400" : "text-gray-400 dark:text-gray-500 group-hover:text-red-500"}`} />
-                    <span className="text-sm sm:text-base font-semibold transition-colors duration-300">Reject</span>
+                    <XCircle
+                      className={`w-5 h-5 transition-colors duration-300 ${
+                        isApproved === false
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-gray-400 dark:text-gray-500 group-hover:text-red-500"
+                      }`}
+                    />
+                    <span className="text-sm sm:text-base font-semibold transition-colors duration-300">
+                      Reject
+                    </span>
                     <span
                       className={`pointer-events-none absolute bottom-0 inset-x-6 h-0.5 rounded-full transition-all duration-300 ${
                         isApproved === false ? "bg-red-500" : "bg-transparent"

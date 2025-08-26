@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import {
@@ -98,8 +98,12 @@ export default function ProductDetailPage() {
   const [isBuyingToResell, setIsBuyingToResell] = useState(false);
   const params = useParams();
   const router = useRouter();
+  const search = useSearchParams();
+  const rawId = (params.id as string) || "";
+  const fromRoyaltyView =
+    /-rv153F2$/.test(rawId) || search.get("royalty") === "1";
+  const productId = rawId.replace(/-rv153F2$/, "");
   const { isAuthenticated } = useAuth();
-  const productId = params.id as string;
 
   // Fetch product data using the hook
   const {
@@ -696,47 +700,13 @@ export default function ProductDetailPage() {
                   </div>
 
                   {/* License Status and Purchase Options */}
-                  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
-                    {/* Show different states based on availability */}
-                    {isResaleOnly ? (
-                      // Resale-Only Mode: Disable new license purchases
-                      <div className="text-center p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <div className="text-blue-500 dark:text-blue-400 mb-2">
-                          <svg
-                            className="h-6 w-6 sm:h-8 sm:w-8 mx-auto"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                        </div>
-                        <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-200 mb-1 font-medium">
-                          Resale-Only Mode
-                        </p>
-                        <p className="text-xs text-blue-600 dark:text-blue-400">
-                          Check resale licenses below.
-                        </p>
-                      </div>
-                    ) : canPurchaseNew ? (
-                      // Normal Mode: Show purchase buttons for all users
-                      <>
-                        <BuyToUseButton />
-                        <BuyToResellButton product={product} />
-                      </>
-                    ) : (
-                      // Show purchase buttons even when licenses not available (for non-logged users to see options)
-                      <>
-                        <BuyToUseButton />
-                        <BuyToResellButton product={product} />
-                        {/* Info about why purchase might not work */}
-                        <div className="text-center p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                          <div className="text-yellow-500 dark:text-yellow-400 mb-2">
+                  {!fromRoyaltyView && (
+                    <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+                      {/* Show different states based on availability */}
+                      {isResaleOnly ? (
+                        // Resale-Only Mode: Disable new license purchases
+                        <div className="text-center p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <div className="text-blue-500 dark:text-blue-400 mb-2">
                             <svg
                               className="h-6 w-6 sm:h-8 sm:w-8 mx-auto"
                               fill="none"
@@ -747,24 +717,60 @@ export default function ProductDetailPage() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={2}
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                               />
                             </svg>
                           </div>
-                          <p className="text-xs sm:text-sm text-yellow-700 dark:text-yellow-200 mb-1 font-medium">
-                            {currentRound === 0
-                              ? "No Licenses Available"
-                              : "Licenses Not Available in This Round"}
+                          <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-200 mb-1 font-medium">
+                            Resale-Only Mode
                           </p>
-                          <p className="text-xs text-yellow-600 dark:text-yellow-400">
-                            {currentRound === 0
-                              ? "This product has no available licenses for purchase."
-                              : `Licenses can only be purchased in Round 0. Current round: ${currentRound}`}
+                          <p className="text-xs text-blue-600 dark:text-blue-400">
+                            Check resale licenses below.
                           </p>
                         </div>
-                      </>
-                    )}
-                  </div>
+                      ) : canPurchaseNew ? (
+                        // Normal Mode: Show purchase buttons for all users
+                        <>
+                          <BuyToUseButton />
+                          <BuyToResellButton product={product} />
+                        </>
+                      ) : (
+                        // Show purchase buttons even when licenses not available (for non-logged users to see options)
+                        <>
+                          <BuyToUseButton />
+                          <BuyToResellButton product={product} />
+                          {/* Info about why purchase might not work */}
+                          <div className="text-center p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                            <div className="text-yellow-500 dark:text-yellow-400 mb-2">
+                              <svg
+                                className="h-6 w-6 sm:h-8 sm:w-8 mx-auto"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                                />
+                              </svg>
+                            </div>
+                            <p className="text-xs sm:text-sm text-yellow-700 dark:text-yellow-200 mb-1 font-medium">
+                              {currentRound === 0
+                                ? "No Licenses Available"
+                                : "Licenses Not Available in This Round"}
+                            </p>
+                            <p className="text-xs text-yellow-600 dark:text-yellow-400">
+                              {currentRound === 0
+                                ? "This product has no available licenses for purchase."
+                                : `Licenses can only be purchased in Round 0. Current round: ${currentRound}`}
+                            </p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
 
                   {/* Product Details */}
                   <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
@@ -809,7 +815,7 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Available Licenses Section */}
-      {availableLicenses.length > 0 && (
+      {!fromRoyaltyView && availableLicenses.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 pb-8 sm:pb-12 md:pb-16">
           <div className="mb-4 sm:mb-6">
             <div className="text-center">

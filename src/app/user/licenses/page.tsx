@@ -13,9 +13,12 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  Download,
 } from "lucide-react";
 import { useGetMyLicenses } from "@/features/user/licenses/hooks/useGetMyLicenses";
 import { useEnableResale } from "@/features/user/licenses/hooks/useEnableResale";
+import { downloadLicenseFile } from "@/features/user/licenses/services/api";
+import toast from "react-hot-toast";
 import Link from "next/link";
 
 export default function MyLicensesPage() {
@@ -411,13 +414,41 @@ export default function MyLicensesPage() {
                                   : "Enable Resale"}
                               </Button>
                             )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-500"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
+                          {license.licenseType === "use" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={async () => {
+                                try {
+                                  const res = await downloadLicenseFile(
+                                    license.id
+                                  );
+                                  const url = res?.data?.signedUrl;
+                                  if (!url) {
+                                    toast.error("No download link available");
+                                  } else {
+                                    window.location.href = url;
+                                  }
+                                } catch (err) {
+                                  const message =
+                                    (
+                                      err as {
+                                        response?: {
+                                          data?: { message?: string };
+                                        };
+                                      }
+                                    )?.response?.data?.message ||
+                                    (err as Error)?.message ||
+                                    "Download failed";
+                                  toast.error(message);
+                                }
+                              }}
+                              className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-500"
+                            >
+                              <Download className="w-4 h-4 mr-1" />
+                              Download
+                            </Button>
+                          )}
                         </div>
                       </td>
                     </tr>
