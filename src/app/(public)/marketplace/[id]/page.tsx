@@ -732,8 +732,12 @@ export default function ProductDetailPage() {
                     ) : (
                       // Show purchase buttons even when licenses not available (for non-logged users to see options)
                       <>
-                        <BuyToUseButton />
-                        <BuyToResellButton product={product} />
+                        <div className="pointer-events-none opacity-60 blur-[0.2px]">
+                          <BuyToUseButton disabled />
+                        </div>
+                        <div className="pointer-events-none opacity-60 blur-[0.2px]">
+                          <BuyToResellButton product={product} disabled />
+                        </div>
                         {/* Info about why purchase might not work */}
                         <div className="text-center p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
                           <div className="text-yellow-500 dark:text-yellow-400 mb-2">
@@ -965,11 +969,11 @@ export default function ProductDetailPage() {
                         </div>
 
                         {/* Purchase Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 min-w-[240px] sm:min-w-[280px]">
-                          <div className="flex-1">
+                        <div className="flex flex-col lg:flex-row gap-2 md:gap-3 w-full">
+                          <div className="w-full lg:flex-1">
                             <BuyToUseButton licenseId={license.license_id} />
                           </div>
-                          <div className="flex-1">
+                          <div className="w-full lg:flex-1">
                             <BuyToResellButton
                               product={product}
                               licenseId={license.license_id}

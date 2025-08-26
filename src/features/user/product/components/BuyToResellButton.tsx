@@ -11,12 +11,14 @@ interface BuyToResellButtonProps {
   product: ProductDetail;
   requireReady?: (action: () => void) => void; // injected by HOC
   licenseId?: string;
+  disabled?: boolean;
 }
 
 function BuyToResellButton({
   product,
   requireReady,
   licenseId,
+  disabled = false,
 }: BuyToResellButtonProps) {
   const params = useParams();
   const productId = params.id as string;
@@ -28,6 +30,7 @@ function BuyToResellButton({
   const { mutate: purchaseProduct } = usePurchaseProduct();
 
   const handleBuyToResell = () => {
+    if (disabled) return;
     // Show insurance modal for resell
     if (licenseId) {
       console.log("Buy to Resell - License ID:", licenseId);
@@ -76,15 +79,16 @@ function BuyToResellButton({
     setSelectedPurchaseType(null);
   };
 
+  const isDisabled = disabled || isBuyingToResell;
+
   return (
     <>
       <Button
         variant="outline"
-        className="w-full bg-transparent dark:bg-transparent border-2 border-flyverr-secondary text-flyverr-secondary dark:text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white dark:hover:bg-flyverr-secondary dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400"
-        onClick={() =>
-          requireReady ? requireReady(handleBuyToResell) : handleBuyToResell()
-        }
-        disabled={isBuyingToResell}
+        className={`w-full bg-transparent dark:bg-transparent border-2 border-flyverr-secondary text-flyverr-secondary dark:text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white dark:hover:bg-flyverr-secondary dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400 ${isDisabled ? "opacity-60 cursor-not-allowed hover:translate-y-0" : ""}`}
+        onClick={() => (requireReady ? requireReady(handleBuyToResell) : handleBuyToResell())}
+        disabled={isDisabled}
+        aria-disabled={isDisabled}
       >
         {isBuyingToResell ? (
           <div className="flex items-center">

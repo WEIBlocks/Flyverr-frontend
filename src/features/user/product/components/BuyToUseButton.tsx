@@ -8,15 +8,17 @@ import withStripeOnboarding from "./withStripeOnboarding";
 interface BuyToUseButtonProps {
   requireReady?: (action: () => void) => void; // injected by HOC
   licenseId?: string;
+  disabled?: boolean;
 }
 
-function BuyToUseButton({ requireReady, licenseId }: BuyToUseButtonProps) {
+function BuyToUseButton({ requireReady, licenseId, disabled = false }: BuyToUseButtonProps) {
   const params = useParams();
   const productId = params.id as string;
   const [isBuyingToUse, setIsBuyingToUse] = useState(false);
   const { mutate: purchaseProduct } = usePurchaseProduct();
 
   const handleBuyToUse = () => {
+    if (disabled) return;
     console.log("Buy to Use clicked for product:", productId);
     if (licenseId) {
       console.log("Buy to Use - License ID:", licenseId);
@@ -48,13 +50,14 @@ function BuyToUseButton({ requireReady, licenseId }: BuyToUseButtonProps) {
     });
   };
 
+  const isDisabled = disabled || isBuyingToUse;
+
   return (
     <Button
-      className="w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-white py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-      onClick={() =>
-        requireReady ? requireReady(handleBuyToUse) : handleBuyToUse()
-      }
-      disabled={isBuyingToUse}
+      className={`w-full bg-flyverr-primary hover:bg-flyverr-primary/90 text-white py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 ${isDisabled ? "opacity-60 cursor-not-allowed hover:translate-y-0" : ""}`}
+      onClick={() => (requireReady ? requireReady(handleBuyToUse) : handleBuyToUse())}
+      disabled={isDisabled}
+      aria-disabled={isDisabled}
     >
       {isBuyingToUse ? (
         <div className="flex items-center">

@@ -116,7 +116,7 @@ export default function UserEarningsPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:mt-12 mb-5">
         <div>
           <div className="flex items-center space-x-3 mb-2">
             <Button
@@ -128,7 +128,7 @@ export default function UserEarningsPage() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               My Earnings
             </h1>
           </div>
@@ -139,7 +139,7 @@ export default function UserEarningsPage() {
         <Button
           onClick={() => refetch()}
           variant="outline"
-          className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
+          className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 self-start md:self-auto"
         >
           <RefreshCw
             className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
@@ -242,132 +242,136 @@ export default function UserEarningsPage() {
       )}
 
       {/* Search */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="relative max-w-md">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             type="text"
             placeholder="Search earnings..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-gray-300 dark:border-gray-600"
+            className="pl-10 border-gray-300 dark:border-gray-600 w-full"
           />
         </div>
-        <div className="flex items-center space-x-3"></div>
+        <div className="flex items-center sm:justify-end"></div>
       </div>
 
       {/* Earnings Table */}
-      <AdminTable>
-        <AdminTableHeader>
-          <tr>
-            <AdminTableHeaderCell>Type</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Amount</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Status</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Date</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Transaction ID</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Payout ID</AdminTableHeaderCell>
-          </tr>
-        </AdminTableHeader>
-        <AdminTableBody>
-          {isLoading ? (
-            // Loading skeleton
-            [...Array(10)].map((_, index) => (
-              <AdminTableRow key={index}>
-                <AdminTableCell>
-                  <div className="animate-pulse flex items-center space-x-2">
-                    <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16"></div>
-                  </div>
-                </AdminTableCell>
-                {[...Array(5)].map((_, i) => (
-                  <AdminTableCell key={i}>
-                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16 animate-pulse"></div>
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <div className="min-w-[720px] sm:min-w-0 px-4 sm:px-0">
+          <AdminTable>
+            <AdminTableHeader>
+              <tr>
+                <AdminTableHeaderCell>Type</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Amount</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Status</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Date</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Transaction ID</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Payout ID</AdminTableHeaderCell>
+              </tr>
+            </AdminTableHeader>
+            <AdminTableBody>
+              {isLoading ? (
+                // Loading skeleton
+                [...Array(10)].map((_, index) => (
+                  <AdminTableRow key={index}>
+                    <AdminTableCell>
+                      <div className="animate-pulse flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16"></div>
+                      </div>
+                    </AdminTableCell>
+                    {[...Array(5)].map((_, i) => (
+                      <AdminTableCell key={i}>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16 animate-pulse"></div>
+                      </AdminTableCell>
+                    ))}
+                  </AdminTableRow>
+                ))
+              ) : filteredEarnings.length === 0 ? (
+                <AdminTableRow>
+                  <AdminTableCell colSpan={6}>
+                    <div className="text-center py-12">
+                      <DollarSign className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                      <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">
+                        {searchTerm
+                          ? "No matching earnings found"
+                          : "No earnings yet"}
+                      </h3>
+                      <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                        {searchTerm
+                          ? "Try adjusting your search terms to find what you're looking for."
+                          : "Your earnings will appear here once you start making sales."}
+                      </p>
+                    </div>
                   </AdminTableCell>
-                ))}
-              </AdminTableRow>
-            ))
-          ) : filteredEarnings.length === 0 ? (
-            <AdminTableRow>
-              <AdminTableCell colSpan={6}>
-                <div className="text-center py-12">
-                  <DollarSign className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">
-                    {searchTerm
-                      ? "No matching earnings found"
-                      : "No earnings yet"}
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                    {searchTerm
-                      ? "Try adjusting your search terms to find what you're looking for."
-                      : "Your earnings will appear here once you start making sales."}
-                  </p>
-                </div>
-              </AdminTableCell>
-            </AdminTableRow>
-          ) : (
-            filteredEarnings.map((earning: Earning) => (
-              <AdminTableRow key={earning.id}>
-                {/* Type */}
-                <AdminTableCell>
-                  <div className="flex items-center space-x-2">
-                    {getEarningTypeIcon(earning.earning_type)}
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getEarningTypeColor(
-                        earning.earning_type
-                      )}`}
-                    >
-                      {earning.earning_type}
-                    </span>
-                  </div>
-                </AdminTableCell>
+                </AdminTableRow>
+              ) : (
+                filteredEarnings.map((earning: Earning) => (
+                  <AdminTableRow key={earning.id}>
+                    {/* Type */}
+                    <AdminTableCell>
+                      <div className="flex items-center space-x-2">
+                        {getEarningTypeIcon(earning.earning_type)}
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getEarningTypeColor(
+                            earning.earning_type
+                          )}`}
+                        >
+                          {earning.earning_type}
+                        </span>
+                      </div>
+                    </AdminTableCell>
 
-                {/* Amount */}
-                <AdminTableCell>
-                  <span className="font-medium text-green-600 dark:text-green-400">
-                    {formatCurrency(earning.amount)}
-                  </span>
-                </AdminTableCell>
+                    {/* Amount */}
+                    <AdminTableCell>
+                      <span className="font-medium text-green-600 dark:text-green-400">
+                        {formatCurrency(earning.amount)}
+                      </span>
+                    </AdminTableCell>
 
-                {/* Status */}
-                <AdminTableCell>
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      earning.is_withdrawn
-                        ? "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
-                        : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                    }`}
-                  >
-                    {earning.is_withdrawn ? "Withdrawn" : "Available"}
-                  </span>
-                </AdminTableCell>
+                    {/* Status */}
+                    <AdminTableCell>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          earning.is_withdrawn
+                            ? "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+                            : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                        }`}
+                      >
+                        {earning.is_withdrawn ? "Withdrawn" : "Available"}
+                      </span>
+                    </AdminTableCell>
 
-                {/* Date */}
-                <AdminTableCell>
-                  <span className="text-gray-500 dark:text-gray-400">
-                    {formatDate(earning.created_at)}
-                  </span>
-                </AdminTableCell>
+                    {/* Date */}
+                    <AdminTableCell>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        {formatDate(earning.created_at)}
+                      </span>
+                    </AdminTableCell>
 
-                {/* Transaction ID */}
-                <AdminTableCell>
-                  <span className="text-gray-500 dark:text-gray-400 font-mono text-sm">
-                    {earning.id.slice(0, 8)}...
-                  </span>
-                </AdminTableCell>
+                    {/* Transaction ID */}
+                    <AdminTableCell>
+                      <span className="text-gray-500 dark:text-gray-400 font-mono text-sm">
+                        {earning.id.slice(0, 8)}...
+                      </span>
+                    </AdminTableCell>
 
-                {/* Payout ID */}
-                <AdminTableCell>
-                  <span className="text-gray-500 dark:text-gray-400 font-mono text-sm">
-                    {earning.payout_id
-                      ? `${earning.payout_id.slice(0, 8)}...`
-                      : "-"}
-                  </span>
-                </AdminTableCell>
-              </AdminTableRow>
-            ))
-          )}
-        </AdminTableBody>
-      </AdminTable>
+                    {/* Payout ID */}
+                    <AdminTableCell>
+                      <span className="text-gray-500 dark:text-gray-400 font-mono text-sm">
+                        {earning.payout_id
+                          ? `${earning.payout_id.slice(0, 8)}...`
+                          : "-"}
+                      </span>
+                    </AdminTableCell>
+                  </AdminTableRow>
+                ))
+              )}
+            </AdminTableBody>
+          </AdminTable>
+        </div>
+      </div>
 
       {/* Pagination */}
       {typed?.data?.pagination && (

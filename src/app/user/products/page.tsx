@@ -143,6 +143,7 @@ export default function MyProductsPage() {
   const [selectedSponsored, setSelectedSponsored] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [sponsoringId, setSponsoringId] = useState<string | null>(null);
 
   // Get products from API
   const statusFilter = selectedStatus === "all" ? undefined : selectedStatus;
@@ -175,6 +176,8 @@ export default function MyProductsPage() {
   // };
 
   const handleSponsorProduct = async (productId: string) => {
+    if (sponsoringId) return;
+    setSponsoringId(productId);
     try {
       const response = await sponsorProductApi({
         productId,
@@ -197,6 +200,8 @@ export default function MyProductsPage() {
         e?.message ||
         "Failed to initiate sponsorship";
       toast.error(msg);
+    } finally {
+      setSponsoringId(null);
     }
   };
 
@@ -331,7 +336,7 @@ export default function MyProductsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 mt-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -603,13 +608,21 @@ export default function MyProductsPage() {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() =>
-                                    handleSponsorProduct(product.id)
-                                  }
-                                  className="border-yellow-200 dark:border-yellow-600 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-800 hover:border-yellow-300 dark:hover:border-yellow-500"
+                                  onClick={() => handleSponsorProduct(product.id)}
+                                  disabled={sponsoringId === product.id}
+                                  className="border-yellow-200 dark:border-yellow-600 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-800 hover:border-yellow-300 dark:hover:border-yellow-500 disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
-                                  <Star className="w-4 h-4" />
-                                  <span className="ml-1">Sponsor product</span>
+                                  {sponsoringId === product.id ? (
+                                    <>
+                                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                      <span className="ml-2">Processing...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Star className="w-4 h-4" />
+                                      <span className="ml-1">Sponsor product</span>
+                                    </>
+                                  )}
                                 </Button>
                               )}
                           </div>

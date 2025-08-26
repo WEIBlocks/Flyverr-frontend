@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -65,6 +65,43 @@ export default function DashboardLayout({
   const { logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const { data: user, isLoading: isLoadingUser } = useGetCurrentUser();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
+
+  // Close user menu on outside click or Escape
+  useEffect(() => {
+    if (!userMenuOpen) return;
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      if (!userMenuRef.current) return;
+      const target = event.target as Node;
+      if (!userMenuRef.current.contains(target)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown, { passive: true });
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [userMenuOpen]);
+
+  // Close menus on route change
+  useEffect(() => {
+    setUserMenuOpen(false);
+    setThemeDropdownOpen(false);
+  }, [pathname]);
 
   // Prevent hydration mismatch by only setting state after mount
   useEffect(() => {
@@ -546,16 +583,55 @@ export default function DashboardLayout({
                 )}
               </div>
 
-              <div className="w-8 h-8 bg-flyverr-primary rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">
-                  <span
-                    className={`transition-opacity duration-200 ${
-                      mounted && user ? "opacity-100" : "opacity-0"
-                    }`}
-                  >
-                    {mounted && user ? user.first_name?.charAt(0) || "U" : "U"}
+              {/* User Menu (Mobile) */}
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="w-8 h-8 bg-flyverr-primary rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-flyverr-primary/40"
+                  aria-haspopup="menu"
+                  aria-expanded={userMenuOpen}
+                >
+                  <span className="text-white font-semibold text-sm">
+                    <span
+                      className={`transition-opacity duration-200 ${
+                        mounted && user ? "opacity-100" : "opacity-0"
+                      }`}
+                    >
+                      {mounted && user ? user.first_name?.charAt(0) || "U" : "U"}
+                    </span>
                   </span>
-                </span>
+                </button>
+
+                {mounted && userMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-card text-card-foreground border border-border rounded-md shadow-lg z-50">
+                    <div className="px-4 py-3">
+                      <p className="text-sm font-medium">
+                        {mounted && user
+                          ? `${user?.first_name || ""} ${user?.last_name || ""}`.trim() || "User"
+                          : "User"}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {mounted && user ? user.email || "" : ""}
+                      </p>
+                    </div>
+                    <div className="py-1 border-t border-border">
+                      <Link href={profileHref ?? "/user/profile"} onClick={() => setUserMenuOpen(false)}>
+                        <div className="w-full px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
+                          Profile
+                        </div>
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          logout();
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
