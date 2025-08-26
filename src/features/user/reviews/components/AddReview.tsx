@@ -4,6 +4,8 @@ import { Star } from "lucide-react";
 import Modal from "@/components/Modal";
 import { useAddReviews } from "../hooks/useAddReviews";
 import { swal } from "@/lib/utils";
+import { ErrorResponse } from "@/lib/types";
+import { createUserFriendlyError } from "@/lib/errorUtils";
 
 interface AddReviewModalProps {
   productId: string;
@@ -49,8 +51,9 @@ export default function AddReviewModal({
           swal("Success", "Review submitted successfully!", "success");
           onSuccess?.();
         },
-        onError: (error) => {
-          swal("Error", "Failed to submit review. Please try again.", "error");
+        onError: (error: Error) => {
+          swal("Error", createUserFriendlyError(error), "error");
+          return;
         },
       }
     );

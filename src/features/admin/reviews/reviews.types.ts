@@ -1,4 +1,4 @@
-export interface PendingReview {
+export interface ReviewItem {
   id: string;
   rating: number;
   comment: string;
@@ -22,7 +22,7 @@ export interface PendingReview {
 export interface PendingReviewsResponse {
   success: boolean;
   data: {
-    reviews: PendingReview[];
+    reviews: ReviewItem[];
     pagination: {
       page: number;
       limit: number;
@@ -45,4 +45,22 @@ export interface ReviewActionModalProps {
   action: "approve" | "reject";
   onSubmit: (data: ReviewActionData) => void;
   isSubmitting: boolean;
+}
+
+export interface ReviewsResponse {
+  success: boolean;
+  data: {
+    reviews: ReviewItem[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+    filters?: {
+      status?: string;
+      rating?: number | null;
+      search?: string;
+    };
+  };
 }

@@ -73,6 +73,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+console.log("isAuthenticated", isLoading);
+
   const logout = () => {
     // Clear local storage
     storage.clearAuth();
