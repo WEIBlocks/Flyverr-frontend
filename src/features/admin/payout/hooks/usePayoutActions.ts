@@ -11,7 +11,7 @@ export function useApprovePayout() {
     Error,
     { payoutId: string; data?: PayoutActionRequest }
   >({
-    mutationFn: ({ payoutId, data }) => approvePayout(payoutId, data),
+    mutationFn: async ({ payoutId, data }) => await approvePayout(payoutId, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
       toast.success(data.message || "Payout approved successfully");
@@ -30,7 +30,7 @@ export function useRejectPayout() {
     Error,
     { payoutId: string; data?: PayoutActionRequest }
   >({
-    mutationFn: ({ payoutId, data }) => rejectPayout(payoutId, data),
+    mutationFn: async ({ payoutId, data }) => await rejectPayout(payoutId, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
       toast.success(data.message || "Payout rejected successfully");
@@ -45,7 +45,7 @@ export function useRetryPayout() {
   const queryClient = useQueryClient();
 
   return useMutation<PayoutActionResponse, Error, string>({
-    mutationFn: (payoutId) => retryPayout(payoutId),
+    mutationFn: async (payoutId) => await retryPayout(payoutId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
       toast.success(data.message || "Payout retry initiated successfully");

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useGetMyLicenses } from "@/features/user/licenses/hooks/useGetMyLicenses";
 import { useEnableResale } from "@/features/user/licenses/hooks/useEnableResale";
+import Link from "next/link";
 
 export default function MyLicensesPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -544,9 +545,12 @@ export default function MyLicensesPage() {
                 : "You haven't purchased any licenses yet. Start exploring the marketplace!"}
             </p>
             {!searchTerm && selectedStatus === "all" && (
-              <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+              <Link
+                href="/marketplace"
+                className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 inline-block px-4 py-2 rounded-md"
+              >
                 Browse Marketplace
-              </Button>
+              </Link>
             )}
           </CardContent>
         </Card>

@@ -25,28 +25,33 @@ export default function CompleteSetupButton({
   const onboardStripeMutation = useOnboardStripe();
 
   const handleCompleteOnboarding = () => {
-    onboardStripeMutation.mutate(undefined, {
-      onSuccess: ({ data }: { data: any }) => {
-        if (data?.data?.onboarding_url) {
-          console.log("data", data?.data?.onboarding_url);
+    onboardStripeMutation.mutate(
+      {
+        country: "US",
+      },
+      {
+        onSuccess: ({ data }: { data: any }) => {
+          if (data?.data?.onboarding_url) {
+            console.log("data", data?.data?.onboarding_url);
 
-          // Store the onboarding URL and show redirect modal
-          setOnboardingUrl(data?.data?.onboarding_url);
-          setShowRedirectModal(true);
-          //   closeModal(); // Close the parent modal
-        } else {
-          console.error("Invalid onboarding URL received");
-          Swal.fire({
-            title: "Error",
-            icon: "error",
-            text: "Invalid onboarding URL received",
-          });
-        }
-      },
-      onError: (error) => {
-        console.error("Failed to initiate Stripe onboarding:", error);
-      },
-    });
+            // Store the onboarding URL and show redirect modal
+            setOnboardingUrl(data?.data?.onboarding_url);
+            setShowRedirectModal(true);
+            //   closeModal(); // Close the parent modal
+          } else {
+            console.error("Invalid onboarding URL received");
+            Swal.fire({
+              title: "Error",
+              icon: "error",
+              text: "Invalid onboarding URL received",
+            });
+          }
+        },
+        onError: (error) => {
+          console.error("Failed to initiate Stripe onboarding:", error);
+        },
+      }
+    );
   };
 
   const handleRedirect = () => {

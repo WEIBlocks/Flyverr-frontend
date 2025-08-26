@@ -77,7 +77,11 @@ export default function SignupPage() {
       onSuccess: () => {
         reset();
         // Redirect to email verification page
-        router.push(`/verify-email?from=registration&email=${encodeURIComponent(data.email)}`);
+        router.push(
+          `/verify-email?from=registration&email=${encodeURIComponent(
+            data.email
+          )}`
+        );
       },
     });
   };
@@ -550,12 +554,9 @@ export default function SignupPage() {
                         className="text-foreground cursor-pointer"
                       >
                         I agree to the{" "}
-                        <a
-                          href="/terms"
-                          className="text-primary hover:underline font-medium"
-                        >
+                        <span className="text-primary hover:underline font-medium">
                           Terms of Service
-                        </a>{" "}
+                        </span>{" "}
                         and{" "}
                         <a
                           href="/privacy"
@@ -623,7 +624,8 @@ export default function SignupPage() {
                         Email verification required
                       </p>
                       <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
-                        After registration, you'll need to verify your email address to activate your account.
+                        After registration, you'll need to verify your email
+                        address to activate your account.
                       </p>
                     </div>
                   </div>

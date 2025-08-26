@@ -278,6 +278,7 @@ export const swal = (
     icon,
     confirmButtonText: "OK",
     allowOutsideClick: false,
+    allowEscapeKey: false,
   }).then((result) => {
     if (result.isConfirmed) {
       callback?.();

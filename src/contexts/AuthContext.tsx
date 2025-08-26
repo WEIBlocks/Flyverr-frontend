@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Set mounted state to prevent hydration mismatch
   useEffect(() => {
-    setMounted(true);
+    setMounted(true as boolean);
   }, []);
 
   // Check if user is authenticated on mount
@@ -65,13 +65,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     } catch (error) {
       console.error("Error checking auth:", error);
-      
+      setIsLoading(false as boolean);
       logout();
 
     } finally {
-      setIsLoading(false);
+      setIsLoading(false as boolean);
     }
   };
+
+console.log("isAuthenticated", isLoading);
 
   const logout = () => {
     // Clear local storage
