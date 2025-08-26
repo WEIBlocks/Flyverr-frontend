@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import type { PendingProduct } from "@/features/admin/product/product.types";
 import { useApproveProduct } from "@/features/admin/product/hooks/useApproveProduct";
+import Link from "next/link";
+import { getAdminProductDownloadUrl } from "@/features/admin/product/services/api";
 import toast from "react-hot-toast";
 import Modal from "@/components/Modal";
 
@@ -53,6 +55,7 @@ export default function ProductApprovalModal({
   });
 
   const { mutate, isPending } = useApproveProduct();
+  const [downloading, setDownloading] = useState(false);
 
   // Initialize form when product changes
   useEffect(() => {
@@ -160,6 +163,26 @@ export default function ProductApprovalModal({
     }
   };
 
+  const handleDownload = async () => {
+    if (!product) return;
+    try {
+      setDownloading(true);
+      const res = await getAdminProductDownloadUrl(product.id);
+      const url = res?.data?.signedUrl;
+      if (!url) throw new Error("No download link available");
+      window.location.href = url;
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ||
+        (err as Error)?.message ||
+        "Download failed";
+      toast.error(message);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   if (!isOpen || !product) return null;
 
   return (
@@ -192,6 +215,24 @@ export default function ProductApprovalModal({
         </div>
 
         <div className="p-6 space-y-6">
+          {/* Quick Actions */}
+          <div className="flex items-center justify-end gap-3">
+            <Link
+              href={`/admin/products/${product.id}`}
+              target="_blank"
+              className="inline-flex items-center rounded-md border-2 border-flyverr-primary text-flyverr-primary px-3 py-2 text-sm font-semibold hover:bg-flyverr-primary/10"
+            >
+              View
+            </Link>
+            <Button
+              onClick={handleDownload}
+              disabled={downloading}
+              className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
+              size="sm"
+            >
+              {downloading ? "Preparing..." : "Download File"}
+            </Button>
+          </div>
           {/* Product Overview */}
           <Card className="border-2 border-gray-100 dark:border-gray-700 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg">

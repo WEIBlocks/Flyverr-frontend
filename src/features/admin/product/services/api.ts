@@ -61,6 +61,14 @@ export function getProductById(id: string) {
     });
 }
 
+export async function getAdminProductDownloadUrl(productId: string) {
+  const { data } = await api.get<{
+    success: boolean;
+    data?: { signedUrl?: string };
+  }>(`/admin/products/${productId}/download`);
+  return data;
+}
+
 interface FlagProductRequest {
   action: "flag" | "unflag" | "delete";
   reason: string;
