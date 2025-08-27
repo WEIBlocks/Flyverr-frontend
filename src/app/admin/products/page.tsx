@@ -215,12 +215,12 @@ export default function AdminAllProductsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             All Products
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
             Manage and monitor all platform products
           </p>
         </div>
@@ -341,216 +341,192 @@ export default function AdminAllProductsPage() {
       ) : (
         <>
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="bg-white dark:bg-gray-800 p-4 sm:p-5 lg:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                <div className="flex-1">
+                  <p className="text-sm sm:text-base font-medium text-gray-600 dark:text-gray-400 mb-1">
                     Total Products
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
                     {pagination?.total || 0}
                   </p>
                 </div>
-                <div className="p-3 bg-blue-500/10 rounded-xl">
-                  <Package className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                <div className="p-2 sm:p-3 bg-blue-500/10 rounded-xl self-start sm:self-auto">
+                  <Package className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-800 p-4 sm:p-5 lg:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                <div className="flex-1">
+                  <p className="text-sm sm:text-base font-medium text-gray-600 dark:text-gray-400 mb-1">
                     Approved
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
                     {products.filter((p) => p.status === "approved").length}
                   </p>
                 </div>
-                <div className="p-3 bg-green-500/10 rounded-xl">
-                  <Target className="w-8 h-8 text-green-600 dark:text-green-400" />
+                <div className="p-2 sm:p-3 bg-green-500/10 rounded-xl self-start sm:self-auto">
+                  <Target className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-green-600 dark:text-green-400" />
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-800 p-4 sm:p-5 lg:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                <div className="flex-1">
+                  <p className="text-sm sm:text-base font-medium text-gray-600 dark:text-gray-400 mb-1">
                     Pending
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
                     {products.filter((p) => p.status === "pending").length}
                   </p>
                 </div>
-                <div className="p-3 bg-yellow-500/10 rounded-xl">
-                  <Clock className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
+                <div className="p-2 sm:p-3 bg-yellow-500/10 rounded-xl self-start sm:self-auto">
+                  <Clock className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-yellow-600 dark:text-yellow-400" />
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <div className="bg-white dark:bg-gray-800 p-4 sm:p-5 lg:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                <div className="flex-1">
+                  <p className="text-sm sm:text-base font-medium text-gray-600 dark:text-gray-400 mb-1">
                     Total Licenses
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
                     {products.reduce((sum, p) => sum + p.total_licenses, 0)}
                   </p>
                 </div>
-                <div className="p-3 bg-purple-500/10 rounded-xl">
-                  <TrendingUp className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                <div className="p-2 sm:p-3 bg-purple-500/10 rounded-xl self-start sm:self-auto">
+                  <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-purple-600 dark:text-purple-400" />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Enhanced Table */}
-          <AdminTable>
-            <AdminTableHeader>
-              <tr>
-                <AdminTableHeaderCell>Product</AdminTableHeaderCell>
-                <AdminTableHeaderCell>Creator & Stage</AdminTableHeaderCell>
-                <AdminTableHeaderCell>Price & Status</AdminTableHeaderCell>
-                <AdminTableHeaderCell>Submission</AdminTableHeaderCell>
-                <AdminTableHeaderCell align="center">
-                  Actions
-                </AdminTableHeaderCell>
-              </tr>
-            </AdminTableHeader>
-            <AdminTableBody>
-              {products.length === 0 ? (
-                <AdminTableRow>
-                  <td colSpan={5} className="text-center py-8">
-                    <div className="text-gray-500 dark:text-gray-400">
-                      <Package className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                      <p>No products found</p>
-                    </div>
-                  </td>
-                </AdminTableRow>
-              ) : (
-                products.map((product) => (
-                  <AdminTableRow key={product.id} hoverable={true}>
-                    {/* Product Cell - Thumbnail + Title */}
-                    <AdminTableCell>
-                      <div className="flex items-center space-x-3">
-                        <ImageWithFallback
-                          src={product.thumbnail_url}
-                          alt={product.title}
-                          width={48}
-                          height={48}
-                          className="flex-shrink-0"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <div className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-sm">
-                            {product.title}
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
-                            {product.category?.name || "Uncategorized"}
-                          </div>
-                        </div>
+          <div className="overflow-x-auto">
+            <AdminTable>
+              <AdminTableHeader>
+                <tr>
+                  <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px]">Product</AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[200px]">Creator & Stage</AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px]">Price & Status</AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[180px]">Submission</AdminTableHeaderCell>
+                  <AdminTableHeaderCell align="center" className="min-w-[120px]">Actions</AdminTableHeaderCell>
+                </tr>
+              </AdminTableHeader>
+              <AdminTableBody>
+                {products.length === 0 ? (
+                  <AdminTableRow>
+                    <td colSpan={5} className="text-center py-8">
+                      <div className="text-gray-500 dark:text-gray-400">
+                        <Package className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm sm:text-base">No products found</p>
                       </div>
-                    </AdminTableCell>
-
-                    {/* Creator & Stage Cell */}
-                    <AdminTableCell>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                          <span className="text-sm text-gray-900 dark:text-white">
-                            {product.creator.first_name}{" "}
-                            {product.creator.last_name}
-                          </span>
-                        </div>
-                        <div className="space-y-1">
-                          {getStageBadge(product.current_stage)}
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            Round {product.current_round}
-                          </div>
-                        </div>
-                      </div>
-                    </AdminTableCell>
-
-                    {/* Price & Status Cell */}
-                    <AdminTableCell>
-                      <div className="space-y-2">
-                        <div className="text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
-                          ${product.original_price}
-                        </div>
-                        {getStatusBadge(product.status)}
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {product.remaining_licenses}/{product.total_licenses}{" "}
-                          licenses
-                        </div>
-                        {Array.isArray(product.dealTypes) && product.dealTypes.length > 0 && (
-                          <div className="flex flex-wrap gap-1 pt-1">
-                            {product.dealTypes.map((dt: string) => (
-                              <Badge key={dt} className={getDealBadgeClasses(dt)}>
-                                {formatDealType(dt)}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </AdminTableCell>
-
-                    {/* Submission Cell */}
-                    <AdminTableCell>
-                      <div className="space-y-1">
-                        <div className="text-sm text-gray-900 dark:text-white flex items-center">
-                          <Calendar className="w-3 h-3 mr-1 text-gray-500" />
-                          {formatDate(product.created_at)}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {product.approved_at
-                            ? `Approved: ${formatDate(product.approved_at)}`
-                            : "Not approved yet"}
-                        </div>
-                      </div>
-                    </AdminTableCell>
-
-                    {/* Actions Cell */}
-                    <AdminTableCell align="center">
-                      <div className="flex items-center justify-center space-x-2">
-                        {/* <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="hover:bg-blue-50 dark:hover:bg-blue-900/20 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleProductClick(product.id)
-                          }}
-                        >
-                          <Eye className="w-3 h-3" />
-                        </Button> */}
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="hover:bg-green-50 dark:hover:bg-green-900/20 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleProductClick(product.id);
-                          }}
-                        >
-                          <Edit className="w-3 h-3" />
-                        </Button>
-                        {/* <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="hover:bg-purple-50 dark:hover:bg-purple-900/20 border-purple-200 dark:border-purple-700 text-purple-600 dark:text-purple-400"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleProductClick(product.id)
-                          }}
-                        >
-                          <BarChart3 className="w-3 h-3" />
-                        </Button> */}
-                      </div>
-                    </AdminTableCell>
+                    </td>
                   </AdminTableRow>
-                ))
-              )}
-            </AdminTableBody>
-          </AdminTable>
+                ) : (
+                  products.map((product) => (
+                    <AdminTableRow key={product.id} hoverable={true}>
+                      {/* Product Cell - Thumbnail + Title */}
+                      <AdminTableCell>
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <ImageWithFallback
+                            src={product.thumbnail_url}
+                            alt={product.title}
+                            width={48}
+                            height={48}
+                            className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-xs sm:text-sm">
+                              {product.title}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+                              {product.category?.name || "Uncategorized"}
+                            </div>
+                          </div>
+                        </div>
+                      </AdminTableCell>
+
+                      {/* Creator & Stage Cell */}
+                      <AdminTableCell>
+                        <div className="space-y-1.5 sm:space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                            <span className="text-xs sm:text-sm text-gray-900 dark:text-white">
+                              {product.creator.first_name} {product.creator.last_name}
+                            </span>
+                          </div>
+                          <div className="space-y-1">
+                            {getStageBadge(product.current_stage)}
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Round {product.current_round}
+                            </div>
+                          </div>
+                        </div>
+                      </AdminTableCell>
+
+                      {/* Price & Status Cell */}
+                      <AdminTableCell>
+                        <div className="space-y-1.5 sm:space-y-2">
+                          <div className="text-base sm:text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
+                            ${product.original_price}
+                          </div>
+                          {getStatusBadge(product.status)}
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {product.remaining_licenses}/{product.total_licenses} licenses
+                          </div>
+                          {Array.isArray(product.dealTypes) && product.dealTypes.length > 0 && (
+                            <div className="flex flex-wrap gap-1 pt-1">
+                              {product.dealTypes.map((dt: string) => (
+                                <Badge key={dt} className={getDealBadgeClasses(dt)}>
+                                  {formatDealType(dt)}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </AdminTableCell>
+
+                      {/* Submission Cell */}
+                      <AdminTableCell>
+                        <div className="space-y-1">
+                          <div className="text-xs sm:text-sm text-gray-900 dark:text-white flex items-center">
+                            <Calendar className="w-3 h-3 mr-1 text-gray-500" />
+                            {formatDate(product.created_at)}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {product.approved_at
+                              ? `Approved: ${formatDate(product.approved_at)}`
+                              : "Not approved yet"}
+                          </div>
+                        </div>
+                      </AdminTableCell>
+
+                      {/* Actions Cell */}
+                      <AdminTableCell align="center">
+                        <div className="flex items-center justify-center space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="hover:bg-green-50 dark:hover:bg-green-900/20 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleProductClick(product.id);
+                            }}
+                          >
+                            <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </Button>
+                        </div>
+                      </AdminTableCell>
+                    </AdminTableRow>
+                  ))
+                )}
+              </AdminTableBody>
+            </AdminTable>
+          </div>
 
           {/* Pagination */}
           {pagination && (

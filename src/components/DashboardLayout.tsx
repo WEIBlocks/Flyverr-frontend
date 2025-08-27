@@ -192,7 +192,7 @@ export default function DashboardLayout({
       {/* Fixed Sidebar */}
       <div
         className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-card text-card-foreground shadow-lg transform transition-transform duration-300 ease-in-out flex flex-col border-r border-border
+        fixed inset-y-0 left-0 z-50 w-64 xl:w-72 bg-card text-card-foreground shadow-lg transform transition-transform duration-300 ease-in-out flex flex-col border-r border-border
         ${
           mounted
             ? sidebarOpen
@@ -373,10 +373,10 @@ export default function DashboardLayout({
       {/* Main content area - Properly positioned */}
       <div className="lg:pl-64">
         {/* Desktop Header - Fixed */}
-        <div className="hidden lg:block fixed top-0 right-0 left-64 z-30 bg-card text-card-foreground shadow-sm border-b border-border">
-          <div className="flex items-center justify-between h-16 px-6">
+        <div className="hidden lg:block fixed top-0 right-0 left-64 xl:left-72 z-30 bg-card text-card-foreground shadow-sm border-b border-border">
+          <div className="flex items-center justify-between h-16 px-4 lg:px-6 xl:px-8">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold">
+              <h1 className="text-lg lg:text-xl xl:text-2xl font-semibold">
                 <span
                   className={`transition-opacity duration-200 ${
                     mounted ? "opacity-100" : "opacity-0"
@@ -473,7 +473,7 @@ export default function DashboardLayout({
 
         {/* Mobile Header */}
         <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-card text-card-foreground shadow-sm border-b border-border">
-          <div className="flex items-center justify-between h-16 px-4">
+          <div className="flex items-center justify-between h-16 px-3 sm:px-4">
             <button
               onClick={() => setSidebarOpen(true)}
               className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-200"
@@ -638,7 +638,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Page content - Scrollable with header offset */}
-        <main className="min-h-screen p-4 sm:p-6 lg:p-8 lg:pt-24 pt-20">
+        <main className="min-h-screen p-4 sm:p-6 lg:p-8 xl:p-10 !pt-24">
           <div className="max-w-7xl mx-auto">
             <StripeOnboardingAlert />
             <div

@@ -137,22 +137,22 @@ export default function HotDealModal({
 
       {open && (
         <Modal size="md">
-          <div className="p-6 w-full">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="p-4 sm:p-6 w-full">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-white">
                 Mark as Hot Deal
               </h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setOpen(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1 sm:p-2"
               >
                 ✕
               </Button>
             </div>
 
-            <form onSubmit={onSubmit} className="space-y-4">
+            <form onSubmit={onSubmit} className="space-y-3 sm:space-y-4 lg:space-y-6">
               <div>
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Deal Name *
@@ -160,10 +160,10 @@ export default function HotDealModal({
                 <Input
                   {...register("dealName")}
                   placeholder="Summer Mega Sale"
-                  className="mt-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                  className="mt-1 sm:mt-2 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-sm sm:text-base"
                 />
                 {errors.dealName && (
-                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                  <p className="text-sm text-red-600 dark:text-red-400 mt-1 sm:mt-2">
                     {String(errors.dealName.message)}
                   </p>
                 )}
@@ -176,23 +176,23 @@ export default function HotDealModal({
                 <Textarea
                   {...register("dealDescription")}
                   placeholder="Exclusive summer deal with up to 50% discount"
-                  rows={3}
-                  className="mt-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                  rows={2}
+                  className="mt-1 sm:mt-2 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-sm sm:text-base"
                 />
                 {errors.dealDescription && (
-                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                  <p className="text-sm text-red-600 dark:text-red-400 mt-1 sm:mt-2">
                     {String(errors.dealDescription.message)}
                   </p>
                 )}
               </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</Label>
               <Input
                 type="date"
                 {...register("startDate")}
-                className="mt-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                className="mt-1 sm:mt-2 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-sm sm:text-base"
               />
             </div>
             <div>
@@ -200,15 +200,15 @@ export default function HotDealModal({
               <Input
                 type="date"
                 {...register("endDate")}
-                className="mt-1 bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
+                className="mt-1 sm:mt-2 bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600 text-sm sm:text-base"
               />
               {errors.endDate && (
-                <p className="text-sm text-red-600 dark:text-red-400 mt-1">{String(errors.endDate.message)}</p>
+                <p className="text-sm text-red-600 dark:text-red-400 mt-1 sm:mt-2">{String(errors.endDate.message)}</p>
               )}
             </div>
           </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                   <input
                     type="checkbox"
@@ -226,28 +226,28 @@ export default function HotDealModal({
                     min={0}
                     max={100}
                     {...register("priority")}
-                    className="mt-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                    className="mt-1 sm:mt-2 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-sm sm:text-base"
                   />
                   {errors.priority && (
-                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    <p className="text-sm text-red-600 dark:text-red-400 mt-1 sm:mt-2">
                       {String(errors.priority.message)}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4 pt-4 sm:pt-6">
                 <Button
                   variant="outline"
                   onClick={() => setOpen(false)}
-                  className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                  className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 w-full sm:w-auto text-sm sm:text-base py-2 sm:py-2.5"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={markHotDealMutation.isPending}
-                  className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto text-sm sm:text-base py-2 sm:py-2.5"
                 >
                   {markHotDealMutation.isPending ? (
                     <>

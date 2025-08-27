@@ -214,34 +214,34 @@ export default function AdminUserDetailPage() {
         <Button
           variant="ghost"
           onClick={() => router.back()}
-          className="mb-6 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-flyverr-primary"
+          className="mb-4 sm:mb-6 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-flyverr-primary text-sm sm:text-base"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Users
         </Button>
 
         {/* Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-20 h-20 bg-flyverr-primary rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-2xl">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-flyverr-primary rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold text-lg sm:text-2xl">
                   {user.first_name.charAt(0)}
                   {user.last_name.charAt(0)}
                 </span>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                   {user.first_name} {user.last_name}
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
                   @{user.username} • {user.email}
                 </p>
-                <div className="flex items-center space-x-2 mt-2">
+                <div className="flex flex-wrap items-center gap-2 mt-2">
                   {getRoleBadge(user.role)}
                   {getStatusBadge(user.status)}
                   {user.email_verified && (
-                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800">
+                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800 text-xs">
                       Verified
                     </Badge>
                   )}
@@ -251,74 +251,74 @@ export default function AdminUserDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Column - User Details Form */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Basic Information */}
             <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <div className="p-2 bg-flyverr-primary/10 rounded-lg">
-                    <User className="w-5 h-5 text-flyverr-primary" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <div className="p-1.5 sm:p-2 bg-flyverr-primary/10 rounded-lg">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                   </div>
                   Basic Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CardContent className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                       First Name
                     </Label>
                     <Input
                       value={user.first_name}
                       disabled
-                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-sm sm:text-base"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                       Last Name
                     </Label>
                     <Input
                       value={user.last_name}
                       disabled
-                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-sm sm:text-base"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                     Username
                   </Label>
                   <Input
                     value={user.username}
                     disabled
-                    className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                    className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-sm sm:text-base"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                     Email
                   </Label>
                   <Input
                     value={user.email}
                     disabled
-                    className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                    className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-sm sm:text-base"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                     Bio
                   </Label>
                   <Textarea
                     value={user.bio || "No bio provided"}
                     disabled
-                    rows={3}
-                    className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                    rows={2}
+                    className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-sm sm:text-base"
                   />
                 </div>
               </CardContent>
@@ -326,18 +326,18 @@ export default function AdminUserDetailPage() {
 
             {/* Role Update Section */}
             <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <div className="p-2 bg-flyverr-primary/10 rounded-lg">
-                    <Crown className="w-5 h-5 text-flyverr-primary" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <div className="p-1.5 sm:p-2 bg-flyverr-primary/10 rounded-lg">
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                   </div>
                   Role Management
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                       User Role
                     </Label>
                     <select
@@ -345,7 +345,7 @@ export default function AdminUserDetailPage() {
                       onChange={(e) =>
                         setEditData({ ...editData, role: e.target.value })
                       }
-                      className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-flyverr-primary/20 focus:border-flyverr-primary"
+                      className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-flyverr-primary/20 focus:border-flyverr-primary"
                     >
                       <option value="user">User</option>
                       <option value="admin">Admin</option>
@@ -353,7 +353,7 @@ export default function AdminUserDetailPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                       Reason for Role Change{" "}
                       <span className="text-red-500">*</span>
                     </Label>
@@ -363,9 +363,9 @@ export default function AdminUserDetailPage() {
                         setEditData({ ...editData, reason: e.target.value })
                       }
                       placeholder="Provide a reason for changing the user's role"
-                      rows={3}
+                      rows={2}
                       maxLength={500}
-                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-flyverr-primary/20 focus:border-flyverr-primary"
+                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-flyverr-primary/20 focus:border-flyverr-primary text-sm sm:text-base"
                       required
                     />
                     <div className="text-xs text-gray-500 dark:text-gray-400 text-right">
@@ -374,15 +374,15 @@ export default function AdminUserDetailPage() {
                   </div>
 
                   {/* Update Role Button */}
-                  <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-600">
+                  <div className="flex justify-end pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-600">
                     <Button
                       onClick={handleUpdate}
                       disabled={
                         updateRoleMutation.isPending || !editData.reason.trim()
                       }
-                      className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
+                      className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white text-sm sm:text-base px-3 sm:px-4 py-2"
                     >
-                      <Save className="w-4 h-4 mr-2" />
+                      <Save className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                       {updateRoleMutation.isPending
                         ? "Updating..."
                         : "Update Role"}
@@ -394,36 +394,36 @@ export default function AdminUserDetailPage() {
 
             {/* Status Update Section */}
             <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <div className="p-2 bg-flyverr-primary/10 rounded-lg">
-                    <Shield className="w-5 h-5 text-flyverr-primary" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <div className="p-1.5 sm:p-2 bg-flyverr-primary/10 rounded-lg">
+                    <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                   </div>
                   Status Management
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                       Current Status
                     </Label>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                       {getStatusBadge(user.status)}
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => setIsStatusModalOpen(true)}
-                        className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
+                        className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 text-sm sm:text-base px-3 sm:px-4 py-2"
                       >
-                        <Shield className="w-4 h-4 mr-2" />
+                        <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                         Update Status
                       </Button>
                     </div>
                   </div>
 
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     Click the button above to change user status with detailed
                     options including reason, admin notes, and suspension
                     duration.
@@ -434,69 +434,69 @@ export default function AdminUserDetailPage() {
           </div>
 
           {/* Right Column - Stats & Info */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-4 sm:space-y-6">
             {/* Statistics */}
             <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <div className="p-2 bg-flyverr-primary/10 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-flyverr-primary" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <div className="p-1.5 sm:p-2 bg-flyverr-primary/10 rounded-lg">
+                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                   </div>
                   Statistics
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2 sm:space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                    <Package className="w-4 h-4 mr-2" />
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                    <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Products
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                     {statistics.totalProducts}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                    <Shield className="w-4 h-4 mr-2" />
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                    <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Licenses
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                     {statistics.totalLicenses}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                    <ShoppingCart className="w-4 h-4 mr-2" />
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                    <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Purchases
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                     {statistics.totalPurchases}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                    <DollarSign className="w-4 h-4 mr-2" />
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                    <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Sales
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                     {statistics.totalSales}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                    <TrendingUp className="w-4 h-4 mr-2" />
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                    <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Spent
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                     ${statistics.totalSpent}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                    <DollarSign className="w-4 h-4 mr-2" />
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                    <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Earned
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                     ${statistics.totalEarned}
                   </span>
                 </div>
@@ -505,27 +505,27 @@ export default function AdminUserDetailPage() {
 
             {/* Recent Activity */}
             <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <div className="p-2 bg-flyverr-primary/10 rounded-lg">
-                    <Activity className="w-5 h-5 text-flyverr-primary" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <div className="p-1.5 sm:p-2 bg-flyverr-primary/10 rounded-lg">
+                    <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                   </div>
                   Recent Products
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {recentActivity.products.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {recentActivity.products
                       .slice(0, 3)
                       .map((product: RecentProduct) => (
                         <div
                           key={product.id}
-                          className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                          className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
-                              <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                              <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
                                 {product.title}
                               </p>
                               <div className="flex items-center space-x-2 mt-1">
@@ -549,7 +549,7 @@ export default function AdminUserDetailPage() {
                       ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center py-4">
                     No products yet
                   </p>
                 )}
@@ -558,28 +558,28 @@ export default function AdminUserDetailPage() {
 
             {/* Timestamps */}
             <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <div className="p-2 bg-flyverr-primary/10 rounded-lg">
-                    <Clock className="w-5 h-5 text-flyverr-primary" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <div className="p-1.5 sm:p-2 bg-flyverr-primary/10 rounded-lg">
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                   </div>
                   Timestamps
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2 sm:space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     Joined
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                     {formatDate(user.created_at)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     Updated
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                     {formatDate(user.updated_at)}
                   </span>
                 </div>

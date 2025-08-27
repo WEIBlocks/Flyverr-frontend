@@ -265,19 +265,19 @@ export default function AdminPlatformRevenuePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
             Platform Revenue
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
             Monitor platform earnings and transaction analytics
           </p>
         </div>
       </div>
-
+      
       {/* Revenue Overview Cards */}
       {isRevenueLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -300,76 +300,76 @@ export default function AdminPlatformRevenuePage() {
         </div>
       ) : (
         revenue && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                     Total Revenue
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                     {formatCurrency(revenue.totalRevenue)}
                   </p>
-                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                  <p className="text-[11px] sm:text-xs text-green-600 dark:text-green-400 mt-1">
                     Platform + Insurance Fees
                   </p>
                 </div>
-                <div className="p-3 bg-green-500/10 rounded-xl">
-                  <DollarSign className="w-8 h-8 text-green-600 dark:text-green-400" />
+                <div className="p-2 sm:p-3 bg-green-500/10 rounded-xl">
+                  <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-green-600 dark:text-green-400" />
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                     Platform Fees
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                     {formatCurrency(revenue.totalPlatformFees)}
                   </p>
-                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                  <p className="text-[11px] sm:text-xs text-blue-600 dark:text-blue-400 mt-1">
                     Commission earnings
                   </p>
                 </div>
-                <div className="p-3 bg-blue-500/10 rounded-xl">
-                  <TrendingUp className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                <div className="p-2 sm:p-3 bg-blue-500/10 rounded-xl">
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                     Insurance Fees
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                     {formatCurrency(revenue.totalInsuranceFees)}
                   </p>
-                  <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                  <p className="text-[11px] sm:text-xs text-purple-600 dark:text-purple-400 mt-1">
                     Protection revenue
                   </p>
                 </div>
-                <div className="p-3 bg-purple-500/10 rounded-xl">
-                  <Shield className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                <div className="p-2 sm:p-3 bg-purple-500/10 rounded-xl">
+                  <Shield className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-purple-600 dark:text-purple-400" />
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+            <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                     Avg Per Transaction
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                     {formatCurrency(revenue.avgRevenuePerTransaction)}
                   </p>
-                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                  <p className="text-[11px] sm:text-xs text-orange-600 dark:text-orange-400 mt-1">
                     {revenue.totalTransactions} transactions
                   </p>
                 </div>
-                <div className="p-3 bg-orange-500/10 rounded-xl">
-                  <BarChart3 className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                <div className="p-2 sm:p-3 bg-orange-500/10 rounded-xl">
+                  <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-orange-600 dark:text-orange-400" />
                 </div>
               </div>
             </div>
@@ -379,7 +379,7 @@ export default function AdminPlatformRevenuePage() {
 
       {/* Revenue Breakdown */}
       {revenue && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Revenue by Transaction Type
@@ -595,184 +595,182 @@ export default function AdminPlatformRevenuePage() {
             </div>
           )}
 
-          <AdminTable>
-            <AdminTableHeader>
-              <tr>
-                <AdminTableHeaderCell>Product</AdminTableHeaderCell>
-                <AdminTableHeaderCell>
-                  <button
-                    onClick={() => handleSort("transaction_type")}
-                    className="flex items-center space-x-1 hover:text-flyverr-primary"
-                  >
-                    <span>Type & Status</span>
-                    {getSortIcon("transaction_type")}
-                  </button>
-                </AdminTableHeaderCell>
-                <AdminTableHeaderCell>Participants</AdminTableHeaderCell>
-                <AdminTableHeaderCell>
-                  <button
-                    onClick={() => handleSort("amount")}
-                    className="flex items-center space-x-1 hover:text-flyverr-primary"
-                  >
-                    <span>Financial Details</span>
-                    {getSortIcon("amount")}
-                  </button>
-                </AdminTableHeaderCell>
-                <AdminTableHeaderCell>
-                  <button
-                    onClick={() => handleSort("created_at")}
-                    className="flex items-center space-x-1 hover:text-flyverr-primary"
-                  >
-                    <span>Timeline</span>
-                    {getSortIcon("created_at")}
-                  </button>
-                </AdminTableHeaderCell>
-              </tr>
-            </AdminTableHeader>
-            <AdminTableBody>
-              {transactions.length === 0 ? (
-                <AdminTableRow>
-                  <td colSpan={5} className="text-center py-8">
-                    <div className="text-gray-500 dark:text-gray-400">
-                      <Package className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                      <p>No transactions found</p>
-                    </div>
-                  </td>
-                </AdminTableRow>
-              ) : (
-                transactions.map((transaction) => (
-                  <AdminTableRow key={transaction.id} hoverable={true}>
-                    {/* Product Cell */}
-                    <AdminTableCell>
-                      <div className="flex items-center space-x-3">
-                        <ImageWithFallback
-                          src={transaction.product.thumbnail_url}
-                          alt={transaction.product.title}
-                          width={48}
-                          height={48}
-                          className="flex-shrink-0"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <div className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-sm">
-                            {transaction.product.title}
-                          </div>
-                          <div className="flex items-center space-x-2 mt-1">
-                            {getStageBadge(transaction.product.current_stage)}
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              Round {transaction.product.current_round}
-                            </span>
-                          </div>
-                        </div>
+          <div className="overflow-x-auto">
+            <AdminTable>
+              <AdminTableHeader>
+                <tr>
+                  <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px] lg:min-w-[320px]">Product</AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">
+                    <button
+                      onClick={() => handleSort("transaction_type")}
+                      className="flex items-center space-x-1 hover:text-flyverr-primary"
+                    >
+                      <span>Type & Status</span>
+                      {getSortIcon("transaction_type")}
+                    </button>
+                  </AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[240px] lg:min-w-[300px]">Participants</AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[240px] lg:min-w-[300px]">
+                    <button
+                      onClick={() => handleSort("amount")}
+                      className="flex items-center space-x-1 hover:text-flyverr-primary"
+                    >
+                      <span>Financial Details</span>
+                      {getSortIcon("amount")}
+                    </button>
+                  </AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px] lg:min-w-[240px]">
+                    <button
+                      onClick={() => handleSort("created_at")}
+                      className="flex items-center space-x-1 hover:text-flyverr-primary"
+                    >
+                      <span>Timeline</span>
+                      {getSortIcon("created_at")}
+                    </button>
+                  </AdminTableHeaderCell>
+                </tr>
+              </AdminTableHeader>
+              <AdminTableBody>
+                {transactions.length === 0 ? (
+                  <AdminTableRow>
+                    <td colSpan={5} className="text-center py-8">
+                      <div className="text-gray-500 dark:text-gray-400">
+                        <Package className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                        <p>No transactions found</p>
                       </div>
-                    </AdminTableCell>
-
-                    {/* Type & Status Cell */}
-                    <AdminTableCell>
-                      <div className="space-y-2">
-                        {getTransactionTypeBadge(transaction.transaction_type)}
-                        {getStatusBadge(transaction.status)}
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {transaction.purchase_type === "resell"
-                            ? "For Resale"
-                            : "For Use"}
-                        </div>
-                      </div>
-                    </AdminTableCell>
-
-                    {/* Participants Cell */}
-                    <AdminTableCell>
-                      <div className="space-y-2">
-                        <div className="text-sm">
-                          <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
-                            <User className="w-3 h-3" />
-                            <span className="font-medium">
-                              {transaction.buyer.first_name}{" "}
-                              {transaction.buyer.last_name}
-                            </span>
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            Buyer: @{transaction.buyer.username}
-                          </div>
-                        </div>
-                        <div className="text-sm">
-                          <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400">
-                            <User className="w-3 h-3" />
-                            <span className="font-medium">
-                              {transaction.seller.first_name}{" "}
-                              {transaction.seller.last_name}
-                            </span>
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            Seller: @{transaction.seller.username}
-                          </div>
-                        </div>
-                      </div>
-                    </AdminTableCell>
-
-                    {/* Financial Details Cell */}
-                    <AdminTableCell>
-                      <div className="space-y-1">
-                        <div className="text-lg font-bold text-gray-900 dark:text-white">
-                          {formatCurrency(transaction.amount)}
-                        </div>
-                        <div className="text-xs space-y-1">
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Platform Fee:</span>
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">
-                              {formatCurrency(transaction.platform_fee)}
-                            </span>
-                          </div>
-                          {transaction.has_insurance && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-500">Insurance:</span>
-                              <span className="text-purple-600 dark:text-purple-400 font-medium">
-                                {formatCurrency(transaction.insurance_fee)}
+                    </td>
+                  </AdminTableRow>
+                ) : (
+                  transactions.map((transaction) => (
+                    <AdminTableRow key={transaction.id} hoverable={true}>
+                      {/* Product Cell */}
+                      <AdminTableCell>
+                        <div className="flex items-center space-x-3">
+                          <ImageWithFallback
+                            src={transaction.product.thumbnail_url}
+                            alt={transaction.product.title}
+                            width={48}
+                            height={48}
+                            className="flex-shrink-0"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-sm">
+                              {transaction.product.title}
+                            </div>
+                            <div className="flex items-center space-x-2 mt-1">
+                              {getStageBadge(transaction.product.current_stage)}
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                Round {transaction.product.current_round}
                               </span>
                             </div>
-                          )}
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">
-                              Creator Royalty:
-                            </span>
-                            <span className="text-green-600 dark:text-green-400 font-medium">
-                              {formatCurrency(transaction.creator_royalty)}
-                            </span>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-1 mt-2">
-                          <CreditCard className="w-3 h-3 text-gray-400" />
-                          <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                            {transaction.payment_method}
-                          </span>
-                          {transaction.has_insurance && (
-                            <Shield className="w-3 h-3 text-purple-500" />
-                          )}
-                        </div>
-                      </div>
-                    </AdminTableCell>
-
-                    {/* Timeline Cell */}
-                    <AdminTableCell>
-                      <div className="space-y-1">
-                        <div className="text-sm text-gray-900 dark:text-white flex items-center">
-                          <Calendar className="w-3 h-3 mr-1 text-gray-500" />
-                          {formatDate(transaction.created_at)}
-                        </div>
-                        {transaction.completed_at && (
-                          <div className="text-xs text-green-600 dark:text-green-400">
-                            Completed: {formatDate(transaction.completed_at)}
+                      </AdminTableCell>
+                      {/* Type & Status Cell */}
+                      <AdminTableCell>
+                        <div className="space-y-2">
+                          {getTransactionTypeBadge(transaction.transaction_type)}
+                          {getStatusBadge(transaction.status)}
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {transaction.purchase_type === "resell"
+                              ? "For Resale"
+                              : "For Use"}
                           </div>
-                        )}
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          ID: {transaction.id.slice(0, 8)}...
                         </div>
-                      </div>
-                    </AdminTableCell>
-                  </AdminTableRow>
-                ))
-              )}
-            </AdminTableBody>
-          </AdminTable>
+                      </AdminTableCell>
+                      {/* Participants Cell */}
+                      <AdminTableCell>
+                        <div className="space-y-2">
+                          <div className="text-sm">
+                            <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
+                              <User className="w-3 h-3" />
+                              <span className="font-medium">
+                                {transaction.buyer.first_name}{" "}
+                                {transaction.buyer.last_name}
+                              </span>
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Buyer: @{transaction.buyer.username}
+                            </div>
+                          </div>
+                          <div className="text-sm">
+                            <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400">
+                              <User className="w-3 h-3" />
+                              <span className="font-medium">
+                                {transaction.seller.first_name}{" "}
+                                {transaction.seller.last_name}
+                              </span>
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Seller: @{transaction.seller.username}
+                            </div>
+                          </div>
+                        </div>
+                      </AdminTableCell>
+                      {/* Financial Details Cell */}
+                      <AdminTableCell>
+                        <div className="space-y-1">
+                          <div className="text-lg font-bold text-gray-900 dark:text-white">
+                            {formatCurrency(transaction.amount)}
+                          </div>
+                          <div className="text-xs space-y-1">
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Platform Fee:</span>
+                              <span className="text-blue-600 dark:text-blue-400 font-medium">
+                                {formatCurrency(transaction.platform_fee)}
+                              </span>
+                            </div>
+                            {transaction.has_insurance && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Insurance:</span>
+                                <span className="text-purple-600 dark:text-purple-400 font-medium">
+                                  {formatCurrency(transaction.insurance_fee)}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">
+                                Creator Royalty:
+                              </span>
+                              <span className="text-green-600 dark:text-green-400 font-medium">
+                                {formatCurrency(transaction.creator_royalty)}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1 mt-2">
+                            <CreditCard className="w-3 h-3 text-gray-400" />
+                            <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                              {transaction.payment_method}
+                            </span>
+                            {transaction.has_insurance && (
+                              <Shield className="w-3 h-3 text-purple-500" />
+                            )}
+                          </div>
+                        </div>
+                      </AdminTableCell>
+                      {/* Timeline Cell */}
+                      <AdminTableCell>
+                        <div className="space-y-1">
+                          <div className="text-sm text-gray-900 dark:text-white flex items-center">
+                            <Calendar className="w-3 h-3 mr-1 text-gray-500" />
+                            {formatDate(transaction.created_at)}
+                          </div>
+                          {transaction.completed_at && (
+                            <div className="text-xs text-green-600 dark:text-green-400">
+                              Completed: {formatDate(transaction.completed_at)}
+                            </div>
+                          )}
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            ID: {transaction.id.slice(0, 8)}...
+                          </div>
+                        </div>
+                      </AdminTableCell>
+                    </AdminTableRow>
+                  ))
+                )}
+              </AdminTableBody>
+            </AdminTable>
+          </div>
 
           {/* Pagination */}
           {pagination && (
@@ -785,7 +783,7 @@ export default function AdminPlatformRevenuePage() {
               onPageSizeChange={handleLimitChange}
               disabled={isFetching}
               entityLabel="transactions"
-              className="mt-4"
+              className="mt-4 sm:mt-6"
             />
           )}
         </>
