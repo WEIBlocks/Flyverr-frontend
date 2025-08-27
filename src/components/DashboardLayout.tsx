@@ -239,7 +239,7 @@ export default function DashboardLayout({
               const isActive = pathname === item.href;
               const IconComp = getIconByName(item.iconName);
               return (
-                <Link key={item.name} href={item.href}>
+                <Link key={item.name} href={item.href} onClick={() => setSidebarOpen(false)}>
                   <div
                     className={`
                     flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer transition-all duration-200 relative
