@@ -221,18 +221,18 @@ export default function AdminPayoutRequestsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
             Payout Requests
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
             Manage and process user payout requests
           </p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-3">
           <Button
             variant="outline"
             className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
@@ -249,7 +249,7 @@ export default function AdminPayoutRequestsPage() {
 
       {/* Stats Cards */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
@@ -268,7 +268,7 @@ export default function AdminPayoutRequestsPage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
@@ -402,160 +402,162 @@ export default function AdminPayoutRequestsPage() {
           </div>
         </div>
       ) : (
-        <AdminTable>
-          <AdminTableHeader>
-            <tr>
-              <AdminTableHeaderCell>Request Details</AdminTableHeaderCell>
-              <AdminTableHeaderCell>User Information</AdminTableHeaderCell>
-              <AdminTableHeaderCell>Amount & Status</AdminTableHeaderCell>
-              <AdminTableHeaderCell>Timeline</AdminTableHeaderCell>
-              <AdminTableHeaderCell>Notes</AdminTableHeaderCell>
-              <AdminTableHeaderCell align="center">
-                Actions
-              </AdminTableHeaderCell>
-            </tr>
-          </AdminTableHeader>
-          <AdminTableBody>
-            {payouts.length === 0 ? (
-              <AdminTableRow>
-                <td colSpan={6} className="text-center py-8">
-                  <div className="text-gray-500 dark:text-gray-400">
-                    <CreditCard className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>No payout requests found</p>
-                  </div>
-                </td>
-              </AdminTableRow>
-            ) : (
-              payouts.map((payout) => (
-                <AdminTableRow key={payout.id} hoverable={true}>
-                  {/* Request Details Cell */}
-                  <AdminTableCell>
-                    <div className="space-y-1">
-                      <div className="font-medium text-gray-900 dark:text-white">
-                        Payout Request
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        ID: {payout.id.slice(0, 8)}...
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        Info ID: {payout.payout_info_id.slice(0, 8)}...
-                      </div>
-                      {payout.retry_count && payout.retry_count > 0 && (
-                        <div className="text-xs text-orange-600 dark:text-orange-400">
-                          Retry #{payout.retry_count}
-                        </div>
-                      )}
+        <div className="overflow-x-auto">
+          <AdminTable>
+            <AdminTableHeader>
+              <tr>
+                <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px] lg:min-w-[320px]">Request Details</AdminTableHeaderCell>
+                <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">User Information</AdminTableHeaderCell>
+                <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">Amount & Status</AdminTableHeaderCell>
+                <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px] lg:min-w-[240px]">Timeline</AdminTableHeaderCell>
+                <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[240px] lg:min-w-[300px]">Notes</AdminTableHeaderCell>
+                <AdminTableHeaderCell align="center" className="min-w-[120px] sm:min-w-[150px] lg:min-w-[200px]">
+                  Actions
+                </AdminTableHeaderCell>
+              </tr>
+            </AdminTableHeader>
+            <AdminTableBody>
+              {payouts.length === 0 ? (
+                <AdminTableRow>
+                  <td colSpan={6} className="text-center py-8">
+                    <div className="text-gray-500 dark:text-gray-400">
+                      <CreditCard className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p>No payout requests found</p>
                     </div>
-                  </AdminTableCell>
-
-                  {/* User Information Cell */}
-                  <AdminTableCell>
-                    <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">
-                          User ID: {payout.user_id.slice(0, 8)}...
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        Click to view full profile
-                      </div>
-                    </div>
-                  </AdminTableCell>
-
-                  {/* Amount & Status Cell */}
-                  <AdminTableCell>
-                    <div className="space-y-2">
-                      <div className="text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
-                        {formatCurrency(payout.amount)}
-                      </div>
-                      {getStatusBadge(payout.status)}
-                    </div>
-                  </AdminTableCell>
-
-                  {/* Timeline Cell */}
-                  <AdminTableCell>
-                    <div className="space-y-1">
-                      <div className="text-sm text-gray-900 dark:text-white flex items-center">
-                        <Calendar className="w-3 h-3 mr-1 text-gray-500" />
-                        {formatDate(payout.request_date)}
-                      </div>
-                      {payout.processed_date && (
-                        <div className="text-xs text-green-600 dark:text-green-400">
-                          Processed: {formatDate(payout.processed_date)}
-                        </div>
-                      )}
-                      {payout.status === "pending" && (
-                        <div className="text-xs text-yellow-600 dark:text-yellow-400">
-                          Awaiting review
-                        </div>
-                      )}
-                    </div>
-                  </AdminTableCell>
-
-                  {/* Notes Cell */}
-                  <AdminTableCell>
-                    <div className="max-w-xs">
-                      {payout.notes ? (
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          <div className="flex items-start space-x-1">
-                            <MessageSquare className="w-3 h-3 mt-0.5 text-gray-500" />
-                            <span className="line-clamp-2">{payout.notes}</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          No notes provided
-                        </div>
-                      )}
-                      {payout.last_error && (
-                        <div className="text-xs text-red-600 dark:text-red-400 mt-1">
-                          Error: {payout.last_error}
-                        </div>
-                      )}
-                    </div>
-                  </AdminTableCell>
-
-                  {/* Actions Cell */}
-                  <AdminTableCell align="center">
-                    <div className="flex items-center justify-center space-x-2">
-                      {payout.status === "pending" && (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="hover:bg-green-50 dark:hover:bg-green-900/20 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400"
-                            onClick={() => openActionDialog(payout, "approve")}
-                          >
-                            <ThumbsUp className="w-3 h-3" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-700 text-red-600 dark:text-red-400"
-                            onClick={() => openActionDialog(payout, "reject")}
-                          >
-                            <ThumbsDown className="w-3 h-3" />
-                          </Button>
-                        </>
-                      )}
-                      {payout.status === "failed" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="hover:bg-blue-50 dark:hover:bg-blue-900/20 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400"
-                          onClick={() => openActionDialog(payout, "retry")}
-                        >
-                          <RotateCcw className="w-3 h-3" />
-                        </Button>
-                      )}
-                    </div>
-                  </AdminTableCell>
+                  </td>
                 </AdminTableRow>
-              ))
-            )}
-          </AdminTableBody>
-        </AdminTable>
+              ) : (
+                payouts.map((payout) => (
+                  <AdminTableRow key={payout.id} hoverable={true}>
+                    {/* Request Details Cell */}
+                    <AdminTableCell>
+                      <div className="space-y-1">
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          Payout Request
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          ID: {payout.id.slice(0, 8)}...
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Info ID: {payout.payout_info_id.slice(0, 8)}...
+                        </div>
+                        {payout.retry_count && payout.retry_count > 0 && (
+                          <div className="text-xs text-orange-600 dark:text-orange-400">
+                            Retry #{payout.retry_count}
+                          </div>
+                        )}
+                      </div>
+                    </AdminTableCell>
+
+                    {/* User Information Cell */}
+                    <AdminTableCell>
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">
+                            User ID: {payout.user_id.slice(0, 8)}...
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Click to view full profile
+                        </div>
+                      </div>
+                    </AdminTableCell>
+
+                    {/* Amount & Status Cell */}
+                    <AdminTableCell>
+                      <div className="space-y-2">
+                        <div className="text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
+                          {formatCurrency(payout.amount)}
+                        </div>
+                        {getStatusBadge(payout.status)}
+                      </div>
+                    </AdminTableCell>
+
+                    {/* Timeline Cell */}
+                    <AdminTableCell>
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-900 dark:text-white flex items-center">
+                          <Calendar className="w-3 h-3 mr-1 text-gray-500" />
+                          {formatDate(payout.request_date)}
+                        </div>
+                        {payout.processed_date && (
+                          <div className="text-xs text-green-600 dark:text-green-400">
+                            Processed: {formatDate(payout.processed_date)}
+                          </div>
+                        )}
+                        {payout.status === "pending" && (
+                          <div className="text-xs text-yellow-600 dark:text-yellow-400">
+                            Awaiting review
+                          </div>
+                        )}
+                      </div>
+                    </AdminTableCell>
+
+                    {/* Notes Cell */}
+                    <AdminTableCell>
+                      <div className="max-w-xs">
+                        {payout.notes ? (
+                          <div className="text-sm text-gray-900 dark:text-white">
+                            <div className="flex items-start space-x-1">
+                              <MessageSquare className="w-3 h-3 mt-0.5 text-gray-500" />
+                              <span className="line-clamp-2">{payout.notes}</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            No notes provided
+                          </div>
+                        )}
+                        {payout.last_error && (
+                          <div className="text-xs text-red-600 dark:text-red-400 mt-1">
+                            Error: {payout.last_error}
+                          </div>
+                        )}
+                      </div>
+                    </AdminTableCell>
+
+                    {/* Actions Cell */}
+                    <AdminTableCell align="center">
+                      <div className="flex items-center justify-center space-x-2">
+                        {payout.status === "pending" && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="hover:bg-green-50 dark:hover:bg-green-900/20 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400"
+                              onClick={() => openActionDialog(payout, "approve")}
+                            >
+                              <ThumbsUp className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-700 text-red-600 dark:text-red-400"
+                              onClick={() => openActionDialog(payout, "reject")}
+                            >
+                              <ThumbsDown className="w-3 h-3" />
+                            </Button>
+                          </>
+                        )}
+                        {payout.status === "failed" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="hover:bg-blue-50 dark:hover:bg-blue-900/20 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400"
+                            onClick={() => openActionDialog(payout, "retry")}
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                          </Button>
+                        )}
+                      </div>
+                    </AdminTableCell>
+                  </AdminTableRow>
+                ))
+              )}
+            </AdminTableBody>
+          </AdminTable>
+        </div>
       )}
 
       {/* Action Modal */}

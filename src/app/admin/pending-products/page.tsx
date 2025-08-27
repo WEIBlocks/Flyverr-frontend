@@ -160,14 +160,14 @@ export default function AdminPendingProductsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             Pending Products
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
             Review and approve new product submissions
           </p>
         </div>
@@ -187,29 +187,29 @@ export default function AdminPendingProductsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                 Pending Review
               </p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                 {pagination?.total || 0}
               </p>
             </div>
-            <div className="p-3 bg-yellow-500/10 rounded-xl">
-              <Clock className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
+            <div className="p-2 sm:p-3 bg-yellow-500/10 rounded-xl">
+              <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600 dark:text-yellow-400" />
             </div>
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                 Today's Submissions
               </p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                 {
                   pendingProducts.filter((p) => {
                     const today = new Date().toDateString();
@@ -218,18 +218,18 @@ export default function AdminPendingProductsPage() {
                 }
               </p>
             </div>
-            <div className="p-3 bg-blue-500/10 rounded-xl">
-              <Calendar className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 sm:p-3 bg-blue-500/10 rounded-xl">
+              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                 Categories
               </p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                 {
                   new Set(
                     pendingProducts.map(
@@ -239,154 +239,158 @@ export default function AdminPendingProductsPage() {
                 }
               </p>
             </div>
-            <div className="p-3 bg-purple-500/10 rounded-xl">
-              <Filter className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+            <div className="p-2 sm:p-3 bg-purple-500/10 rounded-xl">
+              <Filter className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
+        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl border-2 border-gray-100 dark:border-gray-700 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                 Total Licenses
               </p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                 {pendingProducts.reduce((sum, p) => sum + p.total_licenses, 0)}
               </p>
             </div>
-            <div className="p-3 bg-green-500/10 rounded-xl">
-              <Package className="w-8 h-8 text-green-600 dark:text-green-400" />
+            <div className="p-2 sm:p-3 bg-green-500/10 rounded-xl">
+              <Package className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 dark:text-green-400" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Enhanced Table */}
-      <AdminTable>
-        <AdminTableHeader>
-          <tr>
-            <AdminTableHeaderCell>Product</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Price & Status</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Submission</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Licenses</AdminTableHeaderCell>
-            <AdminTableHeaderCell align="center">Actions</AdminTableHeaderCell>
-          </tr>
-        </AdminTableHeader>
-        <AdminTableBody>
-          {pendingProducts.length === 0 ? (
-            <AdminTableRow>
-              <td colSpan={5} className="text-center py-8">
-                <div className="text-gray-500 dark:text-gray-400">
-                  <Package className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p>No pending products found</p>
-                </div>
-              </td>
-            </AdminTableRow>
-          ) : (
-            pendingProducts.map((product) => (
-              <AdminTableRow
-                key={product.id}
-               
-                hoverable={true}
-              >
-                {/* Product Cell - Thumbnail + Title */}
-                <AdminTableCell>
-                  <div className="flex items-center space-x-3">
-                    <ImageWithFallback
-                      src={product.thumbnail_url}
-                      alt={product.title}
-                      width={48}
-                      height={48}
-                      className="flex-shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-sm">
-                        {product.title}
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
-                        by {product.creator.first_name}{" "}
-                        {product.creator.last_name}
-                      </div>
-                    </div>
+      <div className="overflow-x-auto">
+        <AdminTable>
+          <AdminTableHeader>
+            <tr>
+              <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[250px]">Product</AdminTableHeaderCell>
+              <AdminTableHeaderCell className="min-w-[120px] sm:min-w-[150px]">Price & Status</AdminTableHeaderCell>
+              <AdminTableHeaderCell className="min-w-[120px] sm:min-w-[140px]">Submission</AdminTableHeaderCell>
+              <AdminTableHeaderCell className="min-w-[80px] sm:min-w-[100px]">Licenses</AdminTableHeaderCell>
+              <AdminTableHeaderCell align="center" className="min-w-[80px]">Actions</AdminTableHeaderCell>
+            </tr>
+          </AdminTableHeader>
+          <AdminTableBody>
+            {pendingProducts.length === 0 ? (
+              <AdminTableRow>
+                <td colSpan={5} className="text-center py-8">
+                  <div className="text-gray-500 dark:text-gray-400">
+                    <Package className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm sm:text-base">No pending products found</p>
                   </div>
-                </AdminTableCell>
-
-                {/* Price & Status Cell */}
-                <AdminTableCell>
-                  <div className="space-y-2">
-                    <div className="text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
-                      ${product.original_price}
-                    </div>
-                    {getStatusBadge(product.status)}
-                    {getStageBadge(product.current_stage)}
-                  </div>
-                </AdminTableCell>
-
-                {/* Submission Cell */}
-                <AdminTableCell>
-                  <div className="space-y-1">
-                    <div className="text-sm text-gray-900 dark:text-white flex items-center">
-                      <Clock className="w-3 h-3 mr-1 text-gray-500" />
-                      {formatDate(product.created_at)}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {product.category?.name || "Uncategorized"}
-                    </div>
-                  </div>
-                </AdminTableCell>
-
-                {/* Licenses Cell */}
-                <AdminTableCell>
-                  <div className="space-y-1">
-                    <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {product.remaining_licenses}/{product.total_licenses}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      Available
-                    </div>
-                  </div>
-                </AdminTableCell>
-
-                {/* Actions Cell */}
-                <AdminTableCell align="center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="hover:bg-blue-50 dark:hover:bg-blue-900/20 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleProductClick(product);
-                      }}
-                    >
-                      <Eye className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </AdminTableCell>
+                </td>
               </AdminTableRow>
-            ))
-          )}
-        </AdminTableBody>
-      </AdminTable>
+            ) : (
+              pendingProducts.map((product) => (
+                <AdminTableRow
+                  key={product.id}
+                  hoverable={true}
+                >
+                  {/* Product Cell - Thumbnail + Title */}
+                  <AdminTableCell>
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <ImageWithFallback
+                        src={product.thumbnail_url}
+                        alt={product.title}
+                        width={40}
+                        height={40}
+                        className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-xs sm:text-sm">
+                          {product.title}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+                          by {product.creator.first_name}{" "}
+                          {product.creator.last_name}
+                        </div>
+                      </div>
+                    </div>
+                  </AdminTableCell>
+
+                  {/* Price & Status Cell */}
+                  <AdminTableCell>
+                    <div className="space-y-1 sm:space-y-2">
+                      <div className="text-base sm:text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
+                        ${product.original_price}
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {getStatusBadge(product.status)}
+                        {getStageBadge(product.current_stage)}
+                      </div>
+                    </div>
+                  </AdminTableCell>
+
+                  {/* Submission Cell */}
+                  <AdminTableCell>
+                    <div className="space-y-1">
+                      <div className="text-xs sm:text-sm text-gray-900 dark:text-white flex items-center">
+                        <Clock className="w-3 h-3 mr-1 text-gray-500" />
+                        {formatDate(product.created_at)}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {product.category?.name || "Uncategorized"}
+                      </div>
+                    </div>
+                  </AdminTableCell>
+
+                  {/* Licenses Cell */}
+                  <AdminTableCell>
+                    <div className="space-y-1">
+                      <div className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
+                        {product.remaining_licenses}/{product.total_licenses}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Available
+                      </div>
+                    </div>
+                  </AdminTableCell>
+
+                  {/* Actions Cell */}
+                  <AdminTableCell align="center">
+                    <div className="flex items-center justify-center space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="hover:bg-blue-50 dark:hover:bg-blue-900/20 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 p-1 sm:p-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleProductClick(product);
+                        }}
+                      >
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                      </Button>
+                    </div>
+                  </AdminTableCell>
+                </AdminTableRow>
+              ))
+            )}
+          </AdminTableBody>
+        </AdminTable>
+      </div>
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-700 dark:text-gray-300">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+          <div className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 text-center sm:text-left">
             Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
             {pagination.total} results
           </div>
-          <div className="flex space-x-2">
+          <div className="flex items-center justify-center sm:justify-end space-x-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
+              className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
             >
               Previous
             </Button>
-            <span className="flex items-center px-3 text-sm text-gray-700 dark:text-gray-300">
+            <span className="flex items-center px-2 sm:px-3 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
               Page {pagination.page} of {pagination.totalPages}
             </span>
             <Button
@@ -396,6 +400,7 @@ export default function AdminPendingProductsPage() {
                 setCurrentPage(Math.min(pagination.totalPages, currentPage + 1))
               }
               disabled={currentPage === pagination.totalPages}
+              className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
             >
               Next
             </Button>

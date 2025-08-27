@@ -34,7 +34,9 @@ interface Product {
   original_price: number;
   total_licenses: number;
   remaining_licenses: number;
+  images_urls: string[];
   current_stage: string;
+  dealTypes: string[];
   current_round: number;
   status: string;
   featured: boolean;

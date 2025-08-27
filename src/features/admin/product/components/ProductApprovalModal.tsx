@@ -189,16 +189,16 @@ export default function ProductApprovalModal({
     <Modal size="2xl">
       <div className="w-full">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-flyverr-neutral to-gray-50 dark:from-gray-800 dark:to-gray-700/50 rounded-t-2xl">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-lg">
-              <Package className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-flyverr-neutral to-gray-50 dark:from-gray-800 dark:to-gray-700/50 rounded-t-2xl space-y-3 sm:space-y-0">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-lg">
+              <Package className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-300" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 Review Product
               </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
                 {product.title}
               </p>
             </div>
@@ -208,19 +208,19 @@ export default function ProductApprovalModal({
             size="sm"
             onClick={handleClose}
             disabled={isPending}
-            className="text-gray-500 hover:text-flyverr-primary dark:text-gray-400 dark:hover:text-flyverr-secondary hover:bg-flyverr-primary/10 dark:hover:bg-flyverr-secondary/20 rounded-xl p-2"
+            className="text-gray-500 hover:text-flyverr-primary dark:text-gray-400 dark:hover:text-flyverr-secondary hover:bg-flyverr-primary/10 dark:hover:bg-flyverr-secondary/20 rounded-xl p-2 self-end sm:self-auto"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Quick Actions */}
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-3">
             <Link
               href={`/admin/products/${product.id}`}
               target="_blank"
-              className="inline-flex items-center rounded-md border-2 border-flyverr-primary text-flyverr-primary px-3 py-2 text-sm font-semibold hover:bg-flyverr-primary/10"
+              className="inline-flex items-center justify-center rounded-md border-2 border-flyverr-primary text-flyverr-primary px-3 py-2 text-sm font-semibold hover:bg-flyverr-primary/10"
             >
               View
             </Link>
@@ -233,35 +233,36 @@ export default function ProductApprovalModal({
               {downloading ? "Preparing..." : "Download File"}
             </Button>
           </div>
+          
           {/* Product Overview */}
           <Card className="border-2 border-gray-100 dark:border-gray-700 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg">
-              <CardTitle className="text-lg text-gray-900 dark:text-white flex items-center space-x-2">
-                <Package className="w-5 h-5 text-flyverr-primary" />
+            <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg p-4 sm:p-6">
+              <CardTitle className="text-base sm:text-lg text-gray-900 dark:text-white flex items-center space-x-2">
+                <Package className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                 <span>Product Overview</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <div className="w-10 h-10 bg-flyverr-primary/10 dark:bg-flyverr-secondary/20 rounded-lg flex items-center justify-center">
-                    <User className="w-5 h-5 text-flyverr-primary dark:text-flyverr-secondary" />
+            <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                <div className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-flyverr-primary/10 dark:bg-flyverr-secondary/20 rounded-lg flex items-center justify-center">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary dark:text-flyverr-secondary" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate">
                       {product.creator.first_name} {product.creator.last_name}
                     </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                       @{product.creator.username}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <div className="w-10 h-10 bg-flyverr-primary/10 dark:bg-flyverr-secondary/20 rounded-lg flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-flyverr-primary dark:text-flyverr-secondary" />
+                <div className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-flyverr-primary/10 dark:bg-flyverr-secondary/20 rounded-lg flex items-center justify-center">
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary dark:text-flyverr-secondary" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
                       Submitted
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -269,28 +270,28 @@ export default function ProductApprovalModal({
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <div className="w-10 h-10 bg-flyverr-primary/10 dark:bg-flyverr-secondary/20 rounded-lg flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-flyverr-primary dark:text-flyverr-secondary" />
+                <div className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-flyverr-primary/10 dark:bg-flyverr-secondary/20 rounded-lg flex items-center justify-center">
+                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary dark:text-flyverr-secondary" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
                       Original Price
                     </p>
-                    <p className="text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
+                    <p className="text-sm sm:text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
                       ${product.original_price}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <div className="w-10 h-10 bg-flyverr-primary/10 dark:bg-flyverr-secondary/20 rounded-lg flex items-center justify-center">
-                    <Package className="w-5 h-5 text-flyverr-primary dark:text-flyverr-secondary" />
+                <div className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-flyverr-primary/10 dark:bg-flyverr-secondary/20 rounded-lg flex items-center justify-center">
+                    <Package className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary dark:text-flyverr-secondary" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
                       Licenses
                     </p>
-                    <p className="text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
+                    <p className="text-sm sm:text-lg font-bold text-flyverr-primary dark:text-flyverr-secondary">
                       {product.total_licenses}
                     </p>
                   </div>
@@ -301,37 +302,38 @@ export default function ProductApprovalModal({
 
           {/* Approval Decision */}
           <Card className="border-2 border-gray-100 dark:border-gray-700 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg">
-              <CardTitle className="text-lg text-gray-900 dark:text-white flex items-center space-x-2">
-                <CheckCircle className="w-5 h-5 text-flyverr-primary" />
+            <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg p-4 sm:p-6">
+              <CardTitle className="text-base sm:text-lg text-gray-900 dark:text-white flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                 <span>Decision</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-1">
-                <div className="flex gap-1">
+            <CardContent className="p-4 sm:p-6">
+              <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-2 sm:p-1">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-1">
                   <button
                     type="button"
                     onClick={() => setIsApproved(true)}
                     disabled={isSubmitting}
-                    className={`relative flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg transition-all duration-300 ease-out focus:outline-none ${
+                    className={`relative flex-1 inline-flex items-center justify-center gap-3 sm:gap-2 h-14 sm:h-12 rounded-xl sm:rounded-lg transition-all duration-300 ease-out focus:outline-none ${
                       isApproved === true
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 shadow-sm border border-green-200 dark:border-green-700"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 hover:border hover:border-green-200/50 dark:hover:border-green-700/50"
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 shadow-sm border-2 border-green-200 dark:border-green-700"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 hover:border-2 hover:border-green-200/50 dark:hover:border-green-700/50"
                     }`}
                   >
+                    {/* Icon - Hidden on mobile, visible on desktop */}
                     <CheckCircle
-                      className={`w-5 h-5 transition-colors duration-300 ${
+                      className={`inline-block  w-5 h-5 transition-colors duration-300 ${
                         isApproved === true
                           ? "text-green-600 dark:text-green-400"
                           : "text-gray-400 dark:text-gray-500 group-hover:text-green-500"
                       }`}
                     />
-                    <span className="text-sm sm:text-base font-semibold transition-colors duration-300">
+                    <span className="text-base sm:text-sm lg:text-base font-bold sm:font-semibold transition-colors duration-300">
                       Approve
                     </span>
                     <span
-                      className={`pointer-events-none absolute bottom-0 inset-x-6 h-0.5 rounded-full transition-all duration-300 ${
+                      className={`pointer-events-none absolute bottom-0 inset-x-3 sm:inset-x-6 h-1 sm:h-0.5 rounded-full transition-all duration-300 ${
                         isApproved === true ? "bg-green-500" : "bg-transparent"
                       }`}
                     />
@@ -340,24 +342,25 @@ export default function ProductApprovalModal({
                     type="button"
                     onClick={() => setIsApproved(false)}
                     disabled={isSubmitting}
-                    className={`relative flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg transition-all duration-300 ease-out focus:outline-none ${
+                    className={`relative flex-1 inline-flex items-center justify-center gap-3 sm:gap-2 h-14 sm:h-12 rounded-xl sm:rounded-lg transition-all duration-300 ease-out focus:outline-none ${
                       isApproved === false
-                        ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 shadow-sm border border-red-200 dark:border-red-700"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border hover:border-red-200/50 dark:hover:border-red-700/50"
+                        ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 shadow-sm border-2 border-red-200 dark:border-red-700"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border-2 hover:border-red-200/50 dark:hover:border-red-700/50"
                     }`}
                   >
+                    {/* Icon - Hidden on mobile, visible on desktop */}
                     <XCircle
-                      className={`w-5 h-5 transition-colors duration-300 ${
+                      className={`inline-block w-5 h-5 transition-colors duration-300 ${
                         isApproved === false
                           ? "text-red-600 dark:text-red-400"
                           : "text-gray-400 dark:text-gray-500 group-hover:text-red-500"
                       }`}
                     />
-                    <span className="text-sm sm:text-base font-semibold transition-colors duration-300">
+                    <span className="text-base sm:text-sm lg:text-base font-bold sm:font-semibold transition-colors duration-300">
                       Reject
                     </span>
                     <span
-                      className={`pointer-events-none absolute bottom-0 inset-x-6 h-0.5 rounded-full transition-all duration-300 ${
+                      className={`pointer-events-none absolute bottom-0 inset-x-3 sm:inset-x-6 h-1 sm:h-0.5 rounded-full transition-all duration-300 ${
                         isApproved === false ? "bg-red-500" : "bg-transparent"
                       }`}
                     />
@@ -370,25 +373,25 @@ export default function ProductApprovalModal({
           {/* Round Pricing - Only show if approved */}
           {isApproved === true && (
             <Card className="border-2 border-gray-100 dark:border-gray-700 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg">
-                <CardTitle className="text-lg text-gray-900 dark:text-white flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 text-flyverr-primary" />
+              <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg p-4 sm:p-6">
+                <CardTitle className="text-base sm:text-lg text-gray-900 dark:text-white flex items-center space-x-2">
+                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                   <span>Round Pricing Configuration</span>
                 </CardTitle>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Set pricing for different resale rounds
                 </p>
               </CardHeader>
-              <CardContent className="space-y-6 p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                   {/* Newboom (Original) */}
-                  <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <Label className="text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
-                      <Package className="w-4 h-4" />
-                      <span>Newboom (Original)</span>
+                  <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <Label className="text-xs sm:text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+                      <Package className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="truncate">Newboom (Original)</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                      <span className="text-gray-600 dark:text-gray-400 font-bold text-lg">
+                      <span className="text-gray-600 dark:text-gray-400 font-bold text-sm sm:text-lg">
                         $
                       </span>
                       <Input
@@ -397,7 +400,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={Number.isNaN(roundPricing.originalPrice) ? "" : roundPricing.originalPrice}
                         onChange={handlePriceChange("originalPrice")}
-                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm sm:text-base"
                         placeholder="100"
                       />
                     </div>
@@ -408,13 +411,13 @@ export default function ProductApprovalModal({
                   </div>
 
                   {/* Blossom */}
-                  <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <Label className="text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
-                      <Zap className="w-4 h-4" />
+                  <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <Label className="text-xs sm:text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+                      <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span>Blossom</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                      <span className="text-gray-600 dark:text-gray-400 font-bold text-lg">
+                      <span className="text-gray-600 dark:text-gray-400 font-bold text-sm sm:text-lg">
                         $
                       </span>
                       <Input
@@ -423,7 +426,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={Number.isNaN(roundPricing.blossomPrice) ? "" : roundPricing.blossomPrice}
                         onChange={handlePriceChange("blossomPrice")}
-                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm sm:text-base"
                         placeholder="120"
                       />
                     </div>
@@ -438,13 +441,13 @@ export default function ProductApprovalModal({
                   </div>
 
                   {/* Evergreen */}
-                  <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <Label className="text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
-                      <Crown className="w-4 h-4" />
+                  <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <Label className="text-xs sm:text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+                      <Crown className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span>Evergreen</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                      <span className="text-gray-600 dark:text-gray-400 font-bold text-lg">
+                      <span className="text-gray-600 dark:text-gray-400 font-bold text-sm sm:text-lg">
                         $
                       </span>
                       <Input
@@ -453,7 +456,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={Number.isNaN(roundPricing.evergreenPrice) ? "" : roundPricing.evergreenPrice}
                         onChange={handlePriceChange("evergreenPrice")}
-                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm sm:text-base"
                         placeholder="140"
                       />
                     </div>
@@ -468,13 +471,13 @@ export default function ProductApprovalModal({
                   </div>
 
                   {/* Exit Round */}
-                  <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <Label className="text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
-                      <TrendingUp className="w-4 h-4" />
+                  <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <Label className="text-xs sm:text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+                      <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span>Exit</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                      <span className="text-gray-600 dark:text-gray-400 font-bold text-lg">
+                      <span className="text-gray-600 dark:text-gray-400 font-bold text-sm sm:text-lg">
                         $
                       </span>
                       <Input
@@ -483,7 +486,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={Number.isNaN(roundPricing.exitPrice) ? "" : roundPricing.exitPrice}
                         onChange={handlePriceChange("exitPrice")}
-                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm sm:text-base"
                         placeholder="160"
                       />
                     </div>
@@ -503,18 +506,18 @@ export default function ProductApprovalModal({
 
           {/* Admin Notes */}
           <Card className="border-2 border-gray-100 dark:border-gray-700 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg">
-              <CardTitle className="text-lg text-gray-900 dark:text-white flex items-center space-x-2">
-                <AlertCircle className="w-5 h-5 text-flyverr-primary" />
+            <CardHeader className="bg-gradient-to-r from-flyverr-neutral/50 to-gray-50 dark:from-gray-700/50 dark:to-gray-600/50 rounded-t-lg p-4 sm:p-6">
+              <CardTitle className="text-base sm:text-lg text-gray-900 dark:text-white flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
                 <span>Admin Notes</span>
               </CardTitle>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 {isApproved === true
                   ? "Add notes about why this product was approved"
                   : "Add notes about why this product was rejected"}
               </p>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <Textarea
                 value={adminNotes}
                 onChange={(e) => {
@@ -531,7 +534,7 @@ export default function ProductApprovalModal({
                     ? "This product meets our quality standards because..."
                     : "This product was rejected because..."
                 }
-                className="min-h-[120px] border-2 border-gray-200 dark:border-gray-600 focus:border-flyverr-primary focus:ring-flyverr-primary/20 rounded-xl resize-none"
+                className="min-h-[100px] sm:min-h-[120px] border-2 border-gray-200 dark:border-gray-600 focus:border-flyverr-primary focus:ring-flyverr-primary/20 rounded-xl resize-none text-sm sm:text-base"
                 disabled={isPending}
               />
               {errors.adminNotes && (
@@ -543,19 +546,19 @@ export default function ProductApprovalModal({
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex justify-end space-x-4 pt-6 border-t-2 border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row sm:justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-4 sm:pt-6 border-t-2 border-gray-200 dark:border-gray-700">
             <Button
               variant="outline"
               onClick={handleClose}
               disabled={isPending}
-              className="px-8 py-3 text-lg font-semibold rounded-xl border-2 border-gray-300 dark:border-gray-600 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-secondary dark:hover:text-flyverr-secondary transition-all duration-200"
+              className="px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg font-semibold rounded-xl border-2 border-gray-300 dark:border-gray-600 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-secondary dark:hover:text-flyverr-secondary transition-all duration-200 order-2 sm:order-1"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={isPending}
-              className={`min-w-[140px] px-8 py-3 text-lg font-semibold rounded-xl transition-all duration-200 ${
+              className={`min-w-[120px] sm:min-w-[140px] px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg font-semibold rounded-xl transition-all duration-200 order-1 sm:order-2 ${
                 isApproved === true
                   ? "bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl"
                   : isApproved === false
@@ -565,19 +568,19 @@ export default function ProductApprovalModal({
             >
               {isPending ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
                   Processing...
                 </>
               ) : (
                 <>
                   {isApproved === true ? (
                     <>
-                      <CheckCircle className="w-5 h-5 mr-2" />
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                       Approve
                     </>
                   ) : (
                     <>
-                      <XCircle className="w-5 h-5 mr-2" />
+                      <XCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                       Reject
                     </>
                   )}
