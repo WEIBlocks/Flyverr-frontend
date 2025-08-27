@@ -131,26 +131,26 @@ export default function Home() {
               {/* Badge - Modern and Appealing */}
               <div
                 className={`inline-flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-2 sm:py-3 md:py-4 lg:py-4 xl:py-5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-800 dark:text-white border border-gray-200/50 dark:border-gray-700/50 text-xs sm:text-xs md:text-xs lg:text-sm xl:text-base font-semibold rounded-xl sm:rounded-2xl shadow-lg shadow-gray-200/50 dark:shadow-gray-900/50 mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 transform transition-all duration-700 hover:scale-105 hover:shadow-xl ${
-                    isVisible
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-10 opacity-0"
-                  }`}
-                >
+                  isVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-10 opacity-0"
+                }`}
+              >
                 <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 lg:w-3 lg:h-3 xl:w-3.5 xl:h-3.5 bg-flyverr-primary rounded-full animate-pulse"></div>
                 <span className="px-1 sm:px-2">
-                    B2C & C2C Digital Resale Marketplace
-                  </span>
+                  B2C & C2C Digital Resale Marketplace
+                </span>
                 <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 lg:w-3 lg:h-3 xl:w-3.5 xl:h-3.5 bg-flyverr-primary rounded-full animate-pulse delay-1000"></div>
-                </div>
+              </div>
 
               {/* Main Heading - Clean Typography */}
-                <div
+              <div
                 className={`space-y-4 sm:space-y-6 mb-4 sm:mb-6 transform transition-all duration-1000 delay-200 ${
-                    isVisible
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-10 opacity-0"
-                  }`}
-                >
+                  isVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-10 opacity-0"
+                }`}
+              >
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
                   Profit From What You{" "}
                   <span className="relative">
@@ -158,8 +158,8 @@ export default function Home() {
                       Love
                     </span>
                     <span className="absolute -bottom-1 sm:-bottom-1.5 md:-bottom-2 lg:-bottom-2.5 xl:-bottom-3 left-0 right-0 h-2 sm:h-2.5 md:h-3 lg:h-3.5 xl:h-4 bg-yellow-200 dark:bg-yellow-800/30 rounded-full transform -rotate-1"></span>
-                    </span>
-                  </h1>
+                  </span>
+                </h1>
 
                 {/* Subheadline - Clear and Concise */}
                 <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto font-normal px-2 sm:px-4">
@@ -172,38 +172,38 @@ export default function Home() {
                       </span>
                     </span>
                   </span>
-                  </p>
-                </div>
+                </p>
+              </div>
 
               {/* CTA Buttons - Clean and Contrasting */}
-                <div
+              <div
                 className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 transform transition-all duration-1000 delay-500 ${
-                    isVisible
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-10 opacity-0"
-                  }`}
-                >
-                <Button
-                  onClick={handleGetStarted}
-                  className="group relative px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-3 sm:py-4 md:py-4 lg:py-5 xl:py-6 bg-flyverr-primary hover:bg-flyverr-primary/90 dark:bg-flyverr-primary dark:hover:bg-flyverr-primary/90 text-white text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  <Sparkles className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 mr-1.5 sm:mr-2 md:mr-2.5 lg:mr-3 xl:mr-4" />
-                  <span className="relative z-10">Start Creating Today</span>
-                </Button>
+                  isVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-10 opacity-0"
+                }`}
+              >
+                <Link href="/user/products">
+                  <Button className="group relative px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-3 sm:py-4 md:py-4 lg:py-5 xl:py-6 bg-flyverr-primary hover:bg-flyverr-primary/90 dark:bg-flyverr-primary dark:hover:bg-flyverr-primary/90 text-white text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <Sparkles className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 mr-1.5 sm:mr-2 md:mr-2.5 lg:mr-3 xl:mr-4" />
 
-                  <Button
-                    onClick={handleExploreMarketplace}
-                    variant="outline"
+                    <span className="relative z-10">Start Creating Today</span>
+                  </Button>
+                </Link>
+
+                <Button
+                  onClick={handleExploreMarketplace}
+                  variant="outline"
                   className="group px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-3 sm:py-4 md:py-4 lg:py-5 xl:py-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-2 border-gray-200/50 dark:border-gray-700/50 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-primary dark:hover:text-flyverr-primary text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 hover:bg-white dark:hover:bg-gray-800"
-                  >
+                >
                   <span className="relative z-10">
                     Find Profitable Products
                   </span>
                   <ArrowRight className="ml-1.5 sm:ml-2 md:ml-2.5 lg:ml-3 xl:ml-4 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </div>
+                </Button>
               </div>
+            </div>
           </div>
         </section>
 
@@ -227,50 +227,50 @@ export default function Home() {
                       <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 bg-flyverr-primary rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-5">
                         <span className="text-white font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
                           F
-                          </span>
-                        </div>
+                        </span>
+                      </div>
                       <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-semibold text-gray-800 dark:text-gray-200">
                         Flyverr
                       </p>
                       <p className="text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg text-gray-600 dark:text-gray-400">
                         Platform
                       </p>
-                        </div>
-                      </div>
+                    </div>
+                  </div>
 
                   {/* Create Products Circle */}
                   <div className="absolute -top-2 sm:-top-3 md:-top-4 lg:-top-6 xl:-top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-green-100 dark:bg-green-900/20 rounded-full border-2 border-green-300 dark:border-green-700 flex items-center justify-center shadow-lg">
                     <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
                       📦
-                          </span>
-                        </div>
+                    </span>
+                  </div>
 
                   {/* Buy Licenses Circle */}
                   <div className="absolute top-1/2 -right-2 sm:-right-3 md:-right-4 lg:-right-6 xl:-right-8 transform translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-blue-100 dark:bg-blue-900/20 rounded-full border-2 border-blue-300 dark:border-blue-700 flex items-center justify-center shadow-lg">
                     <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
                       💰
-                          </span>
-                      </div>
+                    </span>
+                  </div>
 
                   {/* Claim Royalties Circle */}
                   <div className="absolute bottom-1/2 -right-2 sm:-right-3 md:-right-4 lg:-right-6 xl:-right-8 transform -translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-purple-100 dark:bg-purple-900/20 rounded-full border-2 border-purple-300 dark:border-purple-700 flex items-center justify-center shadow-lg">
                     <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
                       👑
-                          </span>
-                        </div>
+                    </span>
+                  </div>
 
                   {/* Payment Analytics Circle */}
                   <div className="absolute -bottom-2 sm:-bottom-3 md:-bottom-4 lg:-bottom-6 xl:-bottom-8 left-1/2 transform -translate-x-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-orange-100 dark:bg-orange-900/20 rounded-full border-2 border-orange-300 dark:border-orange-700 flex items-center justify-center shadow-lg">
                     <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
                       📊
-                          </span>
-                      </div>
+                    </span>
+                  </div>
 
                   {/* Stripe Payments Circle */}
                   <div className="absolute top-1/2 -left-2 sm:-left-3 md:-left-4 lg:-left-6 xl:-left-8 transform -translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-indigo-100 dark:bg-indigo-900/20 rounded-full border-2 border-indigo-300 dark:border-indigo-700 flex items-center justify-center shadow-lg">
                     <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
                       💳
-                          </span>
+                    </span>
                   </div>
 
                   {/* Flow Lines */}
@@ -429,21 +429,21 @@ export default function Home() {
                       </linearGradient>
                     </defs>
                   </svg>
-                  </div>
-                  </div>
+                </div>
+              </div>
 
               {/* Right Side - Description */}
               <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-8">
                 <div>
                   <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-5">
                     Complete Digital Product Ecosystem
-            </h3>
+                  </h3>
                   <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
                     Flyverr provides a comprehensive platform where creators can
                     build, sell, and earn ongoing royalties from their digital
                     products.
                   </p>
-        </div>
+                </div>
 
                 <div className="space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-5 xl:space-y-6">
                   {/* Create Products */}
@@ -462,7 +462,7 @@ export default function Home() {
                         licensing, and scarcity controls to maximize value.
                       </p>
                     </div>
-            </div>
+                  </div>
 
                   {/* Buy Licenses */}
                   <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-4 xl:space-x-5">
@@ -470,7 +470,7 @@ export default function Home() {
                       <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
                         💰
                       </span>
-                  </div>
+                    </div>
                     <div>
                       <h4 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2 md:mb-2 lg:mb-3 xl:mb-4">
                         Buy Licenses
@@ -480,7 +480,7 @@ export default function Home() {
                         Invest in appreciating assets with controlled scarcity.
                       </p>
                     </div>
-                </div>
+                  </div>
 
                   {/* Claim Royalties */}
                   <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-4 xl:space-x-5">
@@ -541,11 +541,14 @@ export default function Home() {
                 </div>
 
                 <div className="pt-2 sm:pt-3 md:pt-4 lg:pt-4 xl:pt-5">
-                  <button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold py-2 sm:py-3 md:py-3 lg:py-4 xl:py-5 px-3 sm:px-5 md:px-6 lg:px-8 xl:px-10 rounded-xl transition-colors text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
-                  Start Creating Today
-                  </button>
+                  <Link
+                    href="/user/products"
+                    className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold py-2 sm:py-3 md:py-3 lg:py-4 xl:py-5 px-3 sm:px-5 md:px-6 lg:px-8 xl:px-10 rounded-xl transition-colors text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl group relative"
+                  >
+                    Start Creating Today
+                  </Link>
+                </div>
               </div>
-                  </div>
             </div>
           </div>
         </section>
@@ -565,7 +568,7 @@ export default function Home() {
               <div className="sm:col-span-2 lg:col-span-1 lg:row-span-2 bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-lg border border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
                   What's in Your Creator Kit?
-                  </h3>
+                </h3>
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -600,29 +603,29 @@ export default function Home() {
                     </span>
                   </div>
                 </div>
-                </div>
+              </div>
 
               {/* Top Middle Card - Trading Volume */}
               <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
                 <div className="text-center">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-blue-100 dark:bg-blue-900/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
                     <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-blue-600 dark:text-blue-400" />
-                    </div>
+                  </div>
                   <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-2">
                     2,000+
                   </div>
                   <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
                     trades completed this month
                   </div>
-                    </div>
-                  </div>
+                </div>
+              </div>
 
               {/* Top Right Card - Urgency */}
               <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
                 <div className="text-center">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-orange-100 dark:bg-orange-900/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
                     <Zap className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-orange-600 dark:text-orange-400" />
-                    </div>
+                  </div>
                   <div className="text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 text-gray-900 dark:text-white">
                     ⚡ Selling Out Fast!
                   </div>
@@ -632,23 +635,23 @@ export default function Home() {
                       under 48 hours
                     </span>
                   </div>
-                    </div>
-                  </div>
+                </div>
+              </div>
 
               {/* Bottom Middle Card - Royalties */}
               <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
                 <div className="text-center">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-purple-100 dark:bg-purple-900/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
                     <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-purple-600 dark:text-purple-400" />
-                    </div>
+                  </div>
                   <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-2">
                     $500K+
                   </div>
                   <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
                     in creator royalties paid
-                    </div>
                   </div>
                 </div>
+              </div>
 
               {/* Bottom Right Card - Revenue Breakdown */}
               <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
@@ -662,11 +665,11 @@ export default function Home() {
                       <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                         Digital Products
                       </span>
-              </div>
+                    </div>
                     <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                       65%
                     </span>
-            </div>
+                  </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
@@ -820,7 +823,7 @@ export default function Home() {
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.15)_25%,rgba(255,255,255,0.15)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.15)_75%)] bg-[length:20px_20px] opacity-30"></div>
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/20 via-transparent to-black/20"></div>
-            </div>
+          </div>
 
           {/* Floating Elements */}
           <div className="absolute top-10 left-10 w-2 h-2 bg-white/40 rounded-full animate-pulse"></div>
@@ -836,7 +839,7 @@ export default function Home() {
                 <span className="relative">
                   <span className="relative z-10">real income</span>
                   <span className="absolute -bottom-1 left-0 right-0 h-1.5 bg-yellow-300 dark:bg-yellow-200 rounded-full transform -rotate-1 opacity-100"></span>
-                    </span>
+                </span>
               </h2>
 
               {/* Subheadline */}
@@ -848,60 +851,62 @@ export default function Home() {
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-center">
                 {/* Primary CTA Button */}
-                <Button className="group relative px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8 py-1.5 sm:py-2 md:py-2.5 lg:py-3 xl:py-3.5 bg-white hover:bg-gray-50 text-flyverr-primary font-bold text-xs sm:text-sm md:text-base lg:text-lg rounded-md sm:rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  <span className="relative z-10 flex items-center justify-center">
-                    <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5" />
-                    Start Earning Today
+                <Link href="/user/products">
+                  <Button className="group relative px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8 py-1.5 sm:py-2 md:py-2.5 lg:py-3 xl:py-3.5 bg-white hover:bg-gray-50 text-flyverr-primary font-bold text-xs sm:text-sm md:text-base lg:text-lg rounded-md sm:rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <span className="relative z-10 flex items-center justify-center">
+                      <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5" />
+                      Start Earning Today
                     </span>
-                    </Button>
+                  </Button>
+                </Link>
 
                 {/* Secondary CTA Button */}
-                  </div>
+              </div>
 
               {/* Trust Indicators */}
               <div className="mt-6 sm:mt-8 md:mt-10 flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-6 text-white/90 text-xs sm:text-sm">
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-200" />
                   <span>No upfront costs</span>
-                  </div>
+                </div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-200" />
                   <span>Instant payouts</span>
-                  </div>
+                </div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-200" />
                   <span>24/7 support</span>
                 </div>
-                    </div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Footer */}
         <footer className="bg-gray-900 dark:bg-black text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             {/* Main Footer Content */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
               {/* Company Info */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-flyverr-primary rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">F</span>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-flyverr-primary rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-sm sm:text-lg">F</span>
                   </div>
-                  <span className="text-xl font-bold">Flyverr</span>
+                  <span className="text-lg sm:text-xl font-bold">Flyverr</span>
                 </div>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
                   The revolutionary digital marketplace where creators thrive
                   and investors profit from appreciating digital assets.
                 </p>
-                <div className="flex space-x-4">
+                <div className="flex space-x-3 sm:space-x-4">
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors p-1"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -910,10 +915,10 @@ export default function Home() {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors p-1"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -922,10 +927,10 @@ export default function Home() {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors p-1"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -934,10 +939,10 @@ export default function Home() {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors p-1"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -948,13 +953,13 @@ export default function Home() {
               </div>
 
               {/* Quick Links */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Quick Links</h3>
-                <ul className="space-y-2">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-base sm:text-lg font-semibold">Quick Links</h3>
+                <ul className="space-y-1 sm:space-y-2">
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Homepage
                     </Link>
@@ -962,7 +967,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/marketplace"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Marketplace
                     </Link>
@@ -970,7 +975,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/blog"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Blog
                     </Link>
@@ -978,7 +983,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/faq"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       FAQ / Help Center
                     </Link>
@@ -986,7 +991,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/login"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Sign In
                     </Link>
@@ -994,7 +999,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/signup"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Sign Up
                     </Link>
@@ -1003,13 +1008,13 @@ export default function Home() {
               </div>
 
               {/* For Creators */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">For Creators</h3>
-                <ul className="space-y-2">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-base sm:text-lg font-semibold">For Creators</h3>
+                <ul className="space-y-1 sm:space-y-2">
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Start Creating
                     </Link>
@@ -1017,7 +1022,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Creator Guidelines
                     </Link>
@@ -1025,7 +1030,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Royalty System
                     </Link>
@@ -1033,7 +1038,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Creator Dashboard
                     </Link>
@@ -1041,7 +1046,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Success Stories
                     </Link>
@@ -1050,13 +1055,13 @@ export default function Home() {
               </div>
 
               {/* For Investors */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">For Investors</h3>
-                <ul className="space-y-2">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-base sm:text-lg font-semibold">For Investors</h3>
+                <ul className="space-y-1 sm:space-y-2">
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       How It Works
                     </Link>
@@ -1064,7 +1069,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Investment Guide
                     </Link>
@@ -1072,7 +1077,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Resale Insurance
                     </Link>
@@ -1080,7 +1085,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Portfolio Tracking
                     </Link>
@@ -1088,7 +1093,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Market Analytics
                     </Link>
@@ -1098,16 +1103,16 @@ export default function Home() {
             </div>
 
             {/* Bottom Section */}
-            <div className="border-t border-gray-800 pt-8">
-              <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="border-t border-gray-800 pt-6 sm:pt-8">
+              <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
                 {/* Copyright */}
-                <div className="text-gray-400 text-sm">
+                <div className="text-gray-400 text-xs sm:text-sm text-center sm:text-left">
                   © 2024 Flyverr. All rights reserved. Digital marketplace for
                   appreciating assets.
                 </div>
 
                 {/* Legal Links */}
-                <div className="flex space-x-6 text-sm">
+                <div className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6 text-xs sm:text-sm">
                   <Link
                     href="/"
                     className="text-gray-400 hover:text-white transition-colors"
@@ -1136,20 +1141,20 @@ export default function Home() {
               </div>
 
               {/* Newsletter Signup */}
-              <div className="mt-8 pt-8 border-t border-gray-800">
+              <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-800">
                 <div className="max-w-md mx-auto text-center">
-                  <h4 className="text-lg font-semibold mb-2">Stay Updated</h4>
-                  <p className="text-gray-400 text-sm mb-4">
+                  <h4 className="text-base sm:text-lg font-semibold mb-2">Stay Updated</h4>
+                  <p className="text-gray-400 text-xs sm:text-sm mb-4">
                     Get the latest updates on new products, market trends, and
                     investment opportunities.
                   </p>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                     <input
                       type="email"
                       placeholder="Enter your email"
-                      className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                      className="flex-1 px-3 sm:px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                     />
-                    <Button className="px-6 py-2 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold rounded-lg transition-all duration-300">
+                    <Button className="px-4 sm:px-6 py-2 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold rounded-lg transition-all duration-300 text-sm sm:text-base">
                       Subscribe
                     </Button>
                   </div>
