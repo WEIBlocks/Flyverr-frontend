@@ -30,47 +30,47 @@ export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
 
   // Handle reset password redirects from email links
-  useEffect(() => {
-    // Check if there's an access_token in the URL hash (from email reset link)
-    if (typeof window !== "undefined") {
-      const hash = window.location.hash;
-      const searchParams = new URLSearchParams(window.location.search);
+  // useEffect(() => {
+  //   // Check if there's an access_token in the URL hash (from email reset link)
+  //   if (typeof window !== "undefined") {
+  //     const hash = window.location.hash;
+  //     const searchParams = new URLSearchParams(window.location.search);
 
-      // Check for access_token in hash (most common for Supabase)
-      if (hash && hash.includes("access_token")) {
-        const params = new URLSearchParams(hash.substring(1));
-        const accessToken = params.get("access_token");
+  //     // Check for access_token in hash (most common for Supabase)
+  //     if (hash && hash.includes("access_token")) {
+  //       const params = new URLSearchParams(hash.substring(1));
+  //       const accessToken = params.get("access_token");
 
-        if (accessToken) {
-          console.log(
-            "Redirecting to reset password page with token from hash"
-          );
-          router.push(`/reset-password?access_token=${accessToken}`);
-          return;
-        }
-      }
+  //       if (accessToken) {
+  //         console.log(
+  //           "Redirecting to reset password page with token from hash"
+  //         );
+  //         router.push(`/reset-password?access_token=${accessToken}`);
+  //         return;
+  //       }
+  //     }
 
-      // Check for access_token in query params (fallback)
-      const accessTokenFromQuery = searchParams.get("access_token");
-      if (accessTokenFromQuery) {
-        console.log("Redirecting to reset password page with token from query");
-        router.push(`/reset-password?access_token=${accessTokenFromQuery}`);
-        return;
-      }
+  //     // Check for access_token in query params (fallback)
+  //     const accessTokenFromQuery = searchParams.get("access_token");
+  //     if (accessTokenFromQuery) {
+  //       console.log("Redirecting to reset password page with token from query");
+  //       router.push(`/reset-password?access_token=${accessTokenFromQuery}`);
+  //       return;
+  //     }
 
-      // Check for type=recovery in hash (Supabase recovery links)
-      if (hash && hash.includes("type=recovery")) {
-        const params = new URLSearchParams(hash.substring(1));
-        const accessToken = params.get("access_token");
+  //     // Check for type=recovery in hash (Supabase recovery links)
+  //     if (hash && hash.includes("type=recovery")) {
+  //       const params = new URLSearchParams(hash.substring(1));
+  //       const accessToken = params.get("access_token");
 
-        if (accessToken) {
-          console.log("Redirecting to reset password page with recovery token");
-          router.push(`/reset-password?access_token=${accessToken}`);
-          return;
-        }
-      }
-    }
-  }, [router]);
+  //       if (accessToken) {
+  //         console.log("Redirecting to reset password page with recovery token");
+  //         router.push(`/reset-password?access_token=${accessToken}`);
+  //         return;
+  //       }
+  //     }
+  //   }
+  // }, [router]);
 
   // Animation trigger
   useEffect(() => {
