@@ -168,8 +168,8 @@ export default function ProductApprovalModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-flyverr-neutral to-gray-50 dark:from-gray-800 dark:to-gray-700/50 rounded-t-2xl">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-flyverr-primary to-flyverr-secondary rounded-xl flex items-center justify-center shadow-lg">
-              <Package className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-lg">
+              <Package className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -325,13 +325,13 @@ export default function ProductApprovalModal({
               <CardContent className="space-y-6 p-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Newboom (Original) */}
-                  <div className="space-y-3 p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-800">
-                    <Label className="text-sm font-semibold flex items-center space-x-2 text-green-800 dark:text-green-400">
+                  <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <Label className="text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                       <Package className="w-4 h-4" />
                       <span>Newboom (Original)</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                      <span className="text-green-600 dark:text-green-400 font-bold text-lg">
+                      <span className="text-gray-600 dark:text-gray-400 font-bold text-lg">
                         $
                       </span>
                       <Input
@@ -340,24 +340,24 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={roundPricing.originalPrice || ""}
                         onChange={handlePriceChange("originalPrice")}
-                        className="flex-1 bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-white font-semibold  focus:ring-green-500/20 dark:focus:ring-green-500/20 placeholder:text-green-300 dark:placeholder:text-green-400"
+                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         placeholder="100"
                       />
                     </div>
 
-                    <p className="text-xs text-green-700 dark:text-green-300">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
                       Never resold - Original licenses only
                     </p>
                   </div>
 
                   {/* Blossom */}
-                  <div className="space-y-3 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-                    <Label className="text-sm font-semibold flex items-center space-x-2 text-blue-800 dark:text-blue-400">
+                  <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <Label className="text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                       <Zap className="w-4 h-4" />
                       <span>Blossom</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                      <span className="text-blue-600 dark:text-blue-400 font-bold text-lg">
+                      <span className="text-gray-600 dark:text-gray-400 font-bold text-lg">
                         $
                       </span>
                       <Input
@@ -366,7 +366,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={roundPricing.blossomPrice || ""}
                         onChange={handlePriceChange("blossomPrice")}
-                        className="flex-1 bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-white font-semibold  focus:ring-blue-500/20 dark:focus:ring-blue-500/20 placeholder:text-blue-300 dark:placeholder:text-blue-400"
+                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         placeholder="120"
                       />
                     </div>
@@ -375,19 +375,19 @@ export default function ProductApprovalModal({
                         {errors.blossomPrice}
                       </p>
                     )}
-                    <p className="text-xs text-blue-700 dark:text-blue-300">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
                       1st resale cycle - Growing demand
                     </p>
                   </div>
 
                   {/* Evergreen */}
-                  <div className="space-y-3 p-4 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
-                    <Label className="text-sm font-semibold flex items-center space-x-2 text-purple-800 dark:text-purple-400">
+                  <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <Label className="text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                       <Crown className="w-4 h-4" />
                       <span>Evergreen</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                      <span className="text-purple-600 dark:text-purple-400 font-bold text-lg">
+                      <span className="text-gray-600 dark:text-gray-400 font-bold text-lg">
                         $
                       </span>
                       <Input
@@ -396,7 +396,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={roundPricing.evergreenPrice || ""}
                         onChange={handlePriceChange("evergreenPrice")}
-                        className="flex-1 bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-white font-semibold focus:ring-purple-500 dark:focus:ring-purple-500 placeholder:text-purple-300 dark:placeholder:text-purple-400"
+                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         placeholder="140"
                       />
                     </div>
@@ -405,19 +405,19 @@ export default function ProductApprovalModal({
                         {errors.evergreenPrice}
                       </p>
                     )}
-                    <p className="text-xs text-purple-700 dark:text-purple-300">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
                       2nd resale cycle - Stable value
                     </p>
                   </div>
 
                   {/* Exit Round */}
-                  <div className="space-y-3 p-4 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-200 dark:border-orange-800 ">
-                    <Label className="text-sm font-semibold flex items-center space-x-2 text-orange-800 dark:text-orange-400">
+                  <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <Label className="text-sm font-semibold flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                       <TrendingUp className="w-4 h-4" />
                       <span>Exit</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                      <span className="text-orange-600 dark:text-orange-400 font-bold text-lg">
+                      <span className="text-gray-600 dark:text-gray-400 font-bold text-lg">
                         $
                       </span>
                       <Input
@@ -426,7 +426,7 @@ export default function ProductApprovalModal({
                         step="0.01"
                         value={roundPricing.exitPrice || ""}
                         onChange={handlePriceChange("exitPrice")}
-                        className="flex-1 bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-white font-semibold  focus:ring-orange-500 dark:focus:ring-orange-500  placeholder:text-orange-300 dark:placeholder:text-orange-400"
+                        className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-gray-500/20 dark:focus:ring-gray-400/20 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         placeholder="160"
                       />
                     </div>
@@ -435,7 +435,7 @@ export default function ProductApprovalModal({
                         {errors.exitPrice}
                       </p>
                     )}
-                    <p className="text-xs text-orange-700 dark:text-orange-300">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
                       3rd resale cycle - Final opportunity
                     </p>
                   </div>

@@ -10,5 +10,6 @@ export function useGetMyLicenses(page = 1, limit = 20) {
     queryKey: ["my-licenses", page, limit, token],
     queryFn: async () => await getMyLicenses(page, limit),
     enabled: !!isAuthenticated || !!token,
+    
   });
 }

@@ -8,7 +8,7 @@ export function useCreatePlatformProduct() {
     mutationFn: async (payload: any) => await createPlatformProduct(payload),
     onSuccess: async () => {
       toast.success("Platform product created successfully");
-      await queryClient.invalidateQueries({ queryKey: ["admin-platform-products"] });
+      await queryClient.invalidateQueries({ queryKey: ["platform-products"] });
     },
     onError: (error: any) => {
       const message = error?.response?.data?.message || "Failed to create platform product";

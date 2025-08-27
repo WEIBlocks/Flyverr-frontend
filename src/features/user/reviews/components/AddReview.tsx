@@ -44,11 +44,15 @@ export default function AddReviewModal({
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: (data: any) => {
           setIsModalOpen(false);
           setReviewRating(0);
           setReviewComment("");
-          swal("Success", "Review submitted successfully!", "success");
+          swal(
+            "Success",
+            "Thanks for submitting your review. It is in pending approval!",
+            "success"
+          );
           onSuccess?.();
         },
         onError: (error: Error) => {

@@ -26,9 +26,13 @@ export default function PaymentSuccessPage() {
   const {
     data: myLicenses,
     isLoading: isLoadingMyLicenses,
-    error: myLicensesError,
+    isError: isErrorMyLicenses,
   } = useGetMyLicenses(1, 100);
 
+
+ 
+ 
+  
   const handleDownload = async () => {
     if (!licenseId) {
       toast.error("Missing license reference");
@@ -106,7 +110,7 @@ export default function PaymentSuccessPage() {
 
                 <Button
                   variant="outline"
-                  disabled={downloading || !licenseId}
+                  disabled={!productId || isLoadingMyLicenses || isErrorMyLicenses}
                   onClick={() => router.push(`/marketplace/${productId}`)}
                   className="w-full sm:w-auto border-amber-500 dark:border-amber-400 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-400 dark:hover:text-white"
                 >

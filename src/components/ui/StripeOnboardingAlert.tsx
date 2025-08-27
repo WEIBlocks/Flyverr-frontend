@@ -73,7 +73,7 @@ export default function StripeOnboardingAlert() {
                     </div>
                   )}
                 </Button>
-                <Button
+                {/* <Button
                   size="sm"
                   variant="outline"
                   onClick={handleDismiss}
@@ -81,19 +81,19 @@ export default function StripeOnboardingAlert() {
                   className="border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/30 text-xs px-3 py-1"
                 >
                   Remind me later
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>
         </div>
-        <Button
+        {/* <Button
           variant="ghost"
           size="sm"
           onClick={handleDismiss}
           className="text-amber-600 hover:text-amber-800 hover:bg-amber-100 dark:text-amber-400 dark:hover:text-amber-300 dark:hover:bg-amber-900/30 p-1 h-auto"
         >
           <X className="w-4 h-4" />
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, User, MessageSquare, X, Trash2, List } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Star, Clock, User, MessageSquare, X, Trash2, List, Search } from "lucide-react";
 import { useGetReviews, useApproveReview } from "@/features/admin/reviews/hooks";
 
 import { ReviewActionData } from "@/features/admin/reviews/reviews.types";
@@ -12,8 +13,12 @@ import { formatDistanceToNow } from "date-fns";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { swal } from "@/lib/utils";
 import ReviewActionModal from "@/features/admin/reviews/components/ReviewActionModal";
+import { useQueryClient } from "@tanstack/react-query";
+import { ErrorResponse } from "@/lib/types";
+import { createUserFriendlyError } from "@/lib/errorUtils";
 
 export default function AdminReviewsPage() {
+  const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [status, setStatus] = useState<"pending" | "active" | "rejected" | "deleted" | "all">("pending");
   const [rating, setRating] = useState<number | null>(null);
@@ -38,6 +43,18 @@ export default function AdminReviewsPage() {
   });
   const { mutate: approveReview, isPending: isApproving } = useApproveReview();
 
+  // Debounced search effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== search) {
+        setSearch(searchInput.trim());
+        setCurrentPage(1);
+      }
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchInput, search]);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -47,17 +64,11 @@ export default function AdminReviewsPage() {
       { key: "pending", label: "Pending" },
       { key: "active", label: "Active" },
       { key: "rejected", label: "Rejected" },
-      { key: "deleted", label: "Deleted" },
+      // { key: "deleted", label: "Deleted" },
       { key: "all", label: "All" },
     ] as const,
     []
   );
-
-  const applyFilters = () => {
-    setSearch(searchInput.trim());
-    setCurrentPage(1);
-    refetch();
-  };
 
   const clearFilters = () => {
     setStatus("pending");
@@ -100,13 +111,16 @@ export default function AdminReviewsPage() {
               action === "approve" ? "approved" : "rejected"
             } successfully!`,
             "success"
+            ,async ()=>{
+              await queryClient.invalidateQueries({ queryKey: ["admin-reviews"] });
+            }
           );
           closeModal();
         },
-        onError: () => {
+        onError: (err:any) => {
           swal(
             "Error",
-            `Failed to ${action} review. Please try again.`,
+            createUserFriendlyError(err),
             "error"
           );
         },
@@ -190,8 +204,8 @@ export default function AdminReviewsPage() {
                     return <Star className="w-4 h-4" />;
                   case 'rejected':
                     return <X className="w-4 h-4" />;
-                  case 'deleted':
-                    return <Trash2 className="w-4 h-4" />;
+                  // case 'deleted':
+                  //   return <Trash2 className="w-4 h-4" />;
                   case 'all':
                     return <List className="w-4 h-4" />;
                   default:
@@ -213,10 +227,10 @@ export default function AdminReviewsPage() {
                     return isActive 
                       ? 'bg-red-500 text-white border-red-500' 
                       : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-yellow-300 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-900/20 dark:hover:border-red-600';
-                  case 'deleted':
-                    return isActive 
-                      ? 'bg-gray-500 text-white border-gray-500' 
-                      : 'text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-900/20 dark:hover:border-gray-600';
+                  // case 'deleted':
+                  //   return isActive 
+                  //     ? 'bg-gray-500 text-white border-gray-500' 
+                  //     : 'text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-900/20 dark:hover:border-gray-600';
                   case 'all':
                     return isActive 
                       ? 'bg-blue-500 text-white border-blue-500' 
@@ -258,35 +272,33 @@ export default function AdminReviewsPage() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Search Reviews
                 </label>
-                <div className="flex gap-2">
-                  <input
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && applyFilters()}
                     placeholder="Search by comment, product title, or username..."
-                    className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200"
+                    className="pl-10 pr-10"
                     disabled={isLoading}
                   />
-                  <button
-                    onClick={applyFilters}
-                    disabled={isLoading || !searchInput.trim()}
-                    className="px-6 py-2.5 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Searching...
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        Search
-                      </>
-                    )}
-                  </button>
+                  {searchInput && (
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      <button
+                        onClick={() => setSearchInput("")}
+                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
+                {searchInput && (
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    Auto-searching in {searchInput !== search ? "500ms..." : "..."}
+                  </p>
+                )}
               </div>
 
               {/* Filters Section */}
@@ -483,6 +495,9 @@ export default function AdminReviewsPage() {
                       Rating
                     </th>
                     <th className="px-6 py-4 font-semibold text-sm uppercase tracking-wide">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 font-semibold text-sm uppercase tracking-wide">
                       Comment
                     </th>
                     <th className="px-6 py-4 font-semibold text-sm uppercase tracking-wide">
@@ -582,6 +597,22 @@ export default function AdminReviewsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
+                        <Badge
+                          variant="secondary"
+                          className={`text-xs font-medium ${
+                            review.status === "pending"
+                              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200"
+                              : review.status === "active"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-200"
+                              : review.status === "rejected"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-200"
+                              : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-200"
+                          }`}
+                        >
+                          {review.status.charAt(0).toUpperCase() + review.status.slice(1)}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4">
                         <div className="max-w-[300px]">
                           {review.comment ? (
                             <p className="text-gray-700 dark:text-gray-300 line-clamp-2 leading-relaxed">
@@ -607,7 +638,7 @@ export default function AdminReviewsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        {status === "pending" ? (
+                        {review.status === "pending" ? (
                           <div className="flex gap-2">
                             <Button
                               size="sm"
@@ -629,7 +660,9 @@ export default function AdminReviewsPage() {
                           </div>
                         ) : (
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            No actions available
+                            {review.status === "active" && "✓ Approved"}
+                            {review.status === "rejected" && "✕ Rejected"}
+                            {review.status === "deleted" && "🗑️ Deleted"}
                           </div>
                         )}
                       </td>
