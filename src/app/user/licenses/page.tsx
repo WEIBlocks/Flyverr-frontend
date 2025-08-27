@@ -368,24 +368,61 @@ export default function MyLicensesPage() {
                               Resales
                             </span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              {license.purchasedRound < license.currentRound
-                                ? license.productTotal
-                                : license.productSold}
-                              /{license.productTotal}
+                              {(() => {
+                                const total = Number(license.productTotal) || 0;
+                                const soldRaw =
+                                  Number(license.productSold) || 0;
+                                const numeratorBase =
+                                  license.purchasedRound < license.currentRound
+                                    ? total
+                                    : soldRaw;
+                                const numerator = Math.max(
+                                  0,
+                                  Math.min(numeratorBase, total)
+                                );
+                                return `${numerator}/${total}`;
+                              })()}
                             </span>
                           </div>
                           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                             <div
-                              className="bg-gradient-to-r from-flyverr-primary to-flyverr-secondary h-2 rounded-full transition-all duration-300"
+                              className={`h-2 rounded-full transition-all duration-300 bg-gradient-to-r ${(() => {
+                                const total = Number(license.productTotal) || 0;
+                                if (total <= 0)
+                                  return "from-gray-300 to-gray-400";
+                                const soldRaw =
+                                  Number(license.productSold) || 0;
+                                const numeratorBase =
+                                  license.purchasedRound < license.currentRound
+                                    ? total
+                                    : soldRaw;
+                                const numerator = Math.max(
+                                  0,
+                                  Math.min(numeratorBase, total)
+                                );
+                                const pct = (numerator / total) * 100;
+                                if (pct < 33) return "from-red-500 to-red-600";
+                                if (pct < 67)
+                                  return "from-yellow-400 to-yellow-500";
+                                return "from-green-500 to-green-600";
+                              })()}`}
                               style={{
                                 width: `${(() => {
-                                  const numerator =
+                                  const total =
+                                    Number(license.productTotal) || 0;
+                                  if (total <= 0) return 0;
+                                  const soldRaw =
+                                    Number(license.productSold) || 0;
+                                  const numeratorBase =
                                     license.purchasedRound <
                                     license.currentRound
-                                      ? license.productTotal
-                                      : license.productSold;
-                                  const denominator = license.productTotal || 1;
-                                  return (numerator / denominator) * 100;
+                                      ? total
+                                      : soldRaw;
+                                  const numerator = Math.max(
+                                    0,
+                                    Math.min(numeratorBase, total)
+                                  );
+                                  return (numerator / total) * 100;
                                 })()}%`,
                               }}
                             ></div>
