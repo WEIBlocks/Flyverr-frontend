@@ -30,12 +30,19 @@ export default function UserListingsPage() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const limit = 10;
 
   const { data, isLoading, error, refetch } = useResaleListings(
     currentPage,
     limit
   );
+
+  React.useEffect(() => {
+    if (!isLoading) {
+      setIsRefreshing(false);
+    }
+  }, [isLoading]);
 
   const listings = data?.data?.listings || [];
   const pagination = data?.data?.pagination;
@@ -120,12 +127,18 @@ export default function UserListingsPage() {
           </p>
         </div>
         <Button
-          onClick={() => refetch()}
+          onClick={async () => {
+            if (!isRefreshing && !isLoading) {
+              setIsRefreshing(true);
+              await refetch();
+              setIsRefreshing(false);
+            }
+          }}
           variant="outline"
           className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 self-start md:self-auto"
         >
           <RefreshCw
-            className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
+            className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
           />
           Refresh
         </Button>

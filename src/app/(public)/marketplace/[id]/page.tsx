@@ -971,7 +971,7 @@ export default function ProductDetailPage() {
                     </div>
 
                     {/* Main Content Grid - Responsive Layout */}
-                    <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
                       {/* Owner Information */}
                       <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 sm:p-4">
                         <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
@@ -1053,16 +1053,16 @@ export default function ProductDetailPage() {
 
                     {/* Purchase Actions Section */}
                     <div className="border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6">
-                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         {/* Purchase Type Explanation */}
-                        <div className="flex-1">
+                        <div className="w-full sm:w-auto sm:flex-shrink-0">
                           <div className="flex items-center gap-2 mb-2">
                             <Info className="h-3 w-3 sm:h-4 sm:w-4 text-flyverr-primary" />
                             <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                               Purchase Options
                             </span>
                           </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-400">
+                          <div className="grid grid-cols-1 gap-2 text-xs text-gray-600 dark:text-gray-400">
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 bg-flyverr-primary rounded-full"></div>
                               <span>
@@ -1079,11 +1079,11 @@ export default function ProductDetailPage() {
                         </div>
 
                         {/* Purchase Buttons */}
-                        <div className="flex flex-col lg:flex-row gap-2 md:gap-3 w-full">
-                          <div className="w-full lg:flex-1">
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                          <div className="w-full sm:w-auto">
                             <BuyToUseButton licenseId={license.license_id} />
                           </div>
-                          <div className="w-full lg:flex-1">
+                          <div className="w-full sm:w-auto">
                             <BuyToResellButton
                               product={product}
                               licenseId={license.license_id}

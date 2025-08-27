@@ -77,7 +77,7 @@ export default function AdminLayout({
       <DashboardLayout
         navItems={navItems}
         headerTitle="Admin"
-        profileHref="/admin/profile"
+        profileHref="/user/profile"
       >
         {children}
       </DashboardLayout>

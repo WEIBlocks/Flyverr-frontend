@@ -370,65 +370,10 @@ function ProfileContent() {
           <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800 shadow-lg">
             <CardContent className="p-6">
               <div className="text-center">
-                {/* Avatar Section */}
-                <div className="relative inline-block mb-4">
-                  <div
-                    className="w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg relative group cursor-pointer mx-auto"
-                    onClick={handleAvatarClick}
-                  >
-                    <img
-                      src={getAvatarSrc()}
-                      alt={`${user?.first_name} ${user?.last_name}`}
-                      className="w-full h-full object-cover"
-                      onError={handleImageError}
-                      onLoad={() => setImageError(false)}
-                    />
+              
+                
 
-                    {/* Camera Icon Overlay */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                      <Camera className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-
-                  {/* Hidden file input */}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-
-                  {/* Simple Upload Button */}
-                  <div className="mt-3">
-                    <Button
-                      onClick={handleAvatarClick}
-                      variant="outline"
-                      size="sm"
-                      className="w-full bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                    >
-                      <Camera className="w-4 h-4 mr-2" />
-                      Change Photo
-                    </Button>
-
-                    {/* Remove Preview Button - Only show when there's a preview */}
-                    {previewImage && (
-                      <Button
-                        onClick={removePreviewImage}
-                        variant="ghost"
-                        size="sm"
-                        className="w-full mt-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      >
-                        Remove Preview
-                      </Button>
-                    )}
-                  </div>
-
-                  {/* Click to edit hint */}
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                    Click to change photo
-                  </p>
-                </div>
+                
 
                 {/* User Info */}
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">

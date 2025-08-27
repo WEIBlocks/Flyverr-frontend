@@ -85,7 +85,7 @@ function BuyToResellButton({
     <>
       <Button
         variant="outline"
-        className={`w-full bg-transparent dark:bg-transparent border-2 border-flyverr-secondary text-flyverr-secondary dark:text-flyverr-secondary hover:bg-flyverr-secondary hover:text-white dark:hover:bg-flyverr-secondary dark:hover:text-white py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400 ${
+        className={`w-full bg-transparent dark:bg-transparent border-2 border-flyverr-secondary text-flyverr-secondary dark:text-flyverr-secondary hover:bg-flyverr-secondary  py-4 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-400 ${
           isDisabled ? "opacity-60 cursor-not-allowed hover:translate-y-0" : ""
         }`}
         onClick={() =>
