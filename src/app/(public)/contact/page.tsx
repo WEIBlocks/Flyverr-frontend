@@ -86,7 +86,7 @@ export default function ContactPage() {
 
     // Simulate API call
     setTimeout(() => {
-      toast.success("Message sent successfully! We'll get back to you soon.");
+     
       setFormData({
         firstName: "",
         lastName: "",

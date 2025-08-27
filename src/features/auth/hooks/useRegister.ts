@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 
 import { signup } from "../services/api";
 import type { SignupData } from "../auth.types";

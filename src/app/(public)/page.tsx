@@ -1,6 +1,6 @@
 "use client";
 import { AnimatedHero } from "@/components/AnimatedHero";
-import toast from "react-hot-toast";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -82,9 +82,7 @@ export default function Home() {
     setIsVisible(true);
   }, []);
 
-  const handleGetStarted = () => {
-    toast.success("Welcome to Flyverr! Let's start your digital journey!");
-  };
+ 
 
   const handleExploreMarketplace = () => {
     router.push("/marketplace");

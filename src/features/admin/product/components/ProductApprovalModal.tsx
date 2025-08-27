@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import type { PendingProduct } from "@/features/admin/product/product.types";
 import { useApproveProduct } from "@/features/admin/product/hooks/useApproveProduct";
-import toast from "react-hot-toast";
+
 import Modal from "@/components/Modal";
 
 interface ProductApprovalModalProps {

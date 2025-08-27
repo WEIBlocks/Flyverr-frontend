@@ -1,31 +1,31 @@
 "use client";
-import { useQueryClient } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
-import { storage } from '@/lib/utils'
-import toast from 'react-hot-toast'
-import { useAuth } from '@/contexts/AuthContext'
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { storage, swal } from "@/lib/utils";
+
+import { useAuth } from "@/contexts/AuthContext";
 
 export function useLogout() {
-  const queryClient = useQueryClient()
-  const router = useRouter()
-  const { setIsAuthenticated } = useAuth()
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { setIsAuthenticated } = useAuth();
 
   const logout = () => {
     // Clear all stored auth data
-    storage.clearAuth()
-    
+    storage.clearAuth();
+
     // Clear React Query cache
-    queryClient.clear()
+    queryClient.clear();
 
-    setIsAuthenticated(false)
+    setIsAuthenticated(false);
 
-    
     // Show success message
-    toast.success('Logged out successfully')
-    
-    // Redirect to login
-    router.replace('/login')
-  }
+    swal("Success", "Logged out successfully", "success", () => {
+      router.replace("/login");
+    });
 
-  return { logout }
+   
+  };
+
+  return { logout };
 }

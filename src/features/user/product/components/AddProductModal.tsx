@@ -15,7 +15,7 @@ import * as yup from "yup";
 import { useCreateProduct } from "@/features/user/product/hooks/useCreateProduct";
 import { useCreatePlatformProduct } from "@/features/admin/product/hooks/useCreatePlatformProduct";
 import { useGetProductCategory } from "@/features/user/product/hooks/useGetProductCategory";
-import toast from "react-hot-toast";
+
 import { uploadMultipleImages, uploadToStorage } from "@/lib/upload";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Product } from "@/features/user/product/product.types";
@@ -284,10 +284,14 @@ export default function AddProductModal({
       const { data: authData } = await supabase.auth.getUser();
       const supabaseUserId = authData?.user?.id;
       if (!supabaseUserId) {
-        toast.error("Session expired. Please log in again to upload files.");
+        swal(
+          "Error",
+          "Session expired. Please log in again to upload files.",
+          "error"
+        );
         return;
       }
-   
+
       const pathUserId = supabaseUserId || user?.id;
       // Upload assets in parallel
       const [thumb, images, file] = await Promise.all([
@@ -804,7 +808,6 @@ export default function AddProductModal({
 
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-3 pt-4">
-
             <Button
               type="submit"
               className="flex-1 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
@@ -826,9 +829,7 @@ export default function AddProductModal({
             >
               Cancel
             </Button>
-            </div>
-
-       
+          </div>
         </form>
       </div>
     </Modal>

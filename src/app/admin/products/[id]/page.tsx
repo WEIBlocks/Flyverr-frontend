@@ -36,6 +36,7 @@ import toast from "react-hot-toast";
 import Modal from "@/components/Modal";
 import Swal from "sweetalert2";
 import HotDealModal from "../../../../features/admin/product/components/HotDealModal";
+import { swal } from "@/lib/utils";
 
 // Validation schema
 const editProductSchema = yup.object({
@@ -68,18 +69,17 @@ const editProductSchema = yup.object({
         .number()
         .positive("Exit price must be positive")
         .required("Exit price is required"),
-        blossomPrice: yup
+      blossomPrice: yup
         .number()
         .positive("Blossom price must be positive")
         .required("Blossom price is required"),
-        evergreenPrice: yup
+      evergreenPrice: yup
         .number()
         .positive("Evergreen price must be positive")
         .required("Evergreen price is required"),
     })
     .required(),
 });
-
 
 // Types based on the API response
 interface RoundPricing {
@@ -237,10 +237,12 @@ export default function AdminProductDetailPage() {
           : flagAction === "unflag"
           ? "shown"
           : "deleted";
-      toast.success(`Product ${actionText} successfully!`);
-      setShowFlagModal(false);
-      setFlagReason("");
-      setFlagType("");
+      swal("Success", `Product ${actionText} successfully!`, "success", () => {
+        setShowFlagModal(false);
+        setFlagReason("");
+        setFlagType("");
+      });
+
       // No need for window.location.reload() - React Query will refresh the data
     } catch (error) {
       console.error("Error flagging product:", error);
@@ -250,7 +252,11 @@ export default function AdminProductDetailPage() {
           : flagAction === "unflag"
           ? "show"
           : "delete";
-      toast.error(`Failed to ${actionText} product. Please try again.`);
+      swal(
+        "Error",
+        `Failed to ${actionText} product. Please try again.`,
+        "error"
+      );
     }
   };
 
@@ -1003,7 +1009,9 @@ export default function AdminProductDetailPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Licenses */}
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Licenses</h4>
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                    Licenses
+                  </h4>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
@@ -1020,19 +1028,45 @@ export default function AdminProductDetailPage() {
                       <tbody>
                         {recentActivity?.licenses?.length ? (
                           recentActivity.licenses.map((lic: any) => (
-                            <tr key={lic.id} className="border-t border-gray-200 dark:border-gray-700">
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">{shortenId(lic.id)}</td>
-                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{lic.acquired_at ? formatDate(lic.acquired_at) : "—"}</td>
-                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{lic.current_round}</td>
-                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{lic.purchase_type || "—"}</td>
-                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{lic.resale_eligible ? "Yes" : "No"}</td>
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">{lic.current_owner_id ? shortenId(lic.current_owner_id) : "—"}</td>
-                              <td className="py-2 text-gray-700 dark:text-gray-300">{lic.is_listed_for_resale ? "Yes" : "No"}</td>
+                            <tr
+                              key={lic.id}
+                              className="border-t border-gray-200 dark:border-gray-700"
+                            >
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">
+                                {shortenId(lic.id)}
+                              </td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
+                                {lic.acquired_at
+                                  ? formatDate(lic.acquired_at)
+                                  : "—"}
+                              </td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
+                                {lic.current_round}
+                              </td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
+                                {lic.purchase_type || "—"}
+                              </td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
+                                {lic.resale_eligible ? "Yes" : "No"}
+                              </td>
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">
+                                {lic.current_owner_id
+                                  ? shortenId(lic.current_owner_id)
+                                  : "—"}
+                              </td>
+                              <td className="py-2 text-gray-700 dark:text-gray-300">
+                                {lic.is_listed_for_resale ? "Yes" : "No"}
+                              </td>
                             </tr>
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={7} className="py-3 text-center text-gray-500 dark:text-gray-400">No license activity</td>
+                            <td
+                              colSpan={7}
+                              className="py-3 text-center text-gray-500 dark:text-gray-400"
+                            >
+                              No license activity
+                            </td>
                           </tr>
                         )}
                       </tbody>
@@ -1042,7 +1076,9 @@ export default function AdminProductDetailPage() {
 
                 {/* Transactions */}
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Transactions</h4>
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                    Transactions
+                  </h4>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
@@ -1059,19 +1095,41 @@ export default function AdminProductDetailPage() {
                       <tbody>
                         {recentActivity?.transactions?.length ? (
                           recentActivity.transactions.map((tx: any) => (
-                            <tr key={tx.id} className="border-t border-gray-200 dark:border-gray-700">
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">{shortenId(tx.id)}</td>
-                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">${tx.amount}</td>
-                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{tx.status}</td>
-                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">{tx.transaction_type}</td>
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">{shortenId(tx.buyer_id)}</td>
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">{shortenId(tx.seller_id)}</td>
-                              <td className="py-2 text-gray-700 dark:text-gray-300">{formatDate(tx.created_at)}</td>
+                            <tr
+                              key={tx.id}
+                              className="border-t border-gray-200 dark:border-gray-700"
+                            >
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">
+                                {shortenId(tx.id)}
+                              </td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
+                                ${tx.amount}
+                              </td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
+                                {tx.status}
+                              </td>
+                              <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
+                                {tx.transaction_type}
+                              </td>
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">
+                                {shortenId(tx.buyer_id)}
+                              </td>
+                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">
+                                {shortenId(tx.seller_id)}
+                              </td>
+                              <td className="py-2 text-gray-700 dark:text-gray-300">
+                                {formatDate(tx.created_at)}
+                              </td>
                             </tr>
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={7} className="py-3 text-center text-gray-500 dark:text-gray-400">No transaction activity</td>
+                            <td
+                              colSpan={7}
+                              className="py-3 text-center text-gray-500 dark:text-gray-400"
+                            >
+                              No transaction activity
+                            </td>
                           </tr>
                         )}
                       </tbody>

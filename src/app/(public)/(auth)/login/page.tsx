@@ -24,7 +24,7 @@ import {
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import toast from "react-hot-toast";
+
 import Link from "next/link";
 import { useLogin } from "@/features/auth/hooks";
 
@@ -72,16 +72,6 @@ export default function Login() {
   const onSubmit = (data: FormData) => {
     // Login will now handle the redirect based on user role after confirmation
     login(data);
-  };
-
-  const handleSocialLogin = async (provider: "google" | "linkedin") => {
-    setIsSocialLoading(true);
-    toast.error(
-      `${
-        provider.charAt(0).toUpperCase() + provider.slice(1)
-      } login coming soon!`
-    );
-    setIsSocialLoading(false);
   };
 
   return (
