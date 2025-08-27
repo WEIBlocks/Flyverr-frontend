@@ -161,7 +161,7 @@ export default function HotDealModal({ productId, onSuccess, trigger, buttonLabe
             <div>
               <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</Label>
               <Input
-                type="datetime-local"
+                type="date"
                 {...register("startDate")}
                 className="mt-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
               />
@@ -169,9 +169,9 @@ export default function HotDealModal({ productId, onSuccess, trigger, buttonLabe
             <div>
               <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">End Date</Label>
               <Input
-                type="datetime-local"
+                type="date"
                 {...register("endDate")}
-                className="mt-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                className="mt-1 bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
               />
               {errors.endDate && (
                 <p className="text-sm text-red-600 dark:text-red-400 mt-1">{String(errors.endDate.message)}</p>

@@ -161,7 +161,7 @@ export default function PlatformProductsPage() {
             </div>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
+        {/* <div className="flex flex-wrap gap-2">
           <button
             onClick={() => {
               setStatus("");
@@ -197,7 +197,7 @@ export default function PlatformProductsPage() {
               {f.label}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Table */}

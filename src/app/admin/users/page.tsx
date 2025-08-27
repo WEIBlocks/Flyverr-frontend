@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input";
 import { 
   AdminTable, 
   AdminTableHeader, 
@@ -11,9 +12,10 @@ import {
   AdminTableCell, 
   AdminTableHeaderCell 
 } from "@/components/ui/admin-table"
-import { User, Mail, Calendar, Shield, Crown, Ban, Edit, MoreVertical, Users, Activity, UserCheck, UserX, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { User, Mail, Calendar, Shield, Crown, Ban, Edit, MoreVertical,Search, Users, Activity, UserCheck, UserX, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { useGetUsers } from "@/features/admin/user/hooks"
-import { AdminUser } from "@/features/admin/user/user.types"
+import { useSearchUsers } from "@/features/admin/user/hooks"
+import { AdminUser, UsersListResponse } from "@/features/admin/user/user.types"
 import Link from "next/link"
 import PaginationControls from "@/components/ui/PaginationControls"
 
@@ -21,10 +23,56 @@ export default function AdminUsersPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [currentLimit, setCurrentLimit] = useState(20)
 
-  const { data, isLoading, error, isFetching } = useGetUsers(currentPage, currentLimit)
+  // Search filters
+  const [emailQuery, setEmailQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [roleFilter, setRoleFilter] = useState("all")
+
+  // Debounce email input to reduce requests
+  const [debouncedEmail, setDebouncedEmail] = useState("")
   
-  const users = data?.data?.users || []
-  const pagination = data?.data?.pagination
+  useEffect(() => {
+    // Only trigger debounce if email query has content
+    if (!emailQuery) {
+      setDebouncedEmail("");
+      return;
+    }
+    
+    const id = setTimeout(() => {
+      // Trim and validate email before setting
+      const trimmedEmail = emailQuery.trim();
+      setDebouncedEmail(trimmedEmail);
+    }, 500); // Increased debounce time for better performance
+    
+    return () => clearTimeout(id);
+  }, [emailQuery]);
+
+  const isValidEmail = (value: string) => {
+    if (!value) return false;
+    // RFC5322 compliant email regex
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(value);
+  }
+
+  const validEmail = useMemo(() => (isValidEmail(debouncedEmail) ? debouncedEmail : undefined), [debouncedEmail])
+
+  const isSearching = useMemo(() => {
+    // Only search by email if it's a valid email, otherwise rely on status/role
+    return (Boolean(validEmail) || statusFilter !== "all" || roleFilter !== "all")
+  }, [validEmail, statusFilter, roleFilter])
+
+  const { data, isLoading, error, isFetching } = useGetUsers(currentPage, currentLimit)
+  const { data: searchData, isFetching: isSearchingFetching } = useSearchUsers({
+    email: validEmail ? validEmail : "", // Always pass a string
+    status: statusFilter !== "all" ? statusFilter : undefined,
+    role: roleFilter !== "all" ? roleFilter : undefined,
+    page: currentPage,
+    limit: currentLimit,
+  })
+  
+  const effectiveData = (isSearching ? searchData : data) as UsersListResponse | undefined
+  const users: AdminUser[] = effectiveData?.data?.users || []
+  const pagination = effectiveData?.data?.pagination
 
   const getRoleBadge = (role: string) => {
     switch (role) {
@@ -67,7 +115,13 @@ export default function AdminUsersPage() {
     setCurrentPage(1) // Reset to first page when changing limit
   }
 
-  if (isLoading) {
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [validEmail, statusFilter, roleFilter])
+
+  if (isLoading && !isSearching) {
+    // Only show full-page loader for initial load
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -93,6 +147,12 @@ export default function AdminUsersPage() {
             </div>
           ))}
         </div>
+
+
+        {/* // add the search bar   */}
+
+
+        
 
         {/* Table Skeleton */}
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm animate-pulse">
@@ -198,10 +258,10 @@ export default function AdminUsersPage() {
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">User Management</h2>
           <p className="text-gray-600 dark:text-gray-400 mt-1">Manage platform users and their permissions</p>
         </div>
-        <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white">
+        {/* <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white">
           <User className="w-4 h-4 mr-2" />
           Add User
-        </Button>
+        </Button> */}
       </div>
 
       {/* Stats Cards */}
@@ -221,7 +281,7 @@ export default function AdminUsersPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Users</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter(u => u.status === 'active').length}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter((u: AdminUser) => u.status === 'active').length}</p>
             </div>
             <div className="p-3 bg-green-500/10 rounded-lg">
               <UserCheck className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -232,7 +292,7 @@ export default function AdminUsersPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Admins</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter(u => u.role === 'admin').length}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter((u: AdminUser) => u.role === 'admin').length}</p>
             </div>
             <div className="p-3 bg-purple-500/10 rounded-lg">
               <Crown className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -243,7 +303,7 @@ export default function AdminUsersPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Creators</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter(u => u.stats.products > 0).length}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter((u: AdminUser) => (u.stats?.products ?? 0) > 0).length}</p>
             </div>
             <div className="p-3 bg-orange-500/10 rounded-lg">
               <Activity className="w-6 h-6 text-orange-600 dark:text-orange-400" />
@@ -251,6 +311,52 @@ export default function AdminUsersPage() {
           </div>
         </div>
       </div>
+
+
+
+      <div className="flex flex-col gap-4">
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search users by email..."
+              value={emailQuery}
+              onChange={(e) => setEmailQuery(e.target.value)}
+              className="pl-10 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 focus:border-flyverr-primary dark:focus:border-flyverr-secondary"
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Status:</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="suspended">Suspended</option>
+              <option value="banned">Banned</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Role:</span>
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="all">All</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
 
       {/* Enhanced Table */}
       <AdminTable>
@@ -261,90 +367,100 @@ export default function AdminUsersPage() {
             <AdminTableHeaderCell>Activity</AdminTableHeaderCell>
             <AdminTableHeaderCell>Performance</AdminTableHeaderCell>
             <AdminTableHeaderCell align="center">Actions</AdminTableHeaderCell>
-                </tr>
+          </tr>
         </AdminTableHeader>
         <AdminTableBody>
-          {users.map((user) => (
-            <AdminTableRow 
-              key={user.id} 
-              hoverable={true}
-            >
-              <AdminTableCell>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-flyverr-primary rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm">
-                      {user.first_name.charAt(0)}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900 dark:text-white">
-                      {user.first_name} {user.last_name}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                      <Mail className="w-3 h-3 mr-1" />
-                      {user.email}
-                    </div>
-                    <div className="text-xs text-gray-400 dark:text-gray-500">
-                      @{user.username}
-                    </div>
-                  </div>
-                </div>
-              </AdminTableCell>
-              <AdminTableCell>
-                <div className="space-y-2">
-                  {getRoleBadge(user.role)}
-                  {getStatusBadge(user.status)}
-                  {user.email_verified && (
-                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800 text-xs">
-                      Verified
-                    </Badge>
-                  )}
-                </div>
-              </AdminTableCell>
-              <AdminTableCell>
-                <div className="space-y-1">
-                  <div className="text-sm text-gray-900 dark:text-white flex items-center">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    Joined {formatDate(user.created_at)}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Updated {formatDate(user.updated_at)}
-                  </div>
-                </div>
-              </AdminTableCell>
-              <AdminTableCell>
-                <div className="space-y-1">
-                  <div className="text-sm text-gray-900 dark:text-white">
-                    {user.stats.products} products
-                  </div>
-                  <div className="text-sm text-blue-600 dark:text-blue-400">
-                    {user.stats.licenses} licenses
-                  </div>
-                  <div className="text-sm text-green-600 dark:text-green-400">
-                    {user.stats.transactions} transactions
-                  </div>
-                </div>
-              </AdminTableCell>
-              <AdminTableCell align="center">
-                <div className="flex items-center justify-center space-x-2">
-                  <Link href={`/admin/users/${user.id}`}>
-                    <Button size="sm" variant="outline" className="hover:bg-blue-50 dark:hover:bg-blue-900/20">
-                      <Edit className="w-3 h-3" />
-                    </Button>
-                  </Link>
-                  {/* <Button size="sm" variant="outline" className="hover:bg-green-50 dark:hover:bg-green-900/20">
-                    <UserCheck className="w-3 h-3" />
-                  </Button>
-                  <Button size="sm" variant="outline" className="hover:bg-red-50 dark:hover:bg-red-900/20">
-                    <UserX className="w-3 h-3" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                    <MoreVertical className="w-3 h-3" />
-                  </Button> */}
-                </div>
+          {(
+            (isSearching && isSearchingFetching) || 
+            (emailQuery && emailQuery !== debouncedEmail) // Show loader while typing
+          ) ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <AdminTableRow key={i}>
+                <AdminTableCell colSpan={5} align="center">
+                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full mx-auto" />
+                </AdminTableCell>
+              </AdminTableRow>
+            ))
+          ) : users.length === 0 && validEmail && !isSearchingFetching ? (
+            <AdminTableRow>
+              <AdminTableCell colSpan={5} align="center">
+                <span className="text-red-500 text-sm">This email does not exist.</span>
               </AdminTableCell>
             </AdminTableRow>
-          ))}
+          ) : (
+            users.map((user: AdminUser) => (
+              <AdminTableRow 
+                key={user.id} 
+                hoverable={true}
+              >
+                <AdminTableCell>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-flyverr-primary rounded-full flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">
+                        {user.first_name.charAt(0)}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900 dark:text-white">
+                        {user.first_name} {user.last_name}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                        <Mail className="w-3 h-3 mr-1" />
+                        {user.email}
+                      </div>
+                      <div className="text-xs text-gray-400 dark:text-gray-500">
+                        @{user.username}
+                      </div>
+                    </div>
+                  </div>
+                </AdminTableCell>
+                <AdminTableCell>
+                  <div className="space-y-2">
+                    {getRoleBadge(user.role)}
+                    {getStatusBadge(user.status)}
+                    {user.email_verified && (
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800 text-xs">
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
+                </AdminTableCell>
+                <AdminTableCell>
+                  <div className="space-y-1">
+                    <div className="text-sm text-gray-900 dark:text-white flex items-center">
+                      <Calendar className="w-3 h-3 mr-1" />
+                      Joined {formatDate(user.created_at)}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      Updated {formatDate(user.updated_at)}
+                    </div>
+                  </div>
+                </AdminTableCell>
+                <AdminTableCell>
+                  <div className="space-y-1">
+                    <div className="text-sm text-gray-900 dark:text-white">
+                      {user.stats?.products ?? 0} products
+                    </div>
+                    <div className="text-sm text-blue-600 dark:text-blue-400">
+                      {user.stats?.licenses ?? 0} licenses
+                    </div>
+                    <div className="text-sm text-green-600 dark:text-green-400">
+                      {user.stats?.transactions ?? 0} transactions
+                    </div>
+                  </div>
+                </AdminTableCell>
+                <AdminTableCell align="center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Link href={`/admin/users/${user.id}`}>
+                      <Button size="sm" variant="outline" className="hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                        <Edit className="w-3 h-3" />
+                      </Button>
+                    </Link>
+                  </div>
+                </AdminTableCell>
+              </AdminTableRow>
+            ))
+          )}
         </AdminTableBody>
       </AdminTable>
 
@@ -357,7 +473,7 @@ export default function AdminUsersPage() {
           pageSize={currentLimit}
           onPageChange={handlePageChange}
           onPageSizeChange={handleLimitChange}
-          disabled={isFetching}
+          disabled={isFetching || isSearchingFetching}
           entityLabel="records"
           className="mt-4"
         />
@@ -365,5 +481,6 @@ export default function AdminUsersPage() {
     </div>
   )
 }
+
 
 
