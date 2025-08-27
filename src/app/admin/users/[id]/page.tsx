@@ -29,7 +29,15 @@ import { useUpdateUserStatus } from "@/features/admin/user/hooks/useUpdateUserSt
 import { useUpdateUserRole } from "@/features/admin/user/hooks/useUpdateUserRole";
 import AdminUserDetailSkeleton from "@/components/ui/AdminUserDetailSkeleton";
 import StatusUpdateModal from "@/components/ui/StatusUpdateModal";
-import { AdminUser, UserStatistics, RecentActivity, UserDetailResponse, RecentProduct } from "@/features/admin/user/user.types";
+import {
+  AdminUser,
+  UserStatistics,
+  RecentActivity,
+  UserDetailResponse,
+  RecentProduct,
+} from "@/features/admin/user/user.types";
+import { swal } from "@/lib/utils";
+import { createUserFriendlyError } from "@/lib/errorUtils";
 
 export default function AdminUserDetailPage() {
   const params = useParams();
@@ -124,26 +132,26 @@ export default function AdminUserDetailPage() {
       alert("Please provide a reason for the role change");
       return;
     }
-    
+
     updateRoleMutation.mutate(
-      { 
-        userId, 
-        data: { 
-          role: editData.role as "user" | "admin", 
-          reason: editData.reason 
-        } 
+      {
+        userId,
+        data: {
+          role: editData.role as "user" | "admin",
+          reason: editData.reason,
+        },
       },
       {
         onSuccess: () => {
           // Show success message or toast
           console.log("Role updated successfully");
           // Clear the reason field after successful update
-          setEditData(prev => ({ ...prev, reason: "" }));
+          setEditData((prev) => ({ ...prev, reason: "" }));
         },
         onError: (error) => {
           // Show error message or toast
-          console.error('Failed to update user role:', error);
-        }
+          swal("Error", createUserFriendlyError(error), "error");
+        },
       }
     );
   };
@@ -163,8 +171,8 @@ export default function AdminUserDetailPage() {
         },
         onError: (error) => {
           // Show error message or toast
-          console.error('Failed to update user status:', error);
-        }
+          swal("Error", createUserFriendlyError(error), "error");
+        },
       }
     );
   };
@@ -316,106 +324,113 @@ export default function AdminUserDetailPage() {
               </CardContent>
             </Card>
 
-                         {/* Role Update Section */}
-             <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-               <CardHeader className="pb-4">
-                 <CardTitle className="flex items-center gap-2 text-lg">
-                   <div className="p-2 bg-flyverr-primary/10 rounded-lg">
-                     <Crown className="w-5 h-5 text-flyverr-primary" />
-                   </div>
-                   Role Management
-                 </CardTitle>
-               </CardHeader>
-               <CardContent>
-                 <div className="space-y-4">
-                   <div className="space-y-2">
-                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                       User Role
-                     </Label>
-                     <select
-                       value={editData.role || user.role}
-                       onChange={(e) =>
-                         setEditData({ ...editData, role: e.target.value })
-                       }
-                       className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-flyverr-primary/20 focus:border-flyverr-primary"
-                     >
-                       <option value="user">User</option>
-                       <option value="admin">Admin</option>
-                     </select>
-                   </div>
+            {/* Role Update Section */}
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <div className="p-2 bg-flyverr-primary/10 rounded-lg">
+                    <Crown className="w-5 h-5 text-flyverr-primary" />
+                  </div>
+                  Role Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      User Role
+                    </Label>
+                    <select
+                      value={editData.role || user.role}
+                      onChange={(e) =>
+                        setEditData({ ...editData, role: e.target.value })
+                      }
+                      className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-flyverr-primary/20 focus:border-flyverr-primary"
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
 
-                   <div className="space-y-2">
-                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                       Reason for Role Change <span className="text-red-500">*</span>
-                     </Label>
-                     <Textarea
-                       value={editData.reason}
-                       onChange={(e) =>
-                         setEditData({ ...editData, reason: e.target.value })
-                       }
-                       placeholder="Provide a reason for changing the user's role"
-                       rows={3}
-                       maxLength={500}
-                       className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-flyverr-primary/20 focus:border-flyverr-primary"
-                       required
-                     />
-                     <div className="text-xs text-gray-500 dark:text-gray-400 text-right">
-                       {editData.reason.length}/500
-                     </div>
-                   </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Reason for Role Change{" "}
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      value={editData.reason}
+                      onChange={(e) =>
+                        setEditData({ ...editData, reason: e.target.value })
+                      }
+                      placeholder="Provide a reason for changing the user's role"
+                      rows={3}
+                      maxLength={500}
+                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-flyverr-primary/20 focus:border-flyverr-primary"
+                      required
+                    />
+                    <div className="text-xs text-gray-500 dark:text-gray-400 text-right">
+                      {editData.reason.length}/500
+                    </div>
+                  </div>
 
-                   {/* Update Role Button */}
-                   <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-600">
-                     <Button
-                       onClick={handleUpdate}
-                       disabled={updateRoleMutation.isPending || !editData.reason.trim()}
-                       className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
-                     >
-                       <Save className="w-4 h-4 mr-2" />
-                       {updateRoleMutation.isPending ? 'Updating...' : 'Update Role'}
-                     </Button>
-                   </div>
-                 </div>
-               </CardContent>
-             </Card>
+                  {/* Update Role Button */}
+                  <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-600">
+                    <Button
+                      onClick={handleUpdate}
+                      disabled={
+                        updateRoleMutation.isPending || !editData.reason.trim()
+                      }
+                      className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      {updateRoleMutation.isPending
+                        ? "Updating..."
+                        : "Update Role"}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-             {/* Status Update Section */}
-             <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-               <CardHeader className="pb-4">
-                 <CardTitle className="flex items-center gap-2 text-lg">
-                   <div className="p-2 bg-flyverr-primary/10 rounded-lg">
-                     <Shield className="w-5 h-5 text-flyverr-primary" />
-                   </div>
-                   Status Management
-                 </CardTitle>
-               </CardHeader>
-               <CardContent>
-                 <div className="space-y-4">
-                   <div className="space-y-2">
-                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                       Current Status
-                     </Label>
-                     <div className="flex items-center gap-3">
-                       {getStatusBadge(user.status)}
-                       <Button
-                         type="button"
-                         variant="outline"
-                         size="sm"
-                         onClick={() => setIsStatusModalOpen(true)}
-                         className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
-                       >
-                         <Shield className="w-4 h-4 mr-2" />
-                         Update Status
-                       </Button>
-                     </div>
-                   </div>
-                   
-                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                     Click the button above to change user status with detailed options including reason, admin notes, and suspension duration.
-                   </div>
-                 </div>
-               </CardContent>
-             </Card>
+            {/* Status Update Section */}
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <div className="p-2 bg-flyverr-primary/10 rounded-lg">
+                    <Shield className="w-5 h-5 text-flyverr-primary" />
+                  </div>
+                  Status Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Current Status
+                    </Label>
+                    <div className="flex items-center gap-3">
+                      {getStatusBadge(user.status)}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsStatusModalOpen(true)}
+                        className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
+                      >
+                        <Shield className="w-4 h-4 mr-2" />
+                        Update Status
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Click the button above to change user status with detailed
+                    options including reason, admin notes, and suspension
+                    duration.
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Right Column - Stats & Info */}
@@ -501,35 +516,37 @@ export default function AdminUserDetailPage() {
               <CardContent>
                 {recentActivity.products.length > 0 ? (
                   <div className="space-y-3">
-                    {recentActivity.products.slice(0, 3).map((product: RecentProduct) => (
-                      <div
-                        key={product.id}
-                        className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
-                              {product.title}
-                            </p>
-                            <div className="flex items-center space-x-2 mt-1">
-                              {getStatusBadge(product.status)}
-                              <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800 text-xs">
-                                {product.current_stage}
-                              </Badge>
+                    {recentActivity.products
+                      .slice(0, 3)
+                      .map((product: RecentProduct) => (
+                        <div
+                          key={product.id}
+                          className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                                {product.title}
+                              </p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                {getStatusBadge(product.status)}
+                                <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800 text-xs">
+                                  {product.current_stage}
+                                </Badge>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {formatDate(product.created_at)}
+                              </p>
+                              <p className="text-xs text-gray-600 dark:text-gray-400">
+                                {product.remaining_licenses}/
+                                {product.total_licenses} licenses
+                              </p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatDate(product.created_at)}
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
-                              {product.remaining_licenses}/
-                              {product.total_licenses} licenses
-                            </p>
-                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
                   <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
@@ -569,17 +586,17 @@ export default function AdminUserDetailPage() {
               </CardContent>
             </Card>
           </div>
-                 </div>
-       </div>
+        </div>
+      </div>
 
-       {/* Status Update Modal */}
-       <StatusUpdateModal
-         isOpen={isStatusModalOpen}
-         onClose={() => setIsStatusModalOpen(false)}
-         currentStatus={user.status}
-         onUpdate={handleStatusUpdate}
-         isLoading={updateStatusMutation.isPending}
-       />
-     </div>
-   );
- }
+      {/* Status Update Modal */}
+      <StatusUpdateModal
+        isOpen={isStatusModalOpen}
+        onClose={() => setIsStatusModalOpen(false)}
+        currentStatus={user.status}
+        onUpdate={handleStatusUpdate}
+        isLoading={updateStatusMutation.isPending}
+      />
+    </div>
+  );
+}

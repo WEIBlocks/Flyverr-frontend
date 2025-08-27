@@ -19,6 +19,7 @@ import {
   LayoutDashboard,
   Package,
   Key,
+  Mail,
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,10 +50,20 @@ const Navigation = () => {
         { name: "Home", href: "/", icon: Home },
         { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
         { name: "FAQ", href: "/faq", icon: HelpCircle },
+        {
+          name: "Contact Us",
+          href: "/contact",
+          icon: Mail,
+        },
       ]
     : [
         { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
         { name: "FAQ", href: "/faq", icon: HelpCircle },
+        {
+          name: "Contact Us",
+          href: "/contact",
+          icon: Mail,
+        },
       ];
 
   const isActive = (href: string) => {

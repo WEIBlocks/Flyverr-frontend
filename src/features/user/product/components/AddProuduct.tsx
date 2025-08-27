@@ -37,4 +37,4 @@ function AddProductButton({ requireReady }: AddProductButtonProps) {
 }
 
 // Wrap with HOC and pass the action handler
-export default withStripeOnboarding(AddProductButton);
+export default withStripeOnboarding(AddProductButton );

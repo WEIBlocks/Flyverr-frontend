@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 
 import { forgotPassword } from "../services/api";
 import type { ForgotPasswordData } from "../auth.types";

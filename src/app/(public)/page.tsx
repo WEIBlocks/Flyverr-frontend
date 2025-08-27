@@ -1,6 +1,6 @@
 "use client";
 import { AnimatedHero } from "@/components/AnimatedHero";
-import toast from "react-hot-toast";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -12,8 +12,13 @@ import {
   DollarSign,
   Heart,
   Plus,
+  Check,
+  Zap,
+  Shield,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/components/ui/section-header";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -77,406 +82,641 @@ export default function Home() {
     setIsVisible(true);
   }, []);
 
-  const handleGetStarted = () => {
-    toast.success("Welcome to Flyverr! Let's start your digital journey!");
-  };
+ 
 
   const handleExploreMarketplace = () => {
     router.push("/marketplace");
   };
 
   // Add Product Modal state
- 
-
-
 
   return (
     <ProtectedRoute requireAuth={true}>
       <main className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
         {/* Hero Section */}
-        <section className="relative overflow-hidden">
-          {/* Background Elements */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-slate-100 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900">
+          {/* Modern Geometric Background Pattern */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 left-10 w-32 h-32 sm:w-48 sm:h-48 md:w-72 md:h-72 lg:w-72 lg:h-72 xl:w-72 xl:h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute top-40 right-20 w-40 h-40 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-96 xl:h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-            <div className="absolute bottom-20 left-1/3 w-36 h-36 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-80 xl:h-80 bg-indigo-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+            {/* Subtle Grid Pattern */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.08)_1px,transparent_1px)] bg-[size:20px_20px] sm:bg-[size:25px_25px] md:bg-[size:30px_30px] lg:bg-[size:35px_35px] xl:bg-[size:40px_40px] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] dark:bg-[size:20px_20px] dark:sm:bg-[size:25px_25px] dark:md:bg-[size:30px_30px] dark:lg:bg-[size:35px_35px] dark:xl:bg-[size:40px_40px]"></div>
+
+            {/* Modern Floating Elements */}
+            <div className="absolute top-8 sm:top-12 md:top-16 lg:top-20 xl:top-24 left-4 sm:left-6 md:left-8 lg:left-10 xl:left-12 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 xl:w-3 xl:h-3 bg-blue-500 rounded-full opacity-40 animate-pulse shadow-lg shadow-blue-200"></div>
+            <div className="absolute top-12 sm:top-16 md:top-20 lg:top-24 xl:top-28 left-8 sm:left-12 md:left-16 lg:left-20 xl:left-24 w-0.5 h-0.5 sm:w-1 sm:h-1 md:w-1.5 md:h-1.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 bg-indigo-500 rounded-full opacity-50 shadow-lg shadow-indigo-200"></div>
+            <div className="absolute top-16 sm:top-20 md:top-24 lg:top-28 xl:top-32 left-6 sm:left-10 md:left-12 lg:left-16 xl:left-20 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 xl:w-3 xl:h-3 bg-purple-500 rounded-full opacity-45 shadow-lg shadow-purple-200"></div>
+
+            <div className="absolute top-10 sm:top-14 md:top-18 lg:top-22 xl:top-26 right-8 sm:right-12 md:right-16 lg:right-20 xl:right-24 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 xl:w-3 xl:h-3 bg-emerald-500 rounded-full opacity-40 animate-pulse delay-1000 shadow-lg shadow-emerald-200"></div>
+            <div className="absolute top-14 sm:top-18 md:top-22 lg:top-26 xl:top-30 right-12 sm:right-16 md:right-20 lg:right-24 xl:right-28 w-0.5 h-0.5 sm:w-1 sm:h-1 md:w-1.5 md:h-1.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 bg-teal-500 rounded-full opacity-50 shadow-lg shadow-teal-200"></div>
+            <div className="absolute top-18 sm:top-22 md:top-26 lg:top-30 xl:top-34 right-10 sm:right-14 md:right-18 lg:right-22 xl:right-26 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 xl:w-3 xl:h-3 bg-cyan-500 rounded-full opacity-45 shadow-lg shadow-cyan-200"></div>
+
+            {/* Subtle Accent Lines */}
+            <div className="absolute top-1/4 left-0 w-8 sm:w-12 md:w-16 lg:w-20 xl:w-24 h-0.5 sm:h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent dark:via-blue-800 shadow-sm shadow-blue-200"></div>
+            <div className="absolute top-1/3 right-0 w-12 sm:w-16 md:w-20 lg:w-24 xl:w-28 h-0.5 sm:h-px bg-gradient-to-l from-transparent via-indigo-400 to-transparent dark:via-indigo-800 shadow-sm shadow-indigo-200"></div>
+
+            {/* Modern Card-like Elements */}
+            <div className="absolute top-1/2 left-2 sm:left-3 md:left-4 lg:left-6 xl:left-8 w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-32 lg:w-28 lg:h-36 xl:w-32 xl:h-40 bg-white/60 dark:bg-gray-800/40 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/40 dark:border-gray-700/20 shadow-lg shadow-gray-200/50 transform rotate-6 sm:rotate-8 md:rotate-10 lg:rotate-12 xl:rotate-15"></div>
+            <div className="absolute bottom-1/3 right-4 sm:right-6 md:right-8 lg:right-10 xl:right-12 w-12 h-16 sm:w-16 sm:h-20 md:w-20 md:h-28 lg:w-24 lg:h-32 xl:w-28 xl:h-36 bg-white/50 dark:bg-gray-800/30 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/40 dark:border-gray-700/20 shadow-lg shadow-gray-200/50 transform -rotate-4 sm:-rotate-5 md:-rotate-6 lg:-rotate-8 xl:-rotate-10"></div>
+
+            {/* Additional Light Mode Background Elements */}
+            <div className="absolute top-1/3 left-1/4 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 bg-blue-50/30 dark:bg-blue-900/10 rounded-full blur-3xl opacity-60"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 bg-indigo-50/30 dark:bg-indigo-900/10 rounded-full blur-3xl opacity-60"></div>
+            <div className="absolute top-3/4 left-1/3 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 bg-purple-50/30 dark:bg-purple-900/10 rounded-full blur-3xl opacity-60"></div>
           </div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 md:pt-20 lg:pt-20 xl:pt-20 pb-16 sm:pb-20 md:pb-24 lg:pb-32 xl:pb-32">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-12 xl:gap-12 items-center">
-              {/* Left Column - Content */}
-              <div className="space-y-6 sm:space-y-8 md:space-y-8 lg:space-y-8 xl:space-y-8">
-                {/* Badge */}
-                <div
-                  className={`inline-flex items-center space-x-2 px-3 py-2 sm:px-4 sm:py-2 md:px-4 md:py-2 lg:px-4 lg:py-2 xl:px-4 xl:py-2 bg-flyverr-primary text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm font-medium rounded-full shadow-lg transform transition-all duration-700 ${
-                    isVisible
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-10 opacity-0"
-                  }`}
-                >
-                  <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 md:w-4 md:h-4 lg:w-4 lg:h-4 xl:w-4 xl:h-4" />
-                  <span className="text-center">
-                    B2C & C2C Digital Resale Marketplace
-                  </span>
-                </div>
-
-                {/* Main Heading */}
-                <div
-                  className={`space-y-4 sm:space-y-6 md:space-y-6 lg:space-y-6 xl:space-y-6 transform transition-all duration-1000 delay-200 ${
-                    isVisible
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-10 opacity-0"
-                  }`}
-                >
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-flyverr-text leading-tight">
-                    Products That
-                    <span className="block text-flyverr-primary">
-                      Grow in Value
-                    </span>
-                  </h1>
-                  <p className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed">
-                    Creators list limited digital products, buyers use or resell
-                    for profit. The only marketplace with a performance-driven
-                    resale system in the creator economy.
-                  </p>
-                </div>
-
-                {/* CTA Buttons */}
-                <div
-                  className={`flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-4 lg:gap-4 xl:gap-4 transform transition-all duration-1000 delay-500 ${
-                    isVisible
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-10 opacity-0"
-                  }`}
-                >
-                  <Button
-                    onClick={handleExploreMarketplace}
-                    variant="outline"
-                    className="px-6 py-3 sm:px-8 sm:py-4 md:px-8 md:py-4 lg:px-8 lg:py-4 xl:px-8 xl:py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-primary dark:hover:text-flyverr-primary text-base sm:text-lg md:text-lg lg:text-lg xl:text-lg font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
-                  >
-                    Explore Marketplace
-                  </Button>
-                </div>
-              </div>
-
-              {/* Right Column - Image */}
+          <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pt-8 sm:pt-12 md:pt-16 lg:pt-20 xl:pt-24 pb-12 sm:pb-16 md:pb-20 lg:pb-24 xl:pb-28">
+            {/* Centered Content Layout */}
+            <div className="text-center max-w-4xl mx-auto">
+              {/* Badge - Modern and Appealing */}
               <div
-                className={`relative transform transition-all duration-1000 delay-300 ${
+                className={`inline-flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-2 sm:py-3 md:py-4 lg:py-4 xl:py-5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-800 dark:text-white border border-gray-200/50 dark:border-gray-700/50 text-xs sm:text-xs md:text-xs lg:text-sm xl:text-base font-semibold rounded-xl sm:rounded-2xl shadow-lg shadow-gray-200/50 dark:shadow-gray-900/50 mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 transform transition-all duration-700 hover:scale-105 hover:shadow-xl ${
                   isVisible
                     ? "translate-y-0 opacity-100"
                     : "translate-y-10 opacity-0"
                 }`}
               >
-                <div className="relative">
-                  {/* Main Product Showcase */}
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl md:rounded-3xl lg:rounded-3xl xl:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-8 xl:p-8 shadow-2xl border border-gray-100 dark:border-gray-700">
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 lg:gap-4 xl:gap-4">
-                      {/* Product Card 1 */}
-                      <div className="bg-blue-50 dark:bg-blue-900/30 dark:border dark:border-blue-800/50 rounded-xl sm:rounded-2xl md:rounded-2xl lg:rounded-2xl xl:rounded-2xl p-2 sm:p-3 md:p-4 lg:p-4 xl:p-4">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-8 md:h-8 lg:w-8 lg:h-8 xl:w-8 xl:h-8 bg-blue-600 dark:bg-blue-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 md:mb-3 lg:mb-3 xl:mb-3">
-                          <span className="text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-                            📚
-                          </span>
-                        </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm mb-1">
-                          Digital eBooks
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">
-                          Knowledge & Learning
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50 px-1 py-1 sm:px-2 sm:py-1 md:px-2 md:py-1 lg:px-2 lg:py-1 xl:px-2 xl:py-1 rounded-full">
-                            Limited Supply
-                          </span>
-                        </div>
-                      </div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 lg:w-3 lg:h-3 xl:w-3.5 xl:h-3.5 bg-flyverr-primary rounded-full animate-pulse"></div>
+                <span className="px-1 sm:px-2">
+                  B2C & C2C Digital Resale Marketplace
+                </span>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 lg:w-3 lg:h-3 xl:w-3.5 xl:h-3.5 bg-flyverr-primary rounded-full animate-pulse delay-1000"></div>
+              </div>
 
-                      {/* Product Card 2 */}
-                      <div className="bg-purple-50 dark:bg-purple-900/30 dark:border dark:border-purple-800/50 rounded-xl sm:rounded-2xl md:rounded-2xl lg:rounded-2xl xl:rounded-2xl p-2 sm:p-3 md:p-4 lg:p-4 xl:p-4">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-8 md:h-8 lg:w-8 lg:h-8 xl:w-8 xl:h-8 bg-purple-600 dark:bg-purple-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 md:mb-3 lg:mb-3 xl:mb-3">
-                          <span className="text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-                            🎓
-                          </span>
-                        </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm mb-1">
-                          Online Courses
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">
-                          Expert Knowledge
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/50 px-1 py-1 sm:px-2 sm:py-1 md:px-2 md:py-1 lg:px-2 lg:py-1 xl:px-2 xl:py-1 rounded-full">
-                            Premium Content
-                          </span>
-                        </div>
-                      </div>
+              {/* Main Heading - Clean Typography */}
+              <div
+                className={`space-y-4 sm:space-y-6 mb-4 sm:mb-6 transform transition-all duration-1000 delay-200 ${
+                  isVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-10 opacity-0"
+                }`}
+              >
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
+                  Profit From What You{" "}
+                  <span className="relative">
+                    <span className="relative z-10 text-flyverr-primary dark:text-flyverr-primary">
+                      Love
+                    </span>
+                    <span className="absolute -bottom-1 sm:-bottom-1.5 md:-bottom-2 lg:-bottom-2.5 xl:-bottom-3 left-0 right-0 h-2 sm:h-2.5 md:h-3 lg:h-3.5 xl:h-4 bg-yellow-200 dark:bg-yellow-800/30 rounded-full transform -rotate-1"></span>
+                  </span>
+                </h1>
 
-                      {/* Product Card 3 */}
-                      <div className="bg-green-50 dark:bg-green-900/30 dark:border dark:border-green-800/50 rounded-xl sm:rounded-2xl md:rounded-2xl lg:rounded-2xl xl:rounded-2xl p-2 sm:p-3 md:p-4 lg:p-4 xl:p-4">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-8 md:h-8 lg:w-8 lg:h-8 xl:w-8 xl:h-8 bg-green-600 dark:bg-green-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 md:mb-3 lg:mb-3 xl:mb-3">
-                          <span className="text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-                            🎨
-                          </span>
-                        </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm mb-1">
-                          Design Templates
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">
-                          Creative Assets
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/50 px-1 py-1 sm:px-2 sm:py-1 md:px-2 md:py-1 lg:px-2 lg:py-1 xl:px-2 xl:py-1 rounded-full">
-                            Professional
-                          </span>
-                        </div>
-                      </div>
+                {/* Subheadline - Clear and Concise */}
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto font-normal px-2 sm:px-4">
+                  The marketplace for creators and traders building wealth in
+                  the digital economy.
+                  <span className="block mt-2 sm:mt-3 md:mt-4 lg:mt-5 xl:mt-5 text-flyverr-primary dark:text-flyverr-primary font-semibold">
+                    <span className="inline-block overflow-hidden">
+                      <span className="typing-animation">
+                        Create. Trade. Earn.
+                      </span>
+                    </span>
+                  </span>
+                </p>
+              </div>
 
-                      {/* Product Card 4 */}
-                      <div className="bg-orange-50 dark:bg-orange-900/30 dark:border dark:border-orange-800/50 rounded-xl sm:rounded-2xl md:rounded-2xl lg:rounded-2xl xl:rounded-2xl p-2 sm:p-3 md:p-4 lg:p-4 xl:p-4">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-8 md:h-8 lg:w-8 lg:h-8 xl:w-8 xl:h-8 bg-orange-600 dark:bg-orange-500 rounded-lg flex items-center justify-center mb-2 sm:mb-3 md:mb-3 lg:mb-3 xl:mb-3">
-                          <span className="text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-                            🎵
-                          </span>
-                        </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm mb-1">
-                          Digital Music
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">
-                          Audio Content
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/50 px-1 py-1 sm:px-2 sm:py-1 md:px-2 md:py-1 lg:px-2 lg:py-1 xl:px-2 xl:py-1 rounded-full">
-                            Exclusive
-                          </span>
-                        </div>
+              {/* CTA Buttons - Clean and Contrasting */}
+              <div
+                className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 transform transition-all duration-1000 delay-500 ${
+                  isVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-10 opacity-0"
+                }`}
+              >
+                <Link href="/user/products">
+                  <Button className="group relative px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-3 sm:py-4 md:py-4 lg:py-5 xl:py-6 bg-flyverr-primary hover:bg-flyverr-primary/90 dark:bg-flyverr-primary dark:hover:bg-flyverr-primary/90 text-white text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <Sparkles className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 mr-1.5 sm:mr-2 md:mr-2.5 lg:mr-3 xl:mr-4" />
+
+                    <span className="relative z-10">Start Creating Today</span>
+                  </Button>
+                </Link>
+
+                <Button
+                  onClick={handleExploreMarketplace}
+                  variant="outline"
+                  className="group px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-3 sm:py-4 md:py-4 lg:py-5 xl:py-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-2 border-gray-200/50 dark:border-gray-700/50 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-primary dark:hover:text-flyverr-primary text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 hover:bg-white dark:hover:bg-gray-800"
+                >
+                  <span className="relative z-10">
+                    Find Profitable Products
+                  </span>
+                  <ArrowRight className="ml-1.5 sm:ml-2 md:ml-2.5 lg:ml-3 xl:ml-4 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Dashboard Showcase Section */}
+        <section className="py-20 bg-white dark:bg-gray-900">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Section Header */}
+            <SectionHeader
+              title="Buy It. Sell It. Watch It Grow."
+              subtitle="Flyverr connects creators and buyers in a system where every trade can mean higher value. Limited supply, built-in royalties, and real opportunities for profit."
+            />
+
+            {/* Circular Flow Design */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-16 xl:gap-20 items-center">
+              {/* Left Side - Circular Flow Diagram */}
+              <div className="flex justify-center lg:justify-start">
+                <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem]">
+                  {/* Main Circle */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full border-2 sm:border-3 md:border-4 lg:border-4 xl:border-4 border-blue-200 dark:border-blue-800 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 bg-flyverr-primary rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-5">
+                        <span className="text-white font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                          F
+                        </span>
                       </div>
+                      <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-semibold text-gray-800 dark:text-gray-200">
+                        Flyverr
+                      </p>
+                      <p className="text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg text-gray-600 dark:text-gray-400">
+                        Platform
+                      </p>
                     </div>
                   </div>
 
-                  {/* Floating Elements */}
-                  <div className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 md:-top-4 md:-right-4 lg:-top-4 lg:-right-4 xl:-top-4 xl:-right-4 bg-green-500 dark:bg-green-600 text-white px-2 py-1 sm:px-3 sm:py-2 md:px-4 md:py-2 lg:px-4 lg:py-2 xl:px-4 xl:py-2 rounded-full text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm font-semibold shadow-lg">
-                    Appreciating Value
+                  {/* Create Products Circle */}
+                  <div className="absolute -top-2 sm:-top-3 md:-top-4 lg:-top-6 xl:-top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-green-100 dark:bg-green-900/20 rounded-full border-2 border-green-300 dark:border-green-700 flex items-center justify-center shadow-lg">
+                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                      📦
+                    </span>
                   </div>
-                  <div className="absolute -bottom-2 -left-2 sm:-bottom-3 sm:-left-3 md:-bottom-4 md:-left-4 lg:-bottom-4 lg:-left-4 xl:-bottom-4 xl:-left-4 bg-blue-500 dark:bg-blue-600 text-white px-2 py-1 sm:px-3 sm:py-2 md:px-4 md:py-2 lg:px-4 lg:py-2 xl:px-4 xl:py-2 rounded-full text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm font-semibold shadow-lg">
-                    Creator Royalties
+
+                  {/* Buy Licenses Circle */}
+                  <div className="absolute top-1/2 -right-2 sm:-right-3 md:-right-4 lg:-right-6 xl:-right-8 transform translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-blue-100 dark:bg-blue-900/20 rounded-full border-2 border-blue-300 dark:border-blue-700 flex items-center justify-center shadow-lg">
+                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                      💰
+                    </span>
                   </div>
+
+                  {/* Claim Royalties Circle */}
+                  <div className="absolute bottom-1/2 -right-2 sm:-right-3 md:-right-4 lg:-right-6 xl:-right-8 transform -translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-purple-100 dark:bg-purple-900/20 rounded-full border-2 border-purple-300 dark:border-purple-700 flex items-center justify-center shadow-lg">
+                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                      👑
+                    </span>
+                  </div>
+
+                  {/* Payment Analytics Circle */}
+                  <div className="absolute -bottom-2 sm:-bottom-3 md:-bottom-4 lg:-bottom-6 xl:-bottom-8 left-1/2 transform -translate-x-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-orange-100 dark:bg-orange-900/20 rounded-full border-2 border-orange-300 dark:border-orange-700 flex items-center justify-center shadow-lg">
+                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                      📊
+                    </span>
+                  </div>
+
+                  {/* Stripe Payments Circle */}
+                  <div className="absolute top-1/2 -left-2 sm:-left-3 md:-left-4 lg:-left-6 xl:-left-8 transform -translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-indigo-100 dark:bg-indigo-900/20 rounded-full border-2 border-indigo-300 dark:border-indigo-700 flex items-center justify-center shadow-lg">
+                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                      💳
+                    </span>
+                  </div>
+
+                  {/* Flow Lines */}
+                  <svg
+                    className="absolute inset-0 w-full h-full pointer-events-none"
+                    viewBox="0 0 320 320"
+                    preserveAspectRatio="xMidYMid meet"
+                    style={{ filter: "drop-shadow(0 0 2px rgba(0,0,0,0.1))" }}
+                  >
+                    {/* Create to Buy */}
+                    <path
+                      d="M 160 40 Q 200 60 240 160"
+                      stroke="url(#gradient1)"
+                      strokeWidth="2"
+                      fill="none"
+                      className="animate-pulse"
+                      opacity="0.7"
+                    />
+                    {/* Buy to Royalties */}
+                    <path
+                      d="M 280 160 Q 280 200 280 200"
+                      stroke="url(#gradient2)"
+                      strokeWidth="2"
+                      fill="none"
+                      className="animate-pulse"
+                      opacity="0.7"
+                      style={{ animationDelay: "0.5s" }}
+                    />
+                    {/* Royalties to Analytics */}
+                    <path
+                      d="M 240 200 Q 200 240 160 280"
+                      stroke="url(#gradient3)"
+                      strokeWidth="2"
+                      fill="none"
+                      className="animate-pulse"
+                      opacity="0.7"
+                      style={{ animationDelay: "1s" }}
+                    />
+                    {/* Analytics to Stripe */}
+                    <path
+                      d="M 120 280 Q 80 240 40 160"
+                      stroke="url(#gradient4)"
+                      strokeWidth="2"
+                      fill="none"
+                      className="animate-pulse"
+                      opacity="0.7"
+                      style={{ animationDelay: "1.5s" }}
+                    />
+                    {/* Stripe to Create */}
+                    <path
+                      d="M 40 160 Q 80 120 160 40"
+                      stroke="url(#gradient5)"
+                      strokeWidth="2"
+                      fill="none"
+                      className="animate-pulse"
+                      opacity="0.7"
+                      style={{ animationDelay: "2s" }}
+                    />
+
+                    {/* Gradients */}
+                    <defs>
+                      <linearGradient
+                        id="gradient1"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="0%"
+                      >
+                        <stop offset="0%" stopColor="#10B981" stopOpacity="0" />
+                        <stop
+                          offset="50%"
+                          stopColor="#10B981"
+                          stopOpacity="1"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#10B981"
+                          stopOpacity="0"
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="gradient2"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="0%"
+                      >
+                        <stop offset="0%" stopColor="#3B82F6" stopOpacity="0" />
+                        <stop
+                          offset="50%"
+                          stopColor="#3B82F6"
+                          stopOpacity="1"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#3B82F6"
+                          stopOpacity="0"
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="gradient3"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="0%"
+                      >
+                        <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0" />
+                        <stop
+                          offset="50%"
+                          stopColor="#8B5CF6"
+                          stopOpacity="1"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#8B5CF6"
+                          stopOpacity="0"
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="gradient4"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="0%"
+                      >
+                        <stop offset="0%" stopColor="#F59E0B" stopOpacity="0" />
+                        <stop
+                          offset="50%"
+                          stopColor="#F59E0B"
+                          stopOpacity="1"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#F59E0B"
+                          stopOpacity="0"
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="gradient5"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="0%"
+                      >
+                        <stop offset="0%" stopColor="#6366F1" stopOpacity="0" />
+                        <stop
+                          offset="50%"
+                          stopColor="#6366F1"
+                          stopOpacity="1"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#6366F1"
+                          stopOpacity="0"
+                        />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Right Side - Description */}
+              <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-8">
+                <div>
+                  <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-5">
+                    Complete Digital Product Ecosystem
+                  </h3>
+                  <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                    Flyverr provides a comprehensive platform where creators can
+                    build, sell, and earn ongoing royalties from their digital
+                    products.
+                  </p>
+                </div>
+
+                <div className="space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-5 xl:space-y-6">
+                  {/* Create Products */}
+                  <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-4 xl:space-x-5">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+                        📦
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2 md:mb-2 lg:mb-3 xl:mb-4">
+                        Create Products
+                      </h4>
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-gray-600 dark:text-gray-400">
+                        Upload digital products with ease. Set pricing,
+                        licensing, and scarcity controls to maximize value.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Buy Licenses */}
+                  <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-4 xl:space-x-5">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+                        💰
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2 md:mb-2 lg:mb-3 xl:mb-4">
+                        Buy Licenses
+                      </h4>
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-gray-600 dark:text-gray-400">
+                        Purchase limited licenses for premium digital products.
+                        Invest in appreciating assets with controlled scarcity.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Claim Royalties */}
+                  <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-4 xl:space-x-5">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+                        👑
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2 md:mb-2 lg:mb-3 xl:mb-4">
+                        Claim Royalties
+                      </h4>
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-gray-600 dark:text-gray-400">
+                        Earn ongoing royalties every time your products are
+                        resold in the marketplace. Passive income from your
+                        creativity.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Payment Analytics */}
+                  <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-4 xl:space-x-5">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+                        📊
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2 md:mb-2 lg:mb-3 xl:mb-4">
+                        Track Analytics
+                      </h4>
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-gray-600 dark:text-gray-400">
+                        Monitor sales, revenue, and royalty earnings with
+                        detailed analytics and insights to optimize your
+                        strategy.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Stripe Payments */}
+                  <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-4 xl:space-x-5">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 bg-indigo-100 dark:bg-indigo-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+                        💳
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2 md:mb-2 lg:mb-3 xl:mb-4">
+                        Secure Payments
+                      </h4>
+                      <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-gray-600 dark:text-gray-400">
+                        Stripe-powered payments with instant payouts and
+                        automated royalty distribution for seamless
+                        transactions.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 sm:pt-3 md:pt-4 lg:pt-4 xl:pt-5">
+                  <Link
+                    href="/user/products"
+                    className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold py-2 sm:py-3 md:py-3 lg:py-4 xl:py-5 px-3 sm:px-5 md:px-6 lg:px-8 xl:px-10 rounded-xl transition-colors text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl group relative"
+                  >
+                    Start Creating Today
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Animated Hero Component */}
-        <AnimatedHero />
+        {/* Social Proof & Trust Metrics Section */}
+        <section className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28 bg-gray-50 dark:bg-gray-800/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+            {/* Section Header */}
+            <SectionHeader
+              title="Trusted by Thousands of Creators"
+              subtitle="Join the community that's already building wealth in the digital economy"
+            />
 
-        <div className="text-center my-16">
-          <div className="bg-flyverr-primary/5 dark:bg-gray-800 rounded-2xl p-8 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Ready to Start Your Digital Journey?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Join thousands of creators and investors who are already profiting
-              from appreciating digital assets.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-             <AddProuduct />
-              <Button
-                onClick={handleExploreMarketplace}
-                variant="outline"
-                className="px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-primary dark:hover:text-flyverr-primary font-semibold rounded-xl transition-all duration-300"
-              >
-                Explore Marketplace
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Value Proposition Section */}
-        <section className="py-20 bg-white dark:bg-gray-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-flyverr-text dark:text-white mb-4">
-                Digital Assets That Grow in Value
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Unlike traditional marketplaces, our limited digital products
-                increase in value over time. Creators earn royalties on every
-                resale, while buyers profit from appreciating assets.
-              </p>
-            </div>
-
-            {/* Two Column Layout - Creators vs Buyers */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* For Creators */}
-              <div
-                className={`space-y-6 transform transition-all duration-1000 delay-300 ${
-                  isVisible
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-10 opacity-0"
-                }`}
-              >
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-12 h-12 bg-flyverr-primary rounded-xl flex items-center justify-center">
-                    <Download className="w-6 h-6 text-white" />
+            {/* Cards Grid - Responsive Layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12">
+              {/* Left Card - Platform Features */}
+              <div className="sm:col-span-2 lg:col-span-1 lg:row-span-2 bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
+                  What's in Your Creator Kit?
+                </h3>
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                    </div>
+                    <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">
+                      Digital Product Upload
+                    </span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    For Creators
-                  </h3>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                        List Limited Digital Products
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        Upload eBooks, courses, templates, and more with
-                        controlled scarcity
-                      </p>
-                    </div>
+                    <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">
+                      Royalty Tracking
+                    </span>
                   </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                        Earn Royalties on Resales
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        Get paid every time your product is resold as its value
-                        increases
-                      </p>
-                    </div>
+                    <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">
+                      Resale Analytics
+                    </span>
                   </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                        Build Your Brand
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        Grow your audience and establish yourself as a premium
-                        creator
-                      </p>
-                    </div>
+                    <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">
+                      Automated Payments
+                    </span>
                   </div>
                 </div>
-
-                <Button
-                  onClick={handleGetStarted}
-                  className="w-full sm:w-auto px-8 py-3 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
-                >
-                  Start Creating Today
-                </Button>
               </div>
 
-              {/* For Buyers/Investors */}
-              <div
-                className={`space-y-6 transform transition-all duration-1000 delay-500 ${
-                  isVisible
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-10 opacity-0"
-                }`}
-              >
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-12 h-12 bg-flyverr-secondary rounded-xl flex items-center justify-center">
-                    <DollarSign className="w-6 h-6 text-white" />
+              {/* Top Middle Card - Trading Volume */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-blue-100 dark:bg-blue-900/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    For Buyers & Investors
-                  </h3>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                        Invest in Appreciating Assets
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        Purchase limited digital products that increase in value
-                        over time
-                      </p>
-                    </div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-2">
+                    2,000+
                   </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                        Profit from Resales
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        Sell your digital assets when their value appreciates
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                        Access Premium Content
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        Get exclusive digital products from top creators
-                      </p>
-                    </div>
+                  <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
+                    trades completed this month
                   </div>
                 </div>
+              </div>
 
-                <Button
-                  onClick={handleExploreMarketplace}
-                  className="w-full sm:w-auto px-8 py-3 bg-flyverr-secondary hover:bg-flyverr-secondary/90 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
-                >
-                  Start Investing
-                </Button>
+              {/* Top Right Card - Urgency */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-orange-100 dark:bg-orange-900/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Zap className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <div className="text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 text-gray-900 dark:text-white">
+                    ⚡ Selling Out Fast!
+                  </div>
+                  <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
+                    New listings sell out in{" "}
+                    <span className="font-bold text-orange-600 dark:text-orange-400">
+                      under 48 hours
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Middle Card - Royalties */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-purple-100 dark:bg-purple-900/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-2">
+                    $500K+
+                  </div>
+                  <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
+                    in creator royalties paid
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Right Card - Revenue Breakdown */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+                <h4 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 text-center">
+                  Revenue Breakdown
+                </h4>
+                <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        Digital Products
+                      </span>
+                    </div>
+                    <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
+                      65%
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        Resale Royalties
+                      </span>
+                    </div>
+                    <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
+                      35%
+                    </span>
+                  </div>
+                </div>
+                {/* Simple Visual Chart */}
+                <div className="flex h-2.5 sm:h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div
+                    className="bg-blue-500 h-full"
+                    style={{ width: "65%" }}
+                  ></div>
+                  <div
+                    className="bg-green-500 h-full"
+                    style={{ width: "35%" }}
+                  ></div>
+                </div>
               </div>
             </div>
+
+            {/* Bottom CTA */}
           </div>
         </section>
 
         {/* Benefits Section */}
-        <section className="py-20 bg-white dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28 bg-white dark:bg-gray-900">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
             {/* Section Header */}
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-flyverr-text dark:text-white mb-4">
-                Why Choose Flyverr?
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                The only digital marketplace where products appreciate in value,
-                creators earn ongoing royalties, and buyers profit from limited
-                supply scarcity.
-              </p>
-            </div>
+            <SectionHeader
+              title="Why Choose Flyverr?"
+              subtitle="The only digital marketplace where products appreciate in value, creators earn ongoing royalties, and buyers profit from limited supply scarcity."
+            />
 
             {/* Two Column Layout - Content and Image */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-16 xl:gap-20 items-center">
               {/* Left Column - Benefits List */}
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 {/* Benefit 1 */}
-                <div className="space-y-3">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                     Limited Digital Products
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                     Sell limited digital products like ebooks, courses,
                     templates, and software with controlled scarcity that drives
                     value appreciation.
@@ -484,11 +724,11 @@ export default function Home() {
                 </div>
 
                 {/* Benefit 2 */}
-                <div className="space-y-3">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                     Resale Ecosystem
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                     Once original licenses sell out, products become eligible
                     for resale at higher prices. Creators earn ongoing royalties
                     from every resale.
@@ -496,33 +736,33 @@ export default function Home() {
                 </div>
 
                 {/* Benefit 3 */}
-                <div className="space-y-3">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                     Investment Protection
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                     Optional insurance protects your resale investment. Get
                     refunded if you can&apos;t resell within 30 days.
                   </p>
                 </div>
 
                 {/* Benefit 4 */}
-                <div className="space-y-3">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                     Verified Reviews
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                     Trust authentic reviews from verified purchasers. 1-5 star
                     rating system with admin moderation ensures quality.
                   </p>
                 </div>
 
                 {/* Benefit 5 */}
-                <div className="space-y-3">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                     Secure Platform
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                     Stripe-powered payments, instant license delivery, and
                     secure transaction processing for all digital assets.
                   </p>
@@ -538,17 +778,17 @@ export default function Home() {
                     alt="Digital Marketplace"
                     width={500}
                     height={600}
-                    className="w-full h-auto rounded-2xl shadow-lg"
+                    className="w-full h-auto rounded-xl sm:rounded-2xl shadow-lg"
                   />
 
                   {/* Overlay Card */}
-                  <div className="absolute bottom-6 right-6 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg max-w-48">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                        <TrendingUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg max-w-40 sm:max-w-48">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                        <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
                           Digital assets that appreciate in value
                         </p>
                         <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -560,11 +800,11 @@ export default function Home() {
                 </div>
 
                 {/* Platform Info Below Image */}
-                <div className="mt-6 text-center">
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <div className="mt-4 sm:mt-6 text-center">
+                  <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                     Flyverr Platform
                   </h4>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     Where digital assets grow in value
                   </p>
                 </div>
@@ -575,364 +815,96 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Featured Products Section */}
-        <section className="py-20 bg-white dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section Header */}
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-flyverr-text dark:text-white mb-4">
-                Featured Digital Products
+        {/* Call to Action Section - Big Push */}
+        <section className="relative overflow-hidden bg-flyverr-primary dark:bg-flyverr-primary">
+          {/* Background Pattern */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.15)_25%,rgba(255,255,255,0.15)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.15)_75%)] bg-[length:20px_20px] opacity-30"></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/20 via-transparent to-black/20"></div>
+          </div>
+
+          {/* Floating Elements */}
+          <div className="absolute top-10 left-10 w-2 h-2 bg-white/40 rounded-full animate-pulse"></div>
+          <div className="absolute top-20 right-20 w-1 h-1 bg-white/50 rounded-full animate-pulse delay-1000"></div>
+          <div className="absolute bottom-20 left-20 w-1.5 h-1.5 bg-white/40 rounded-full animate-pulse delay-500"></div>
+          <div className="absolute bottom-10 right-10 w-1 h-1 bg-white/50 rounded-full animate-pulse delay-1500"></div>
+
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-10 sm:py-14 md:py-18 lg:py-20 xl:py-24">
+            <div className="text-center max-w-4xl mx-auto">
+              {/* Main Headline */}
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white mb-3 sm:mb-4 md:mb-6 leading-tight">
+                Join hundreds of creators building{" "}
+                <span className="relative">
+                  <span className="relative z-10">real income</span>
+                  <span className="absolute -bottom-1 left-0 right-0 h-1.5 bg-yellow-300 dark:bg-yellow-200 rounded-full transform -rotate-1 opacity-100"></span>
+                </span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Discover trending digital assets at different lifecycle stages
+
+              {/* Subheadline */}
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white/95 mb-4 sm:mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed">
+                Start your journey to financial freedom. Upload your first
+                product in minutes and join the digital economy revolution.
               </p>
-            </div>
 
-            {/* Featured Products Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Featured Product 1 - Newboom Stage */}
-              <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
-                {/* Product Image */}
-                <div className="relative h-56 bg-blue-500 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop"
-                    alt="Web Development Course"
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black/20"></div>
-
-                  {/* Stage Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-green-500 text-white text-xs px-3 py-1 rounded-full font-medium">
-                      Stage 1: Newboom
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-center">
+                {/* Primary CTA Button */}
+                <Link href="/user/products">
+                  <Button className="group relative px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8 py-1.5 sm:py-2 md:py-2.5 lg:py-3 xl:py-3.5 bg-white hover:bg-gray-50 text-flyverr-primary font-bold text-xs sm:text-sm md:text-base lg:text-lg rounded-md sm:rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <span className="relative z-10 flex items-center justify-center">
+                      <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5" />
+                      Start Earning Today
                     </span>
-                  </div>
+                  </Button>
+                </Link>
 
-                  {/* Hot Badge */}
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-red-500 text-white text-xs px-3 py-1 rounded-full font-medium">
-                      HOT
-                    </span>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button
-                      size="sm"
-                      className="bg-white text-gray-900 hover:bg-gray-100 rounded-full w-10 h-10 p-0"
-                    >
-                      <Heart className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Product Info */}
-                <div className="p-6">
-                  {/* Category & Rating */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">
-                      Digital Course
-                    </span>
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 ml-1 font-medium">
-                        4.8
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
-                    Complete Web Development Masterclass
-                  </h3>
-
-                  {/* Creator */}
-                  <div className="flex items-center mb-4">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">
-                      CP
-                    </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      CodeMaster Pro
-                    </span>
-                  </div>
-
-                  {/* License Info */}
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Licenses Available
-                      </span>
-                      <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                        50 of 100
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                      <div
-                        className="bg-blue-500 h-2 rounded-full"
-                        style={{ width: "50%" }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Price and Action */}
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      $299
-                    </div>
-                    <Button
-                      size="sm"
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2"
-                    >
-                      View Details
-                    </Button>
-                  </div>
-                </div>
+                {/* Secondary CTA Button */}
               </div>
 
-              {/* Featured Product 2 - Blossom Stage */}
-              <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
-                {/* Product Image */}
-                <div className="relative h-56 bg-pink-500 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop"
-                    alt="UI/UX Design System"
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black/20"></div>
-
-                  {/* Stage Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-blue-500 text-white text-xs px-3 py-1 rounded-full font-medium">
-                      Stage 2: Blossom
-                    </span>
-                  </div>
-
-                  {/* Sale Badge */}
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-medium">
-                      SALE
-                    </span>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button
-                      size="sm"
-                      className="bg-white text-gray-900 hover:bg-gray-100 rounded-full w-10 h-10 p-0"
-                    >
-                      <Heart className="w-5 h-5" />
-                    </Button>
-                  </div>
+              {/* Trust Indicators */}
+              <div className="mt-6 sm:mt-8 md:mt-10 flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-6 text-white/90 text-xs sm:text-sm">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-200" />
+                  <span>No upfront costs</span>
                 </div>
-
-                {/* Product Info */}
-                <div className="p-6">
-                  {/* Category & Rating */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">
-                      Design System
-                    </span>
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 ml-1 font-medium">
-                        4.9
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
-                    Premium UI/UX Design System
-                  </h3>
-
-                  {/* Creator */}
-                  <div className="flex items-center mb-4">
-                    <div className="w-6 h-6 bg-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">
-                      DS
-                    </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      DesignStudio
-                    </span>
-                  </div>
-
-                  {/* License Info */}
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Licenses Available
-                      </span>
-                      <span className="text-sm font-medium text-orange-600 dark:text-orange-400">
-                        25 of 75
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                      <div
-                        className="bg-pink-500 h-2 rounded-full"
-                        style={{ width: "33%" }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Price and Action */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                        $149
-                      </span>
-                      <span className="text-sm text-gray-500 line-through ml-2">
-                        $199
-                      </span>
-                    </div>
-                    <Button
-                      size="sm"
-                      className="bg-pink-600 hover:bg-pink-700 text-white font-semibold px-6 py-2"
-                    >
-                      View Details
-                    </Button>
-                  </div>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-200" />
+                  <span>Instant payouts</span>
+                </div>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-200" />
+                  <span>24/7 support</span>
                 </div>
               </div>
-
-              {/* Featured Product 3 - Evergreen Stage */}
-              <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
-                {/* Product Image */}
-                <div className="relative h-56 bg-emerald-500 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop"
-                    alt="Digital Marketing Guide"
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black/20"></div>
-
-                  {/* Stage Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-purple-500 text-white text-xs px-3 py-1 rounded-full font-medium">
-                      Stage 3: Evergreen
-                    </span>
-                  </div>
-
-                  {/* Trending Badge */}
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-emerald-500 text-white text-xs px-3 py-1 rounded-full font-medium">
-                      TRENDING
-                    </span>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button
-                      size="sm"
-                      className="bg-white text-gray-900 hover:bg-gray-100 rounded-full w-10 h-10 p-0"
-                    >
-                      <Heart className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Product Info */}
-                <div className="p-6">
-                  {/* Category & Rating */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">
-                      Digital Guide
-                    </span>
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 ml-1 font-medium">
-                        4.7
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
-                    Digital Marketing Strategy Guide
-                  </h3>
-
-                  {/* Creator */}
-                  <div className="flex items-center mb-4">
-                    <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">
-                      MG
-                    </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      MarketingGuru
-                    </span>
-                  </div>
-
-                  {/* License Info */}
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Licenses Available
-                      </span>
-                      <span className="text-sm font-medium text-red-600 dark:text-red-400">
-                        15 of 60
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                      <div
-                        className="bg-emerald-500 h-2 rounded-full"
-                        style={{ width: "25%" }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Price and Action */}
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      $199
-                    </div>
-                    <Button
-                      size="sm"
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2"
-                    >
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* View All Button */}
-            <div className="text-center mt-12">
-              <Button
-                onClick={handleExploreMarketplace}
-                className="px-8 py-3 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg"
-              >
-                Explore All Products
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
             </div>
           </div>
         </section>
 
         {/* Footer */}
         <footer className="bg-gray-900 dark:bg-black text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             {/* Main Footer Content */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
               {/* Company Info */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-flyverr-primary rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">F</span>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-flyverr-primary rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-sm sm:text-lg">F</span>
                   </div>
-                  <span className="text-xl font-bold">Flyverr</span>
+                  <span className="text-lg sm:text-xl font-bold">Flyverr</span>
                 </div>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
                   The revolutionary digital marketplace where creators thrive
                   and investors profit from appreciating digital assets.
                 </p>
-                <div className="flex space-x-4">
+                <div className="flex space-x-3 sm:space-x-4">
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors p-1"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -941,10 +913,10 @@ export default function Home() {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors p-1"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -953,10 +925,10 @@ export default function Home() {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors p-1"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -965,10 +937,10 @@ export default function Home() {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors p-1"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -979,13 +951,13 @@ export default function Home() {
               </div>
 
               {/* Quick Links */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Quick Links</h3>
-                <ul className="space-y-2">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-base sm:text-lg font-semibold">Quick Links</h3>
+                <ul className="space-y-1 sm:space-y-2">
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Homepage
                     </Link>
@@ -993,7 +965,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/marketplace"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Marketplace
                     </Link>
@@ -1001,7 +973,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/blog"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Blog
                     </Link>
@@ -1009,7 +981,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/faq"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       FAQ / Help Center
                     </Link>
@@ -1017,7 +989,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/login"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Sign In
                     </Link>
@@ -1025,7 +997,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/signup"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Sign Up
                     </Link>
@@ -1034,13 +1006,13 @@ export default function Home() {
               </div>
 
               {/* For Creators */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">For Creators</h3>
-                <ul className="space-y-2">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-base sm:text-lg font-semibold">For Creators</h3>
+                <ul className="space-y-1 sm:space-y-2">
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Start Creating
                     </Link>
@@ -1048,7 +1020,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Creator Guidelines
                     </Link>
@@ -1056,7 +1028,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Royalty System
                     </Link>
@@ -1064,7 +1036,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Creator Dashboard
                     </Link>
@@ -1072,7 +1044,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Success Stories
                     </Link>
@@ -1081,13 +1053,13 @@ export default function Home() {
               </div>
 
               {/* For Investors */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">For Investors</h3>
-                <ul className="space-y-2">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-base sm:text-lg font-semibold">For Investors</h3>
+                <ul className="space-y-1 sm:space-y-2">
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       How It Works
                     </Link>
@@ -1095,7 +1067,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Investment Guide
                     </Link>
@@ -1103,7 +1075,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Resale Insurance
                     </Link>
@@ -1111,7 +1083,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Portfolio Tracking
                     </Link>
@@ -1119,7 +1091,7 @@ export default function Home() {
                   <li>
                     <Link
                       href="/"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       Market Analytics
                     </Link>
@@ -1129,16 +1101,16 @@ export default function Home() {
             </div>
 
             {/* Bottom Section */}
-            <div className="border-t border-gray-800 pt-8">
-              <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="border-t border-gray-800 pt-6 sm:pt-8">
+              <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
                 {/* Copyright */}
-                <div className="text-gray-400 text-sm">
+                <div className="text-gray-400 text-xs sm:text-sm text-center sm:text-left">
                   © 2024 Flyverr. All rights reserved. Digital marketplace for
                   appreciating assets.
                 </div>
 
                 {/* Legal Links */}
-                <div className="flex space-x-6 text-sm">
+                <div className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6 text-xs sm:text-sm">
                   <Link
                     href="/"
                     className="text-gray-400 hover:text-white transition-colors"
@@ -1167,20 +1139,20 @@ export default function Home() {
               </div>
 
               {/* Newsletter Signup */}
-              <div className="mt-8 pt-8 border-t border-gray-800">
+              <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-800">
                 <div className="max-w-md mx-auto text-center">
-                  <h4 className="text-lg font-semibold mb-2">Stay Updated</h4>
-                  <p className="text-gray-400 text-sm mb-4">
+                  <h4 className="text-base sm:text-lg font-semibold mb-2">Stay Updated</h4>
+                  <p className="text-gray-400 text-xs sm:text-sm mb-4">
                     Get the latest updates on new products, market trends, and
                     investment opportunities.
                   </p>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                     <input
                       type="email"
                       placeholder="Enter your email"
-                      className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                      className="flex-1 px-3 sm:px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                     />
-                    <Button className="px-6 py-2 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold rounded-lg transition-all duration-300">
+                    <Button className="px-4 sm:px-6 py-2 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white font-semibold rounded-lg transition-all duration-300 text-sm sm:text-base">
                       Subscribe
                     </Button>
                   </div>
@@ -1189,9 +1161,6 @@ export default function Home() {
             </div>
           </div>
         </footer>
-
-        
-      
       </main>
     </ProtectedRoute>
   );

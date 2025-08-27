@@ -171,7 +171,7 @@ export default function AdminPendingProductsPage() {
             Review and approve new product submissions
           </p>
         </div>
-        <div className="flex items-center space-x-3">
+        {/* <div className="flex items-center space-x-3">
           <Button
             variant="outline"
             className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
@@ -183,7 +183,7 @@ export default function AdminPendingProductsPage() {
             <TrendingUp className="w-4 h-4 mr-2" />
             Review Queue
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Stats Cards */}

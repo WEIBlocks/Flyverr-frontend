@@ -15,7 +15,7 @@ import * as yup from "yup";
 import { useCreateProduct } from "@/features/user/product/hooks/useCreateProduct";
 import { useCreatePlatformProduct } from "@/features/admin/product/hooks/useCreatePlatformProduct";
 import { useGetProductCategory } from "@/features/user/product/hooks/useGetProductCategory";
-import toast from "react-hot-toast";
+
 import { uploadMultipleImages, uploadToStorage } from "@/lib/upload";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Product } from "@/features/user/product/product.types";
@@ -284,10 +284,14 @@ export default function AddProductModal({
       const { data: authData } = await supabase.auth.getUser();
       const supabaseUserId = authData?.user?.id;
       if (!supabaseUserId) {
-        toast.error("Session expired. Please log in again to upload files.");
+        swal(
+          "Error",
+          "Session expired. Please log in again to upload files.",
+          "error"
+        );
         return;
       }
-   
+
       const pathUserId = supabaseUserId || user?.id;
       // Upload assets in parallel
       const [thumb, images, file] = await Promise.all([
@@ -302,6 +306,7 @@ export default function AddProductModal({
         thumbnailUrl: thumb.url || "",
         imagesUrls: images.map((i) => i.url || "").filter(Boolean),
         fileUrl: file.path,
+        categoryId: data.categoryId,
         fileType: (mainFile as File).type || data.fileType,
         fileSize: (mainFile as File).size || data.fileSize,
         originalPrice: parseFloat(data.originalPrice),
@@ -802,16 +807,7 @@ export default function AddProductModal({
           {/* Inline field errors are shown below inputs; no global error alert */}
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              className="flex-1  border-border text-foreground hover:bg-accent hover:text-accent-foreground"
-              disabled={isPending || isPlatformPending || isLoading}
-            >
-              Cancel
-            </Button>
+          <div className="flex flex-col md:flex-row gap-3 pt-4">
             <Button
               type="submit"
               className="flex-1 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
@@ -822,6 +818,16 @@ export default function AddProductModal({
                 : isPlatformProduct
                 ? "Create Platform Product"
                 : "Add Product"}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClose}
+              className="flex-1 border-border text-foreground hover:bg-accent hover:text-accent-foreground"
+              disabled={isPending || isPlatformPending || isLoading}
+            >
+              Cancel
             </Button>
           </div>
         </form>

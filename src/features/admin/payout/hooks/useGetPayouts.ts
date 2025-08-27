@@ -9,6 +9,6 @@ export function useGetPayouts(status?: string) {
       const response = await getPayouts(status);
       return response;
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
+   
   });
 }

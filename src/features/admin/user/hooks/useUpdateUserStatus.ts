@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUserStatus } from "../services/api";
-import { toast } from "react-hot-toast";
+
 import Swal from "sweetalert2";
 import { createUserFriendlyError } from "@/lib/errorUtils";
 

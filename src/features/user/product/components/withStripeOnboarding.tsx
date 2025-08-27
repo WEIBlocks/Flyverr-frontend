@@ -4,13 +4,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useGetCurrentUser } from "@/features/auth/hooks";
 import { canPurchaseProducts } from "@/lib/stripeHelpers";
 import { swal } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CreditCard } from "lucide-react";
 import { useOnboardStripe } from "@/features/user/payment/hooks/useOnboardStripe";
 import Swal from "sweetalert2";
 import { X, AlertCircle } from "lucide-react";
 import { useGetStripeConnectStatus } from "../../payment/hooks/useGetStripeConnectStatus";
+import { useGetMarketplaceProductDetail } from "@/features/marketplace/hooks";
 
 // Country options for Stripe onboarding
 const COUNTRIES = [
@@ -27,7 +28,8 @@ interface StripeOnboardingInjectedProps {
 }
 
 export default function withStripeOnboarding<T extends object>(
-  Component: React.ComponentType<T & StripeOnboardingInjectedProps>
+  Component: React.ComponentType<T & StripeOnboardingInjectedProps> ,
+  
 ) {
   return function StripeOnboardingWrapper(props: T) {
     const [showOnboardingModal, setShowOnboardingModal] = useState(false);
@@ -36,8 +38,17 @@ export default function withStripeOnboarding<T extends object>(
     const [selectedCountry, setSelectedCountry] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
 
+    const params = useParams();
+    const productId = params.id as string;
+
     const { isAuthenticated } = useAuth();
     const { data: currentUser, isLoading: isUserLoading } = useGetCurrentUser();
+    
+    const {
+      data: product,
+      isLoading: isProductLoading,
+      isError: isProductError,
+    } = useGetMarketplaceProductDetail(productId);
     const {
       data: stripeConnectStatus,
       isLoading: isStripeConnectStatusLoading,
@@ -65,6 +76,15 @@ export default function withStripeOnboarding<T extends object>(
         return;
       }
 
+   
+      if (product && product.creator_id.toString() === currentUser.id.toString() ) {
+        swal(
+          "Cannot Purchase Own Product",
+          "You cannot purchase your own product",
+          "info"
+        );
+        return;
+      }
       // Check if user can proceed (Stripe onboarded)
       if (!canPurchaseProducts(currentUser)) {
         // Show onboarding modal with country selection
@@ -72,7 +92,8 @@ export default function withStripeOnboarding<T extends object>(
         return;
       }
 
-      if (isStripeConnectStatusLoading || isStripeConnectStatusError) {
+      
+      if ((isStripeConnectStatusLoading || isStripeConnectStatusError)) {
         Swal.fire({
           title: "Checking Stripe status...",
           text: isStripeConnectStatusError
@@ -103,7 +124,7 @@ export default function withStripeOnboarding<T extends object>(
 
         return;
       }
-      
+
       // User can proceed, run the provided action
       action();
     };

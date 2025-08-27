@@ -37,39 +37,8 @@ export default function FAQPage() {
     setMounted(true);
   }, []);
 
-  // Listen for theme changes
-  useEffect(() => {
-    const handleThemeChange = () => {
-      // Force re-render when theme changes
-      setMounted(false);
-
-    };
-
-    // Listen for storage changes (theme changes)
-    window.addEventListener("storage", handleThemeChange);
-
-    // Also listen for theme class changes on document
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === "attributes" &&
-          mutation.attributeName === "class"
-        ) {
-          handleThemeChange();
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => {
-      window.removeEventListener("storage", handleThemeChange);
-      observer.disconnect();
-    };
-  }, []);
+ 
+ 
 
   // Reset search when category changes
   useEffect(() => {

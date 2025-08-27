@@ -9,7 +9,7 @@ export function useGetUsers(page: number = 1, limit: number = 50) {
     queryKey: ["admin-users", page, limit, token],
     queryFn: async (): Promise<UsersListResponse> =>
       await getUsers(page, limit),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+  
     enabled: !!token,
   });
 }

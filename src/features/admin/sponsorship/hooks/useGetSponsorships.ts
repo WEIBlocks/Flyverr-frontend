@@ -9,6 +9,6 @@ export function useGetSponsorships(page: number = 1, limit: number = 10) {
       const response = await getSponsorships(page, limit);
       return response;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+   
   });
 }

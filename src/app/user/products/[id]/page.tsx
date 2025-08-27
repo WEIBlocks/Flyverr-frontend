@@ -8,15 +8,15 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
-  ArrowLeft, 
-  Save, 
-  Eye, 
-  Download, 
-  Calendar, 
-  User, 
-  Package, 
-  DollarSign, 
+import {
+  ArrowLeft,
+  Save,
+  Eye,
+  Download,
+  Calendar,
+  User,
+  Package,
+  DollarSign,
   FileText,
   Image as ImageIcon,
   Upload,
@@ -27,50 +27,66 @@ import {
   XCircle,
   Tag,
   Info,
-  X
+  X,
 } from "lucide-react";
 import { useGetProductById } from "@/features/user/product/hooks/useGetProductById";
 import { useUpdateProduct } from "@/features/user/product/hooks/useUpdateProduct";
 import { Product } from "@/features/user/product/product.types";
-import { toast } from "react-hot-toast";
+
 import { ErrorAlert } from "@/components/ui/error-alert";
 
 // ProductImage Component with loading and error handling
-const ProductImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
-  const [imageState, setImageState] = useState<'loading' | 'loaded' | 'error'>('loading');
+const ProductImage = ({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) => {
+  const [imageState, setImageState] = useState<"loading" | "loaded" | "error">(
+    "loading"
+  );
   const [imageSrc, setImageSrc] = useState(src);
 
   const handleImageLoad = () => {
-    setImageState('loaded');
+    setImageState("loaded");
   };
 
   const handleImageError = () => {
-    setImageState('error');
-    setImageSrc('/api/placeholder/150/150'); // Fallback to placeholder API or default image
+    setImageState("error");
+    setImageSrc("/api/placeholder/150/150"); // Fallback to placeholder API or default image
   };
 
   // Default placeholder image (you can replace this with your own default image)
   const defaultImage = (
-    <div className={`${className} bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-600`}>
+    <div
+      className={`${className} bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-600`}
+    >
       <ImageIcon className="w-6 h-6 text-gray-400 dark:text-gray-500" />
     </div>
   );
 
-  if (imageState === 'error') {
+  if (imageState === "error") {
     return defaultImage;
   }
 
   return (
     <>
-      {imageState === 'loading' && (
-        <div className={`${className} bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center`}>
+      {imageState === "loading" && (
+        <div
+          className={`${className} bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center`}
+        >
           <div className="w-4 h-4 border-2 border-gray-300 dark:border-gray-600 border-t-flyverr-primary rounded-full animate-spin"></div>
         </div>
       )}
       <img
         src={imageSrc}
         alt={alt}
-        className={`${className} ${imageState === 'loading' ? 'hidden' : 'block'}`}
+        className={`${className} ${
+          imageState === "loading" ? "hidden" : "block"
+        }`}
         onLoad={handleImageLoad}
         onError={handleImageError}
       />
@@ -78,7 +94,15 @@ const ProductImage = ({ src, alt, className }: { src: string; alt: string; class
   );
 };
 
-import { formatDate, formatFileSize, getStatusColor, getStatusIcon, getFileTypeIcon } from "@/lib/productUtils";
+import {
+  formatDate,
+  formatFileSize,
+  getStatusColor,
+  getStatusIcon,
+  getFileTypeIcon,
+} from "@/lib/productUtils";
+import { swal } from "@/lib/utils";
+import { createUserFriendlyError } from "@/lib/errorUtils";
 
 export default function ProductEditPage() {
   const params = useParams();
@@ -87,7 +111,7 @@ export default function ProductEditPage() {
 
   const { data: productData, isLoading, error } = useGetProductById(productId);
   const product = productData?.data?.product;
-  
+
   const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
 
   // Form state
@@ -119,9 +143,9 @@ export default function ProductEditPage() {
   }, [product]);
 
   const handleInputChange = (field: string, value: string | number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -134,7 +158,7 @@ export default function ProductEditPage() {
 
   const handleImagesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setImageFiles(prev => [...prev, ...files]);
+    setImageFiles((prev) => [...prev, ...files]);
   };
 
   const handleMainFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,7 +173,7 @@ export default function ProductEditPage() {
   };
 
   const removeImage = (index: number) => {
-    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const removeMainFile = () => {
@@ -194,16 +218,20 @@ export default function ProductEditPage() {
       totalLicenses: formData.totalLicenses.toString(),
     };
 
-    updateProduct({ id: productId, product: productData }, {
-      onSuccess: () => {
-        toast.success("Product updated successfully!");
-        router.push("/user/products");
-      },
-      onError: (error: any) => {
-        setApiError(error);
-        toast.error("Failed to update product");
+    updateProduct(
+      { id: productId, product: productData },
+      {
+        onSuccess: () => {
+          swal("Success", "Product updated successfully!", "success", () => {
+            router.push("/user/products");
+          });
+        },
+        onError: (error: any) => {
+          setApiError(error);
+          swal("Error", createUserFriendlyError(error), "error");
+        },
       }
-    });
+    );
   };
 
   const handleBack = () => {
@@ -221,7 +249,7 @@ export default function ProductEditPage() {
           <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse"></div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
@@ -231,7 +259,7 @@ export default function ProductEditPage() {
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse"></div>
             </div>
           </div>
-          
+
           <div className="space-y-6">
             <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
             <div className="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
@@ -251,7 +279,8 @@ export default function ProductEditPage() {
             Product Not Found
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {error?.message || "The product you're looking for doesn't exist or you don't have access to it."}
+            {error?.message ||
+              "The product you're looking for doesn't exist or you don't have access to it."}
           </p>
           <Button onClick={handleBack} variant="outline">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -267,9 +296,9 @@ export default function ProductEditPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button 
-            onClick={handleBack} 
-            variant="outline" 
+          <Button
+            onClick={handleBack}
+            variant="outline"
             size="sm"
             className="border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
@@ -285,9 +314,9 @@ export default function ProductEditPage() {
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-3">
-          <Button 
+          <Button
             onClick={handleViewMode}
             variant="outline"
             className="border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -295,7 +324,7 @@ export default function ProductEditPage() {
             <Eye className="w-4 h-4 mr-2" />
             View Mode
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={isUpdating}
             className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
@@ -323,7 +352,10 @@ export default function ProductEditPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="title"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     Product Title *
                   </Label>
                   <Input
@@ -338,13 +370,18 @@ export default function ProductEditPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="description" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="description"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     Description *
                   </Label>
                   <Textarea
                     id="description"
                     value={formData.description}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("description", e.target.value)
+                    }
                     placeholder="Enter product description"
                     className="mt-1"
                     rows={4}
@@ -364,7 +401,10 @@ export default function ProductEditPage() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="price" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label
+                      htmlFor="price"
+                      className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
                       Price *
                     </Label>
                     <Input
@@ -373,7 +413,12 @@ export default function ProductEditPage() {
                       step="0.01"
                       min="0"
                       value={formData.originalPrice}
-                      onChange={(e) => handleInputChange("originalPrice", parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "originalPrice",
+                          parseFloat(e.target.value) || 0
+                        )
+                      }
                       placeholder="0.00"
                       className="mt-1"
                       required
@@ -381,7 +426,10 @@ export default function ProductEditPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="licenses" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label
+                      htmlFor="licenses"
+                      className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
                       Total Licenses *
                     </Label>
                     <Input
@@ -389,7 +437,12 @@ export default function ProductEditPage() {
                       type="number"
                       min="1"
                       value={formData.totalLicenses}
-                      onChange={(e) => handleInputChange("totalLicenses", parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "totalLicenses",
+                          parseInt(e.target.value) || 0
+                        )
+                      }
                       placeholder="1"
                       className="mt-1"
                       required
@@ -408,7 +461,10 @@ export default function ProductEditPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="thumbnail" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="thumbnail"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     Upload Thumbnail
                   </Label>
                   <Input
@@ -454,7 +510,10 @@ export default function ProductEditPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="images" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="images"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     Upload Images
                   </Label>
                   <Input
@@ -505,7 +564,10 @@ export default function ProductEditPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="mainFile" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="mainFile"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     Upload File
                   </Label>
                   <Input
@@ -557,22 +619,33 @@ export default function ProductEditPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Status</span>
-                  <Badge className={`${getStatusColor(product.status)} font-medium flex items-center gap-1`}>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Status
+                  </span>
+                  <Badge
+                    className={`${getStatusColor(
+                      product.status
+                    )} font-medium flex items-center gap-1`}
+                  >
                     {getStatusIcon(product.status)}
-                    {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
+                    {product.status.charAt(0).toUpperCase() +
+                      product.status.slice(1)}
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Current Stage</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Current Stage
+                  </span>
                   <span className="font-medium text-gray-900 dark:text-white">
                     {product.current_stage}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Round</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Round
+                  </span>
                   <span className="font-medium text-gray-900 dark:text-white">
                     {product.current_round}
                   </span>
@@ -610,7 +683,7 @@ export default function ProductEditPage() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="text-sm text-gray-500 dark:text-gray-400">
                   {product.creator.email}
                 </div>
@@ -637,9 +710,7 @@ export default function ProductEditPage() {
         </div>
 
         {/* Error Alert */}
-        {apiError && (
-          <ErrorAlert error={apiError} />
-        )}
+        {apiError && <ErrorAlert error={apiError} />}
       </form>
     </div>
   );

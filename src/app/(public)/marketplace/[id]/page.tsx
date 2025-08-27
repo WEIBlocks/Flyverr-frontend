@@ -54,6 +54,58 @@ import type {
   ReviewSummary,
 } from "@/features/user/reviews/review.types";
 
+// Add proper types for the license data structure
+interface LicenseProduct {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail_url: string;
+  current_stage: string;
+  current_round: number;
+  original_price: number;
+  total_licenses: number;
+  remaining_licenses: number;
+  creator: {
+    id: string;
+    name: string;
+    username: string;
+  };
+}
+
+interface License {
+  id: string;
+  license_token: string;
+  purchase_type: "use" | "resell";
+  resale_eligible: boolean;
+  current_round: number;
+  purchased_round: number;
+  is_listed_for_resale: boolean;
+  is_enabled_by_user_for_resale: boolean;
+  created_at: string;
+  acquired_at: string;
+  purchase_amount: number;
+  purchase_date: string;
+}
+
+interface LicenseGroup {
+  product: LicenseProduct;
+  licenses: License[];
+}
+
+interface MyLicensesResponse {
+  success: boolean;
+  message: string;
+  data: {
+    licenses: LicenseGroup[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  };
+}
+
 // Resale Stage Configuration
 const resaleStages = {
   newboom: {
@@ -168,7 +220,61 @@ export default function ProductDetailPage() {
       recordView(product.category_id);
     }
   }, [productId, product, isLoading, trackProductView, recordView]);
+  // Safely compute ownsLicense with proper loading and error checks
+  const ownsLicense = React.useMemo(() => {
+    // Don't compute if still loading or has errors
+    if (isLoadingMyLicenses || myLicensesError || !myLicenses) {
+      console.log("ownsLicense - Early return:", { isLoadingMyLicenses, myLicensesError, hasMyLicenses: !!myLicenses });
+      return false;
+    }
 
+    // Check if productId is available
+    if (!productId) {
+      console.log("ownsLicense - No productId available");
+      return false;
+    }
+
+    // Type-safe access to licenses data
+    const licensesData = (myLicenses as MyLicensesResponse)?.data?.licenses;
+    console.log("ownsLicense - licensesData:", licensesData);
+    console.log("ownsLicense - productId:", productId, "type:", typeof productId);
+    
+    if (!licensesData || !Array.isArray(licensesData)) {
+      console.log("ownsLicense - No licenses data or not array");
+      return false;
+    }
+
+    // Debug: Log each group to see what we're checking
+    console.log("ownsLicense - Checking groups:", licensesData.map(group => ({
+      productId: group?.product?.id,
+      productTitle: group?.product?.title,
+      licensesCount: group?.licenses?.length,
+      targetProductId: productId,
+      productIdType: typeof group?.product?.id
+    })));
+
+    const result = licensesData.some(
+      (group: LicenseGroup) => {
+        const groupProductId = group?.product?.id;
+        const hasMatchingProduct = String(groupProductId) === String(productId);
+        const hasLicenses = Array.isArray(group.licenses) && group.licenses.length > 0;
+        
+        console.log("ownsLicense - Group check:", {
+          groupProductId,
+          targetProductId: productId,
+          hasMatchingProduct,
+          hasLicenses,
+          licenses: group?.licenses,
+          comparison: `${groupProductId} === ${productId}`
+        });
+        
+        return hasMatchingProduct && hasLicenses;
+      }
+    );
+
+    console.log("ownsLicense - Final result:", result);
+    return result;
+  }, [myLicenses, productId, isLoadingMyLicenses, myLicensesError]);
   // Show loading state
   if (isLoading) {
     return <ProductDetailSkeleton />;
@@ -204,12 +310,10 @@ export default function ProductDetailPage() {
     product.images_urls && product.images_urls.length > 0
       ? product.images_urls
       : [product.thumbnail_url];
-  const ownsLicense = !!(myLicenses as any)?.data?.licenses?.some(
-    (group: any) =>
-      group?.product?.id === productId &&
-      Array.isArray(group.licenses) &&
-      group.licenses.length > 0
-  );
+  // Safely compute ownsLicense with proper loading and error checks
+
+
+  console.log("ownsLicense", ownsLicense);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -355,14 +459,14 @@ export default function ProductDetailPage() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-flyverr-secondary/20 dark:bg-flyverr-secondary/30 text-flyverr-secondary dark:text-flyverr-secondary text-xs sm:text-sm">
+                  <Badge className="bg-green-500 dark:bg-green-400 text-white dark:text-white text-xs sm:text-sm">
                     Digital Product
                   </Badge>
                   {ownsLicense && (
                     <AddReview
                       productId={productId}
-                      buttonVariant="outline"
-                      buttonClassName="border-2 border-flyverr-primary dark:border-flyverr-primary text-flyverr-primary dark:text-white hover:bg-flyverr-primary hover:text-white dark:hover:bg-flyverr-primary dark:hover:text-white px-3 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg"
+                      buttonVariant="default"
+                      buttonClassName="bg-amber-500 dark:bg-amber-400 text-white hover:bg-amber-600 dark:hover:bg-amber-500 px-3 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg"
                       onSuccess={() => setSelectedTab("reviews")}
                     />
                   )}

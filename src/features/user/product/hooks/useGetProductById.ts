@@ -10,7 +10,6 @@ export function useGetProductById(id: string) {
       return response;
     },
     enabled: !!id, // Only run query if ID is provided
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+   
   });
 }

@@ -16,8 +16,6 @@ export const useGetMarketplaceProducts = (
       return response;
     },
     enabled: options.enabled !== undefined ? options.enabled : true,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
-    refetchOnWindowFocus: false,
+
   });
 };

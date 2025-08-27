@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { approvePayout, rejectPayout, retryPayout } from "../services/api";
 import { PayoutActionRequest, PayoutActionResponse } from "../payout.types";
-import toast from "react-hot-toast";
+
+import { swal } from "@/lib/utils";
+import { createUserFriendlyError } from "@/lib/errorUtils";
 
 export function useApprovePayout() {
   const queryClient = useQueryClient();
@@ -11,13 +13,20 @@ export function useApprovePayout() {
     Error,
     { payoutId: string; data?: PayoutActionRequest }
   >({
-    mutationFn: async ({ payoutId, data }) => await approvePayout(payoutId, data),
+    mutationFn: async ({ payoutId, data }) =>
+      await approvePayout(payoutId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
-      toast.success(data.message || "Payout approved successfully");
+      swal(
+        "Success",
+        data.message || "Payout approved successfully",
+        "success",
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
+        }
+      );
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to approve payout");
+      swal("Error", createUserFriendlyError(error), "error");
     },
   });
 }
@@ -30,13 +39,20 @@ export function useRejectPayout() {
     Error,
     { payoutId: string; data?: PayoutActionRequest }
   >({
-    mutationFn: async ({ payoutId, data }) => await rejectPayout(payoutId, data),
+    mutationFn: async ({ payoutId, data }) =>
+      await rejectPayout(payoutId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
-      toast.success(data.message || "Payout rejected successfully");
+      swal(
+        "Success",
+        data.message || "Payout rejected successfully",
+        "success",
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
+        }
+      );
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to reject payout");
+      swal("Error", createUserFriendlyError(error), "error");
     },
   });
 }
@@ -47,11 +63,17 @@ export function useRetryPayout() {
   return useMutation<PayoutActionResponse, Error, string>({
     mutationFn: async (payoutId) => await retryPayout(payoutId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
-      toast.success(data.message || "Payout retry initiated successfully");
+      swal(
+        "Success",
+        data.message || "Payout retry initiated successfully",
+        "success",
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["admin-payouts"] });
+        }
+      );
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to retry payout");
+      swal("Error", createUserFriendlyError(error), "error");
     },
   });
 }

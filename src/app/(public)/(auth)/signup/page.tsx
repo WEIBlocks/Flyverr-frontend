@@ -22,7 +22,7 @@ import {
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import toast from "react-hot-toast";
+
 import Link from "next/link";
 import { useRegister } from "@/features/auth/hooks";
 import { useForm } from "react-hook-form";
@@ -86,15 +86,7 @@ export default function SignupPage() {
     });
   };
 
-  const handleSocialLogin = async (provider: "google" | "linkedin") => {
-    setIsSocialLoading(true);
-    toast.error(
-      `${
-        provider.charAt(0).toUpperCase() + provider.slice(1)
-      } login coming soon!`
-    );
-    setIsSocialLoading(false);
-  };
+ 
 
   return (
     <ProtectedRoute>

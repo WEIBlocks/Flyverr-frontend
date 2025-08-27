@@ -214,7 +214,7 @@ export default function PlatformProductsPage() {
           </tr>
         </AdminTableHeader>
         <AdminTableBody>
-          {!isLoading ? (
+          {isLoading ? (
             <AdminTableRow>
               <td
                 colSpan={7}
