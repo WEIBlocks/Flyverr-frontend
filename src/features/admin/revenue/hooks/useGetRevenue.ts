@@ -9,6 +9,6 @@ export function useGetRevenue() {
       const response = await getRevenueOverview();
       return response;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    
   });
 }

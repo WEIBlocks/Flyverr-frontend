@@ -8,6 +8,7 @@ export const useMarkProductAsHotDeal = () => {
       return await markProductAsHotDeal(data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-product"] });
       queryClient.invalidateQueries({ queryKey: ["hot-deals"] });
     },
     onError: (error) => {

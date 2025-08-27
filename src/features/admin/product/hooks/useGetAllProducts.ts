@@ -9,6 +9,6 @@ export function useGetAllProducts(page: number = 1, limit: number = 20, status?:
       const response = await getAllProducts(page, limit, status, search);
       return response;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+  
   });
 }

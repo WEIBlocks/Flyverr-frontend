@@ -804,7 +804,7 @@ export default function AddProductModal({
 
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-3 pt-4">
-          
+
             <Button
               type="submit"
               className="flex-1 bg-flyverr-primary hover:bg-flyverr-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
@@ -826,7 +826,7 @@ export default function AddProductModal({
             >
               Cancel
             </Button>
-          </div>
+            </div>
 
        
         </form>

@@ -22,6 +22,6 @@ export function useRecommendedProducts(limitPerCategory = 6) {
       );
     },
     enabled: true,
-    staleTime: 60_000,
+   
   });
 }

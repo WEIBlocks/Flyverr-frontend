@@ -10,6 +10,6 @@ export function useGetPlatformProducts(
   return useQuery({
     queryKey: ["platform-products", { page, limit, status, search }],
     queryFn: async () => await getPlatformProducts(page, limit, status, search),
-    staleTime: 1000 * 60,
+  
   });
 }
