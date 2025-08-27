@@ -431,7 +431,7 @@ export default function AdminProductDetailPage() {
 
             {/* Admin Actions */}
             <div className="flex flex-wrap gap-2 sm:gap-3 justify-start md:justify-end w-full md:w-auto">
-              {Array.isArray(product.dealTypes) && !product.dealTypes.includes("hot_deals") && (
+              {Array.isArray(product?.dealTypes) && !product?.dealTypes?.includes("hot_deals") && (
                 <HotDealModal
                   productId={productId}
                   buttonLabel="Mark Hot Deal"

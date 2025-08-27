@@ -76,12 +76,12 @@ export default function RoyaltyPage() {
   );
   const claimMutation = useClaimRoyalty();
 
-  const groupedLicenses = licensesRes?.data?.licenses || [];
+  const groupedLicenses = (licensesRes as any)?.data?.licenses || [];
 
   const filteredLicenses = useMemo(() => {
     if (!search.trim()) return groupedLicenses;
     const q = search.toLowerCase();
-    return groupedLicenses.filter((g) =>
+    return groupedLicenses.filter((g: any) =>
       g.product.title.toLowerCase().includes(q)
     );
   }, [groupedLicenses, search]);
@@ -149,7 +149,7 @@ export default function RoyaltyPage() {
                 <AdminTableHeaderCell>Stage</AdminTableHeaderCell>
                 <AdminTableHeaderCell>Round</AdminTableHeaderCell>
                 <AdminTableHeaderCell>Licenses</AdminTableHeaderCell>
-                <AdminTableHeaderCell></AdminTableHeaderCell>
+                {/* <AdminTableHeaderCell></AdminTableHeaderCell> */}
               </tr>
             </AdminTableHeader>
             <AdminTableBody>
@@ -175,7 +175,7 @@ export default function RoyaltyPage() {
                   </AdminTableCell>
                 </AdminTableRow>
               ) : (
-                filteredLicenses.map((group) => (
+                filteredLicenses.map((group: any) => (
                   <AdminTableRow key={group.product.id}>
                     <AdminTableCell>
                       <div className="flex items-center gap-3">
@@ -216,12 +216,12 @@ export default function RoyaltyPage() {
               )}
             </AdminTableBody>
           </AdminTable>
-          {licensesRes?.data?.pagination && (
+          {(licensesRes as any)?.data?.pagination && (
             <PaginationControls
-              currentPage={licensesRes.data.pagination.page}
-              totalPages={licensesRes.data.pagination.totalPages}
-              totalCount={licensesRes.data.pagination.total}
-              pageSize={licensesRes.data.pagination.limit}
+              currentPage={(licensesRes as any).data.pagination.page}
+              totalPages={(licensesRes as any).data.pagination.totalPages}
+              totalCount={(licensesRes as any).data.pagination.total}
+              pageSize={(licensesRes as any).data.pagination.limit}
               onPageChange={(p) => setLicensesPage(p)}
               onPageSizeChange={(s) => {
                 setLicensesLimit(s);
@@ -251,7 +251,7 @@ export default function RoyaltyPage() {
               </tr>
             </AdminTableHeader>
             <AdminTableBody>
-              {!historyRes?.data?.royaltyClaims?.length ? (
+              {!(historyRes as any)?.data?.royaltyClaims?.length ? (
                 <AdminTableRow>
                   <AdminTableCell colSpan={5}>
                     <div className="text-center py-8 text-gray-500 dark:text-gray-400">
@@ -260,7 +260,7 @@ export default function RoyaltyPage() {
                   </AdminTableCell>
                 </AdminTableRow>
               ) : (
-                historyRes.data.royaltyClaims.map((item) => (
+                (historyRes as any).data.royaltyClaims.map((item: any) => (
                   <AdminTableRow key={item.id}>
                     <AdminTableCell>
                       <div className="text-sm">
@@ -296,12 +296,12 @@ export default function RoyaltyPage() {
               )}
             </AdminTableBody>
           </AdminTable>
-          {historyRes?.data?.pagination && (
+          {(historyRes as any)?.data?.pagination && (
             <PaginationControls
-              currentPage={historyRes.data.pagination.page}
-              totalPages={historyRes.data.pagination.totalPages}
-              totalCount={historyRes.data.pagination.total}
-              pageSize={historyRes.data.pagination.limit}
+              currentPage={(historyRes as any).data.pagination.page}
+              totalPages={(historyRes as any).data.pagination.totalPages}
+              totalCount={(historyRes as any).data.pagination.total}
+              pageSize={(historyRes as any).data.pagination.limit}
               onPageChange={(p) => setHistoryPage(p)}
               onPageSizeChange={(s) => {
                 setHistoryLimit(s);
@@ -330,7 +330,7 @@ export default function RoyaltyPage() {
               </tr>
             </AdminTableHeader>
             <AdminTableBody>
-              {!acquiredRes?.data?.royaltyLicenses?.length ? (
+              {!(acquiredRes as any)?.data?.royaltyLicenses?.length ? (
                 <AdminTableRow>
                   <AdminTableCell colSpan={4}>
                     <div className="text-center py-8 text-gray-500 dark:text-gray-400">
@@ -339,7 +339,7 @@ export default function RoyaltyPage() {
                   </AdminTableCell>
                 </AdminTableRow>
               ) : (
-                acquiredRes.data.royaltyLicenses.map((lic) => (
+                (acquiredRes as any).data.royaltyLicenses.map((lic: any) => (
                   <AdminTableRow key={lic.id}>
                     <AdminTableCell>
                       <div className="text-sm">
@@ -372,12 +372,12 @@ export default function RoyaltyPage() {
               )}
             </AdminTableBody>
           </AdminTable>
-          {acquiredRes?.data?.pagination && (
+          {(acquiredRes as any)?.data?.pagination && (
             <PaginationControls
-              currentPage={acquiredRes.data.pagination.page}
-              totalPages={acquiredRes.data.pagination.totalPages}
-              totalCount={acquiredRes.data.pagination.total}
-              pageSize={acquiredRes.data.pagination.limit}
+              currentPage={(acquiredRes as any).data.pagination.page}
+              totalPages={(acquiredRes as any).data.pagination.totalPages}
+              totalCount={(acquiredRes as any).data.pagination.total}
+              pageSize={(acquiredRes as any).data.pagination.limit}
               onPageChange={(p) => setAcquiredPage(p)}
               onPageSizeChange={(s) => {
                 setAcquiredLimit(s);
@@ -433,7 +433,7 @@ export default function RoyaltyPage() {
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 {isEligibilityLoading ? (
                   <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-40 animate-pulse" />
-                ) : eligibilityRes?.data?.eligible ? (
+                ) : (eligibilityRes as any)?.data?.eligible ? (
                   <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                     <CheckCircle2 className="w-4 h-4" /> Eligible for royalty
                     claim
@@ -441,13 +441,13 @@ export default function RoyaltyPage() {
                 ) : (
                   <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                     <AlertCircle className="w-4 h-4" />{" "}
-                    {eligibilityRes?.data?.reason || "Not eligible"}
+                    {(eligibilityRes as any)?.data?.reason || "Not eligible"}
                   </div>
                 )}
               </div>
 
               {/* Platform products list when eligible */}
-              {eligibilityRes?.data?.eligible && (
+              {(eligibilityRes as any)?.data?.eligible && (
                 <div className="space-y-3">
                   <h3 className="text-sm font-medium text-gray-900 dark:text-white">
                     Select a Platform Product
@@ -462,7 +462,7 @@ export default function RoyaltyPage() {
                       </tr>
                     </AdminTableHeader>
                     <AdminTableBody>
-                      {!platformRes?.data?.platformProducts?.length ? (
+                      {!(platformRes as any)?.data?.platformProducts?.length ? (
                         <AdminTableRow>
                           <AdminTableCell colSpan={4}>
                             <div className="text-center py-6 text-gray-500 dark:text-gray-400">
@@ -471,7 +471,7 @@ export default function RoyaltyPage() {
                           </AdminTableCell>
                         </AdminTableRow>
                       ) : (
-                        platformRes.data.platformProducts.map((p) => {
+                        (platformRes as any).data.platformProducts.map((p: any) => {
                           const isSelected =
                             selectedPlatformProductId === p.product_id;
                           return (
@@ -543,7 +543,7 @@ export default function RoyaltyPage() {
                 <Button
                   onClick={submitClaim}
                   disabled={
-                    !eligibilityRes?.data?.eligible ||
+                    !(eligibilityRes as any)?.data?.eligible ||
                     !selectedPlatformProductId ||
                     claimMutation.isPending
                   }

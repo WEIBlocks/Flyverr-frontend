@@ -31,10 +31,10 @@ export default function DashboardPage() {
   );
   const { data: earningsData, isLoading: isEarningsLoading } = useEarnings();
 
-  const stats = statsData?.data || null;
-  const resaleListings = resaleData?.data?.listings || [];
-  const earnings = earningsData?.data?.earnings || [];
-  const earningsOverview = earningsData?.data?.summary || null;
+  const stats = (statsData as any)?.data || null;
+  const resaleListings = (resaleData as any)?.data?.listings || [];
+  const earnings = (earningsData as any)?.data?.earnings || [];
+  const earningsOverview = (earningsData as any)?.data?.summary || null;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -294,8 +294,9 @@ export default function DashboardPage() {
                             <ImageWithFallback
                               src={listing.product.thumbnail_url}
                               alt={listing.product.title}
+                              width={40}
+                              height={40}
                               className="w-10 h-10 object-cover rounded"
-                              fallbackSrc="/placeholder-product.jpg"
                             />
                             <div>
                               <div className="text-sm font-medium text-gray-900 dark:text-white">

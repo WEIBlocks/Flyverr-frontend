@@ -62,8 +62,8 @@ export default function PayoutRequestsPage() {
   const createPayoutMethodMutation = useCreatePayoutMethod();
   const requestPayoutMutation = useRequestPayout();
 
-  const payoutInfo = payoutInfoData?.data;
-  const userPayouts = userPayoutsData?.data || [];
+  const payoutInfo = (payoutInfoData as any)?.data;
+  const userPayouts = (userPayoutsData as any)?.data || [];
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -526,7 +526,7 @@ export default function PayoutRequestsPage() {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 >
                   <option value="">Select payout method</option>
-                  {payoutInfo?.payoutMethods.active.map((method) => (
+                  {payoutInfo?.payoutMethods.active.map((method: PayoutMethod) => (
                     <option key={method.id} value={method.id}>
                       {method.payment_method} - {method.account_details.note}
                     </option>
