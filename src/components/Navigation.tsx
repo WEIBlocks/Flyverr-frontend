@@ -122,6 +122,16 @@ const Navigation = () => {
     setIsThemeMenuOpen(false);
   };
 
+  const handleThemeToggle = () => {
+    setIsThemeMenuOpen(!isThemeMenuOpen);
+    setIsProfileMenuOpen(false); // Close profile dropdown when opening theme dropdown
+  };
+
+  const handleProfileToggle = () => {
+    setIsProfileMenuOpen(!isProfileMenuOpen);
+    setIsThemeMenuOpen(false); // Close theme dropdown when opening profile dropdown
+  };
+
   // Don't render until mounted to prevent hydration mismatch
   if (!mounted) {
     return (
@@ -213,7 +223,7 @@ const Navigation = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+                onClick={handleThemeToggle}
                 className="text-gray-700 dark:text-gray-300 hover:text-flyverr-primary"
               >
                 {getThemeIcon()}
@@ -281,7 +291,7 @@ const Navigation = () => {
               <div className="relative" ref={profileDropdownRef}>
                 <Button
                   variant="ghost"
-                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  onClick={handleProfileToggle}
                   className="text-gray-700 dark:text-gray-300 hover:text-flyverr-primary"
                 >
                   <User className="w-4 h-4 mr-2" />
@@ -356,7 +366,7 @@ const Navigation = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+                onClick={handleThemeToggle}
                 className="text-gray-700 dark:text-gray-300 hover:text-flyverr-primary"
               >
                 {getThemeIcon()}

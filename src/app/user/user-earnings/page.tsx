@@ -36,7 +36,7 @@ export default function UserEarningsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
-
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const { data, isLoading, error, refetch } = useEarnings(
     currentPage,
     itemsPerPage
@@ -136,13 +136,30 @@ export default function UserEarningsPage() {
             Track your earnings from royalties and resales
           </p>
         </div>
-        <Button
+        {/* <Button
           onClick={() => refetch()}
           variant="outline"
           className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 self-start md:self-auto"
         >
           <RefreshCw
             className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
+          />
+          Refresh
+        </Button> */}
+
+        <Button
+          onClick={async () => {
+            if (!isRefreshing && !isLoading) {
+              setIsRefreshing(true);
+              await refetch();
+              setIsRefreshing(false);
+            }
+          }}
+          variant="outline"
+          className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 self-start md:self-auto"
+        >
+          <RefreshCw
+            className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
           />
           Refresh
         </Button>

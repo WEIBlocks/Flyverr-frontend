@@ -897,7 +897,7 @@ export default function ProductDetailPage() {
                     <div className="flex justify-between">
                       <span>Category:</span>
                       <span className="font-medium text-flyverr-text dark:text-white">
-                        {product.category_id || "Digital Product"}
+                        {product.category_name || "Digital Product"}
                       </span>
                     </div>
                   </div>

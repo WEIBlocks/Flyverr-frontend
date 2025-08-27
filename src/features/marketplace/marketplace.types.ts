@@ -43,6 +43,7 @@ export interface ProductDetail {
   id: string;
   creator_id: string;
   category_id: string | null;
+  category_name: string | null;
   title: string;
   description: string;
   thumbnail_url: string;
