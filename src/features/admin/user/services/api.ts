@@ -52,3 +52,25 @@ export function updateUserRole(
 ) {
   return api.put(`/admin/users/${userId}/role`, data);
 }
+
+export function searchUsers(params: {
+  email?: string;
+  status?: string;
+  role?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const qp = new URLSearchParams();
+  if (params.email) qp.append("email", params.email);
+  if (params.status && params.status !== "all") qp.append("status", params.status);
+  if (params.role && params.role !== "all") qp.append("role", params.role);
+  qp.append("page", String(params.page ?? 1));
+  qp.append("limit", String(params.limit ?? 50));
+
+  return api
+    .get(`/admin/users/search?${qp.toString()}`)
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err;
+    });
+}

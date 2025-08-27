@@ -51,8 +51,8 @@ export default function AdminLayout({
       iconName: "stale",
     },
     { 
-      name: "Pending Reviews", 
-      href: "/admin/pending-review", 
+      name: "Reviews", 
+      href: "/admin/reviews", 
       iconName: "reviews" 
     },
     {

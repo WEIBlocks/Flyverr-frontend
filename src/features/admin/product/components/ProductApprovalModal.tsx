@@ -98,7 +98,7 @@ export default function ProductApprovalModal({
       const numeric = parseFloat(value);
       setRoundPricing((prev) => ({
         ...prev,
-        [field]: isNaN(numeric) ? 0 : numeric,
+        [field]: value === "" ? Number.NaN : numeric,
       }));
     };
 
@@ -393,9 +393,9 @@ export default function ProductApprovalModal({
                       </span>
                       <Input
                         type="number"
-                        min="0"
+                        min="0.01"
                         step="0.01"
-                        value={roundPricing.originalPrice || ""}
+                        value={Number.isNaN(roundPricing.originalPrice) ? "" : roundPricing.originalPrice}
                         onChange={handlePriceChange("originalPrice")}
                         className="flex-1 bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-white font-semibold  focus:ring-green-500/20 dark:focus:ring-green-500/20 placeholder:text-green-300 dark:placeholder:text-green-400"
                         placeholder="100"
@@ -419,9 +419,9 @@ export default function ProductApprovalModal({
                       </span>
                       <Input
                         type="number"
-                        min="0"
+                        min="0.01"
                         step="0.01"
-                        value={roundPricing.blossomPrice || ""}
+                        value={Number.isNaN(roundPricing.blossomPrice) ? "" : roundPricing.blossomPrice}
                         onChange={handlePriceChange("blossomPrice")}
                         className="flex-1 bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-white font-semibold  focus:ring-blue-500/20 dark:focus:ring-blue-500/20 placeholder:text-blue-300 dark:placeholder:text-blue-400"
                         placeholder="120"
@@ -449,9 +449,9 @@ export default function ProductApprovalModal({
                       </span>
                       <Input
                         type="number"
-                        min="0"
+                        min="0.01"
                         step="0.01"
-                        value={roundPricing.evergreenPrice || ""}
+                        value={Number.isNaN(roundPricing.evergreenPrice) ? "" : roundPricing.evergreenPrice}
                         onChange={handlePriceChange("evergreenPrice")}
                         className="flex-1 bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-white font-semibold focus:ring-purple-500 dark:focus:ring-purple-500 placeholder:text-purple-300 dark:placeholder:text-purple-400"
                         placeholder="140"
@@ -479,9 +479,9 @@ export default function ProductApprovalModal({
                       </span>
                       <Input
                         type="number"
-                        min="0"
+                        min="0.01"
                         step="0.01"
-                        value={roundPricing.exitPrice || ""}
+                        value={Number.isNaN(roundPricing.exitPrice) ? "" : roundPricing.exitPrice}
                         onChange={handlePriceChange("exitPrice")}
                         className="flex-1 bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-white font-semibold  focus:ring-orange-500 dark:focus:ring-orange-500  placeholder:text-orange-300 dark:placeholder:text-orange-400"
                         placeholder="160"

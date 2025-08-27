@@ -161,11 +161,14 @@ export default function AdminProductDetailPage() {
   >("");
 
   const { data, isLoading, error } = useGetProductById(productId);
+
+  console.log("weiblocks prodcuts",data)
+  
   const editProductMutation = useEditProduct();
   const flagProductMutation = useFlagProduct();
 
   const [showHotDealModal, setShowHotDealModal] = useState(false);
-
+ 
   const {
     register,
     handleSubmit,
@@ -195,6 +198,7 @@ export default function AdminProductDetailPage() {
   useEffect(() => {
     if (data?.data?.product) {
       const product = data.data.product;
+    
       reset({
         title: product.title,
         description: product.description,
@@ -212,6 +216,8 @@ export default function AdminProductDetailPage() {
     }
   }, [data, reset]);
 
+
+ 
   const onSubmit = (formData: any) => {
     editProductMutation.mutate({
       productId,
@@ -419,11 +425,13 @@ export default function AdminProductDetailPage() {
 
             {/* Admin Actions */}
             <div className="flex flex-wrap gap-2 sm:gap-3 justify-start md:justify-end w-full md:w-auto">
-              <HotDealModal
-                productId={productId}
-                buttonLabel="Mark Hot Deal"
-                buttonClassName="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20 shadow-sm"
-              />
+              {Array.isArray(product.dealTypes) && !product.dealTypes.includes("hot_deals") && (
+                <HotDealModal
+                  productId={productId}
+                  buttonLabel="Mark Hot Deal"
+                  buttonClassName="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20 shadow-sm"
+                />
+              )}
               {product.status === "approved" && (
                 <Button
                   variant="outline"
@@ -524,96 +532,26 @@ export default function AdminProductDetailPage() {
                   {/* Thumbnail Upload */}
                   <div className="space-y-3">
                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Product Thumbnail *
+                      Product Images *
                     </Label>
-
-                    {/* Simple Thumbnail Area */}
                     <div className="w-full">
-                      {watch("thumbnail_url") ? (
-                        <div className="relative">
-                          <div className="w-full h-48 sm:h-60 md:h-64 lg:h-72 border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden relative">
-                            <ImageWithFallback
-                              src={watch("thumbnail_url")}
-                              alt="Product thumbnail"
-                              fill={true}
-                              fallbackIcon={
-                                <ImageIcon className="w-16 h-16 text-gray-400" />
-                              }
-                              className="w-full h-full object-cover"
-                            />
+                      {(() => {
+                        const allImages = [
+                          ...(product.thumbnail_url ? [product.thumbnail_url] : []),
+                          ...(Array.isArray(product.images_urls) ? product.images_urls : [])
+                        ];
+                        return allImages.length > 0 ? (
+                          <ProductImageCarousel images={allImages} />
+                        ) : (
+                          <div className="w-full h-48 sm:h-60 md:h-64 lg:h-72 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-700">
+                            <ImageIcon className="w-12 h-12 text-gray-400 mb-2" />
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              No images available
+                            </p>
                           </div>
-
-                          {/* Simple Remove Button */}
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setValue("thumbnail_url", "")}
-                            className="absolute top-2 right-2 w-6 h-6 p-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full"
-                          >
-                            ✕
-                          </Button>
-
-                          {/* Simple Change Button */}
-                          <div className="mt-2">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() =>
-                                document
-                                  .getElementById("thumbnail-upload")
-                                  ?.click()
-                              }
-                              className="w-full border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
-                            >
-                              <ImageIcon className="w-4 h-4 mr-2" />
-                              Change Image
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="w-full h-48 sm:h-60 md:h-64 lg:h-72 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-700">
-                          <ImageIcon className="w-12 h-12 text-gray-400 mb-2" />
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                            No thumbnail selected
-                          </p>
-                          <Button
-                            type="button"
-                            onClick={() =>
-                              document
-                                .getElementById("thumbnail-upload")
-                                ?.click()
-                            }
-                            className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white px-4 py-2 rounded-md"
-                          >
-                            <ImageIcon className="w-4 h-4 mr-2" />
-                            Upload Image
-                          </Button>
-                        </div>
-                      )}
+                        );
+                      })()}
                     </div>
-
-                    {/* Hidden file input */}
-                    <input
-                      id="thumbnail-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = (e) => {
-                            setValue(
-                              "thumbnail_url",
-                              e.target?.result as string
-                            );
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                    />
-
                     {errors.thumbnail_url && (
                       <p className="text-sm text-red-600 dark:text-red-400">
                         {errors.thumbnail_url.message}
@@ -1254,6 +1192,45 @@ export default function AdminProductDetailPage() {
         )}
 
         {/* Hot Deal Modal handled by component's internal state */}
+      </div>
+    </div>
+  );
+}
+
+function ProductImageCarousel({ images }: { images: string[] }) {
+  const [current, setCurrent] = useState(0);
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [images]);
+  if (!images || images.length === 0) return null;
+  return (
+    <div className="relative w-full h-48 sm:h-60 md:h-64 lg:h-72 overflow-hidden rounded-md border border-gray-300 dark:border-gray-600">
+      {images.map((img, idx) => (
+        <div
+          key={img}
+          className={`absolute top-0 left-0 w-full h-full transition-opacity duration-700 ${idx === current ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+        >
+          <ImageWithFallback
+            src={img}
+            alt={`Product image ${idx + 1}`}
+            fill={true}
+            fallbackIcon={<ImageIcon className="w-16 h-16 text-gray-400" />}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ))}
+      {/* Dots */}
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+        {images.map((_, idx) => (
+          <span
+            key={idx}
+            className={`w-2 h-2 rounded-full ${idx === current ? 'bg-flyverr-primary' : 'bg-gray-300 dark:bg-gray-600'}`}
+          />
+        ))}
       </div>
     </div>
   );

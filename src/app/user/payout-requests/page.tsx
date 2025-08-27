@@ -178,7 +178,7 @@ export default function PayoutRequestsPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:mt-12 mb-6">
         <div>
           <div className="flex items-center space-x-3 mb-2">
             <Button
@@ -190,7 +190,7 @@ export default function PayoutRequestsPage() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               Payout Requests
             </h1>
           </div>
@@ -198,7 +198,7 @@ export default function PayoutRequestsPage() {
             Manage your payout methods and request withdrawals
           </p>
         </div>
-        <div className="flex space-x-3">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-3 self-start md:self-auto">
           <Button
             onClick={refetchAll}
             variant="outline"

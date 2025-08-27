@@ -41,17 +41,17 @@ export default function PaginationControls({
   return (
     <div
       className={cn(
-        "flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700",
+        "flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-gray-700",
         className
       )}
     >
       {/* Left side: page size + total */}
-      <div className="flex items-center space-x-4">
-        <span className="text-sm text-gray-600 dark:text-gray-400">Show:</span>
+      <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+        <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Show:</span>
         <select
           value={pageSize}
           onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
-          className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          className="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-xs sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           disabled={disabled || !onPageSizeChange}
         >
           {[10, 20, 50, 100].map((n) => (
@@ -60,13 +60,16 @@ export default function PaginationControls({
             </option>
           ))}
         </select>
-        <span className="text-sm text-gray-600 dark:text-gray-400">
+        <span className="hidden sm:inline text-sm text-gray-600 dark:text-gray-400">
           of {totalCount} {entityLabel}
+        </span>
+        <span className="sm:hidden text-xs text-gray-600 dark:text-gray-400">
+          {totalCount} total
         </span>
       </div>
 
       {/* Right side: pager */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
         <Button
           variant="outline"
           size="sm"
@@ -83,8 +86,11 @@ export default function PaginationControls({
         >
           <ChevronLeft className="w-4 h-4" />
         </Button>
-        <span className="text-sm text-gray-600 dark:text-gray-400 px-3">
+        <span className="hidden sm:inline text-sm text-gray-600 dark:text-gray-400 px-3">
           Page {currentPage} of {Math.max(totalPages || 1, 1)}
+        </span>
+        <span className="sm:hidden text-xs text-gray-600 dark:text-gray-400 px-2">
+          Pg {currentPage}/{Math.max(totalPages || 1, 1)}
         </span>
         <Button
           variant="outline"

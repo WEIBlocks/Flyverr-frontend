@@ -113,7 +113,7 @@ export default function RoyaltyPage() {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 md:mt-12 ">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

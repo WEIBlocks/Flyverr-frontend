@@ -53,6 +53,7 @@ export function useLogin() {
         text: "Welcome back!",
         icon: "success",
         confirmButtonText: "OK",
+        allowEscapeKey:false, 
         allowOutsideClick: false,
       }).then(async (result) => {
         if (result.isConfirmed) {
