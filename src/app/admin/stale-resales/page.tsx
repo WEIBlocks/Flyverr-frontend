@@ -123,20 +123,20 @@ export default function StaleResalesPage() {
   const pagination = insuranceData?.data?.pagination;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900 dark:text-white">
             Insurance Management
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
             Manage expired insurance and overdue resales
           </p>
         </div>
         <Button
           onClick={() => refetch()}
-          className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
+          className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white text-sm sm:text-base px-3 sm:px-4 py-2"
         >
           <RefreshCw
             className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`}
@@ -146,10 +146,10 @@ export default function StaleResalesPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+      <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
               Status:
             </span>
             <div className="flex rounded-md overflow-hidden border border-gray-200 dark:border-gray-700">
@@ -161,7 +161,7 @@ export default function StaleResalesPage() {
                       setPage(1);
                       setStatus(s);
                     }}
-                    className={`px-3 py-1.5 text-sm transition-colors ${
+                    className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm transition-colors ${
                       status === s
                         ? "bg-flyverr-primary text-white"
                         : "bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50"
@@ -174,7 +174,7 @@ export default function StaleResalesPage() {
             </div>
           </div>
 
-          <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <label className="inline-flex items-center gap-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
             <input
               type="checkbox"
               checked={includeResold}
@@ -191,19 +191,19 @@ export default function StaleResalesPage() {
 
       {/* Summary Cards */}
       {isInitialLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <Card
               key={i}
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+              className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
             >
               <CardContent className="p-0">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
-                    <div className="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
-                    <div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+                    <div className="w-20 sm:w-24 h-3 sm:h-4 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+                    <div className="w-12 sm:w-16 h-6 sm:h-8 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
                   </div>
-                  <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
                 </div>
               </CardContent>
             </Card>
@@ -211,74 +211,74 @@ export default function StaleResalesPage() {
         </div>
       ) : (
         summary && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            <Card className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <CardContent className="p-0">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                       Total Records
                     </p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                       {summary.total}
                     </p>
                   </div>
-                  <div className="p-3 bg-blue-500/10 rounded-lg">
-                    <Package className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  <div className="p-2 sm:p-3 bg-blue-500/10 rounded-lg">
+                    <Package className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+            <Card className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <CardContent className="p-0">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                       Expired
                     </p>
-                    <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-red-600 dark:text-red-400">
                       {summary.expired}
                     </p>
                   </div>
-                  <div className="p-3 bg-red-500/10 rounded-lg">
-                    <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                  <div className="p-2 sm:p-3 bg-red-500/10 rounded-lg">
+                    <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+            <Card className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <CardContent className="p-0">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                       Overdue
                     </p>
-                    <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-600 dark:text-orange-400">
                       {summary.overdue}
                     </p>
                   </div>
-                  <div className="p-3 bg-orange-500/10 rounded-lg">
-                    <Clock className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                  <div className="p-2 sm:p-3 bg-orange-500/10 rounded-lg">
+                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+            <Card className="bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <CardContent className="p-0">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                       Total Fees
                     </p>
-                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600 dark:text-green-400">
                       {formatCurrency(summary.totalInsuranceFees)}
                     </p>
                   </div>
-                  <div className="p-3 bg-green-500/10 rounded-lg">
-                    <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  <div className="p-2 sm:p-3 bg-green-500/10 rounded-lg">
+                    <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                   </div>
                 </div>
               </CardContent>
@@ -289,12 +289,14 @@ export default function StaleResalesPage() {
 
       {/* Records Table */}
       <Card className="border-0 bg-white dark:bg-gray-800">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Shield className="h-5 w-5 text-amber-500" />
-            <span>Insurance Records</span>
+        <CardHeader className="p-3 sm:p-4 lg:p-6">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:space-x-2 text-base sm:text-lg">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
+              <span>Insurance Records</span>
+            </div>
             {summary && (
-              <Badge variant="outline" className="ml-2">
+              <Badge variant="outline" className="w-fit sm:ml-2 text-xs sm:text-sm">
                 {summary.overdue} overdue
               </Badge>
             )}
@@ -302,33 +304,33 @@ export default function StaleResalesPage() {
         </CardHeader>
         <CardContent className="p-0">
           {isInitialLoading ? (
-            <div className="p-6">
-              <div className="w-full h-8 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse mb-4" />
+            <div className="p-3 sm:p-4 lg:p-6">
+              <div className="w-full h-6 sm:h-8 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse mb-3 sm:mb-4" />
               {[1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={i}
-                  className="h-10 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse mb-2"
+                  className="h-8 sm:h-10 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse mb-2"
                 />
               ))}
             </div>
           ) : records.length === 0 ? (
-            <div className="p-6 text-center">
-              <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400">
+            <div className="p-3 sm:p-4 lg:p-6 text-center">
+              <Package className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
+              <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
                 No insurance records found
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
+              <table className="min-w-full text-xs sm:text-sm">
                 <thead className="bg-gray-50 dark:bg-gray-700/50 text-left text-gray-600 dark:text-gray-300">
                   <tr>
-                    <th className="px-4 py-3">Product</th>
-                    <th className="px-4 py-3">Owner</th>
-                    <th className="px-4 py-3">Insurance Fee</th>
-                    <th className="px-4 py-3">Deadline</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Days Overdue</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 min-w-[200px] sm:min-w-[250px] lg:min-w-[300px]">Product</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 min-w-[150px] sm:min-w-[200px] lg:min-w-[250px]">Owner</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 min-w-[120px] sm:min-w-[150px] lg:min-w-[180px]">Insurance Fee</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 min-w-[120px] sm:min-w-[150px] lg:min-w-[180px]">Deadline</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 min-w-[120px] sm:min-w-[150px] lg:min-w-[180px]">Status</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 min-w-[120px] sm:min-w-[150px] lg:min-w-[180px]">Days Overdue</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -341,9 +343,9 @@ export default function StaleResalesPage() {
                         setIsDetailOpen(true);
                       }}
                     >
-                      <td className="px-4 py-3">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3">
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-white">
+                          <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">
                             {record.product.title}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -352,9 +354,9 @@ export default function StaleResalesPage() {
                           </p>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3">
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-white">
+                          <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">
                             {record.user.firstName} {record.user.lastName}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -362,14 +364,14 @@ export default function StaleResalesPage() {
                           </p>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="font-medium text-green-600 dark:text-green-400">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3">
+                        <span className="font-medium text-green-600 dark:text-green-400 text-xs sm:text-sm">
                           {formatCurrency(record.insuranceFee)}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3">
                         <div>
-                          <p className="text-gray-900 dark:text-white">
+                          <p className="text-gray-900 dark:text-white text-xs sm:text-sm">
                             {formatDate(record.insuranceDeadline)}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -377,34 +379,34 @@ export default function StaleResalesPage() {
                           </p>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center space-x-2">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:space-x-2">
                           <Badge
                             variant={
                               record.isOverdue ? "destructive" : "secondary"
                             }
-                            className="text-xs"
+                            className="text-xs w-fit"
                           >
                             {record.insuranceStatus}
                           </Badge>
                           {record.isOverdue && (
-                            <Badge variant="destructive" className="text-xs">
+                            <Badge variant="destructive" className="text-xs w-fit">
                               {record.daysOverdue}d overdue
                             </Badge>
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center space-x-2">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3">
+                        <div className="flex items-center gap-1 sm:space-x-2">
                           {record.isOverdue ? (
                             <>
-                              <Clock className="h-4 w-4 text-red-500" />
-                              <span className="text-red-600 font-medium">
+                              <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-red-500" />
+                              <span className="text-red-600 font-medium text-xs sm:text-sm">
                                 {record.daysOverdue} days
                               </span>
                             </>
                           ) : (
-                            <span className="text-gray-500 dark:text-gray-400">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
                               -
                             </span>
                           )}
@@ -436,12 +438,12 @@ export default function StaleResalesPage() {
           onPageSizeChange={handleLimitChange}
           disabled={isFetching}
           entityLabel="records"
-          className="mt-4"
+          className="mt-4 sm:mt-6"
         />
       )}
 
       {pagination && (
-        <div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+        <div className="text-center text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-2 sm:mt-3">
           Showing {(page - 1) * limit + 1} to{" "}
           {Math.min(page * limit, pagination.total)} of {pagination.total}{" "}
           records

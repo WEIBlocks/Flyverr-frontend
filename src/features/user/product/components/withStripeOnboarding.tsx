@@ -290,7 +290,7 @@ export default function withStripeOnboarding<T extends object>(
                 <Button
                   onClick={handleCompleteOnboarding}
                   disabled={!selectedCountry || isLoading}
-                  className="bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
+                  className="bg-amber-600 hover:bg-amber-700 text-gray-500 disabled:opacity-50"
                 >
                   {isLoading ? (
                     <>

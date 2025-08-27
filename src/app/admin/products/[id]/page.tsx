@@ -416,13 +416,13 @@ export default function AdminProductDetailPage() {
         </Button>
 
         {/* Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
                 Product Details
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-2">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2">
                 {product.status === "deleted"
                   ? "This product has been deleted"
                   : "View and edit product information"}
@@ -795,7 +795,7 @@ export default function AdminProductDetailPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 text-wrap whitespace-normal break-words">
                     <p>{product.creator.email}</p>
                     <p>Status: {product.creator.status}</p>
                   </div>
@@ -951,7 +951,7 @@ export default function AdminProductDetailPage() {
                     Licenses
                   </h4>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-xs sm:text-sm">
                       <thead>
                         <tr className="text-left text-gray-600 dark:text-gray-400">
                           <th className="py-2 pr-3">License ID</th>
@@ -1018,7 +1018,7 @@ export default function AdminProductDetailPage() {
                     Transactions
                   </h4>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-xs sm:text-sm">
                       <thead>
                         <tr className="text-left text-gray-600 dark:text-gray-400">
                           <th className="py-2 pr-3">Tx ID</th>
@@ -1192,7 +1192,7 @@ export default function AdminProductDetailPage() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-end space-x-3 pt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-end space-x-3 pt-4">
                   <Button
                     variant="outline"
                     onClick={() => setShowFlagModal(false)}
@@ -1266,7 +1266,7 @@ function ProductImageCarousel({ images }: { images: string[] }) {
   }, [images]);
   if (!images || images.length === 0) return null;
   return (
-    <div className="relative w-full h-48 sm:h-60 md:h-64 lg:h-72 overflow-hidden rounded-md border border-gray-300 dark:border-gray-600">
+    <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-56 xl:h-64 overflow-hidden rounded-md border border-gray-300 dark:border-gray-600">
       {images.map((img, idx) => (
         <div
           key={img}
@@ -1276,17 +1276,17 @@ function ProductImageCarousel({ images }: { images: string[] }) {
             src={img}
             alt={`Product image ${idx + 1}`}
             fill={true}
-            fallbackIcon={<ImageIcon className="w-16 h-16 text-gray-400" />}
+            fallbackIcon={<ImageIcon className="w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-gray-400" />}
             className="w-full h-full object-cover"
           />
         </div>
       ))}
       {/* Dots */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1.5 sm:gap-2">
         {images.map((_, idx) => (
           <span
             key={idx}
-            className={`w-2 h-2 rounded-full ${idx === current ? 'bg-flyverr-primary' : 'bg-gray-300 dark:bg-gray-600'}`}
+            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${idx === current ? 'bg-flyverr-primary' : 'bg-gray-300 dark:bg-gray-600'}`}
           />
         ))}
       </div>
