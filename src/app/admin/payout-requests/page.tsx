@@ -248,7 +248,7 @@ export default function AdminPayoutRequestsPage() {
             />
             Refresh
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
           >
@@ -258,7 +258,7 @@ export default function AdminPayoutRequestsPage() {
           <Button className="bg-flyverr-primary hover:bg-flyverr-primary/90 text-white">
             <BarChart3 className="w-4 h-4 mr-2" />
             Analytics
-          </Button>
+          </Button> */}
         </div>
       </div>
 

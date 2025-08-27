@@ -277,7 +277,7 @@ export default function AdminPlatformRevenuePage() {
             Monitor platform earnings and transaction analytics
           </p>
         </div>
-        <div className="flex items-center space-x-3">
+        {/* <div className="flex items-center space-x-3">
           <Button
             variant="outline"
             className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
@@ -289,7 +289,7 @@ export default function AdminPlatformRevenuePage() {
             <BarChart3 className="w-4 h-4 mr-2" />
             Analytics
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Revenue Overview Cards */}

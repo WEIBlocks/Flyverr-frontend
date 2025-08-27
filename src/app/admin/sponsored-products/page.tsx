@@ -254,7 +254,7 @@ export default function AdminSponsoredProductsPage() {
             Monitor and manage product sponsorships
           </p>
         </div>
-        <div className="flex items-center space-x-3">
+        {/* <div className="flex items-center space-x-3">
           <Button
             variant="outline"
             className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10"
@@ -266,7 +266,7 @@ export default function AdminSponsoredProductsPage() {
             <BarChart3 className="w-4 h-4 mr-2" />
             View Analytics
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Stats Cards */}
