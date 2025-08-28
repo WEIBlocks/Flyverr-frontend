@@ -31,6 +31,9 @@ interface Product {
   thumbnail_url: string;
   file_type: string;
   file_size: number;
+  dealTypes: string[];
+  images_urls: string[];
+  categories: Category[];
   original_price: number;
   total_licenses: number;
   remaining_licenses: number;

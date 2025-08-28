@@ -44,8 +44,8 @@ export default function UserListingsPage() {
     }
   }, [isLoading]);
 
-  const listings = data?.data?.listings || [];
-  const pagination = data?.data?.pagination;
+  const listings = (data as any)?.data?.listings || [];
+  const pagination = (data as any)?.data?.pagination;
 
   const getStageColor = (stage: string) => {
     switch (stage) {
