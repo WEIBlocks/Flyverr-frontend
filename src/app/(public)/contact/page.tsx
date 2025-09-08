@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { sendContactForm } from "@/features/contact/services/api";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -83,10 +84,9 @@ export default function ContactPage() {
     }
 
     setIsSubmitting(true);
-
-    // Simulate API call
-    setTimeout(() => {
-     
+    try {
+      await sendContactForm(formData);
+      toast.success("Your message has been sent successfully!");
       setFormData({
         firstName: "",
         lastName: "",
@@ -94,8 +94,13 @@ export default function ContactPage() {
         subject: "",
         message: "",
       });
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.error || "Failed to send message. Please try again."
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   const contactInfo = [
@@ -141,13 +146,13 @@ export default function ContactPage() {
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-32 h-32 sm:w-48 sm:h-48 md:w-72 md:h-72 lg:w-72 lg:h-72 xl:w-72 xl:h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute top-40 right-20 w-40 h-40 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-96 xl:h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-20 left-1/3 w-36 h-36 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-80 xl:h-80 bg-indigo-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+          <div className="absolute bottom-20 left-1/3 w-36 h-36 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-80 xl:w-80 bg-indigo-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Badge */}
           <div className="inline-flex items-center space-x-2 px-3 py-2 sm:px-4 sm:py-2 md:px-4 md:py-2 lg:px-4 lg:py-2 xl:px-4 xl:py-2 bg-flyverr-primary text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm font-medium rounded-full shadow-lg mb-6 sm:mb-8">
-            <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 md:w-4 md:h-4 lg:w-4 lg:h-4 xl:w-4 xl:h-4" />
+            <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 md:w-4 md:h-4 lg:w-4 xl:w-4" />
             <span>Get in Touch</span>
           </div>
 
