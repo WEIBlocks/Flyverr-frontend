@@ -167,140 +167,140 @@ export default function UserListingsPage() {
       {/* <div className="overflow-x-auto -mx-4 sm:mx-0">
         <div className="max-h-[60vh] md:max-h-[70vh] lg:max-h-none ">
           <div className="min-w-[720px] sm:min-w-0 px-4 sm:px-0 overflow-y-auto "> */}
-            <AdminTable>
-              <AdminTableHeader>
-                <tr>
-                  <AdminTableHeaderCell>Product</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Price</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Stage</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Status</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Round</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Acquired Date</AdminTableHeaderCell>
-                </tr>
-              </AdminTableHeader>
-              <AdminTableBody>
-                {isLoading ? (
-                  // Loading skeleton
-                  [...Array(10)].map((_, index) => (
-                    <AdminTableRow key={index}>
-                      <AdminTableCell>
-                        <div className="animate-pulse flex items-center space-x-3">
-                          <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                          <div>
-                            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded mb-1 w-40"></div>
-                            <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
-                          </div>
-                        </div>
-                      </AdminTableCell>
-                      {[...Array(5)].map((_, i) => (
-                        <AdminTableCell key={i}>
-                          <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16 animate-pulse"></div>
-                        </AdminTableCell>
-                      ))}
-                    </AdminTableRow>
-                  ))
-                ) : filteredListings.length === 0 ? (
-                  <AdminTableRow>
-                    <AdminTableCell colSpan={6}>
-                      <div className="text-center py-12">
-                        <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                        <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">
-                          {searchTerm
-                            ? "No matching listings found"
-                            : "No listings yet"}
-                        </h3>
-                        <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                          {searchTerm
-                            ? "Try adjusting your search terms to find what you're looking for."
-                            : "Your resale-eligible licenses will appear here once you have some."}
-                        </p>
+      <AdminTable>
+        <AdminTableHeader>
+          <tr>
+            <AdminTableHeaderCell>Product</AdminTableHeaderCell>
+            <AdminTableHeaderCell>Price</AdminTableHeaderCell>
+            <AdminTableHeaderCell>Stage</AdminTableHeaderCell>
+            <AdminTableHeaderCell>Status</AdminTableHeaderCell>
+            <AdminTableHeaderCell>Round</AdminTableHeaderCell>
+            <AdminTableHeaderCell>Acquired Date</AdminTableHeaderCell>
+          </tr>
+        </AdminTableHeader>
+        <AdminTableBody>
+          {isLoading ? (
+            // Loading skeleton
+            [...Array(10)].map((_, index) => (
+              <AdminTableRow key={index}>
+                <AdminTableCell>
+                  <div className="animate-pulse flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                    <div>
+                      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded mb-1 w-40"></div>
+                      <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
+                    </div>
+                  </div>
+                </AdminTableCell>
+                {[...Array(5)].map((_, i) => (
+                  <AdminTableCell key={i}>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-16 animate-pulse"></div>
+                  </AdminTableCell>
+                ))}
+              </AdminTableRow>
+            ))
+          ) : filteredListings.length === 0 ? (
+            <AdminTableRow>
+              <AdminTableCell colSpan={6}>
+                <div className="text-center py-12">
+                  <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">
+                    {searchTerm
+                      ? "No matching listings found"
+                      : "No listings yet"}
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                    {searchTerm
+                      ? "Try adjusting your search terms to find what you're looking for."
+                      : "Your resale-eligible licenses will appear here once you have some."}
+                  </p>
+                </div>
+              </AdminTableCell>
+            </AdminTableRow>
+          ) : (
+            filteredListings.map((listing: ResaleListing) => (
+              <AdminTableRow key={listing.id}>
+                {/* Product */}
+                <AdminTableCell>
+                  <div className="flex items-center space-x-3">
+                    <ImageWithFallback
+                      src={listing.product.thumbnail_url}
+                      alt={listing.product.title}
+                      className="w-12 h-12 object-cover rounded-lg"
+                      fallbackSrc="/placeholder-product.jpg"
+                    />
+                    <div>
+                      <div className="font-medium text-gray-900 dark:text-white line-clamp-2 max-w-[220px] sm:max-w-none">
+                        {listing.product.title}
                       </div>
-                    </AdminTableCell>
-                  </AdminTableRow>
-                ) : (
-                  filteredListings.map((listing: ResaleListing) => (
-                    <AdminTableRow key={listing.id}>
-                      {/* Product */}
-                      <AdminTableCell>
-                        <div className="flex items-center space-x-3">
-                          <ImageWithFallback
-                            src={listing.product.thumbnail_url}
-                            alt={listing.product.title}
-                            className="w-12 h-12 object-cover rounded-lg"
-                            fallbackSrc="/placeholder-product.jpg"
-                          />
-                          <div>
-                            <div className="font-medium text-gray-900 dark:text-white line-clamp-2 max-w-[220px] sm:max-w-none">
-                              {listing.product.title}
-                            </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              ID: {listing.id.slice(0, 8)}...
-                            </div>
-                          </div>
-                        </div>
-                      </AdminTableCell>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        ID: {listing.id.slice(0, 8)}...
+                      </div>
+                    </div>
+                  </div>
+                </AdminTableCell>
 
-                      {/* Price */}
-                      <AdminTableCell>
-                        <span className="font-medium text-green-600 dark:text-green-400">
-                          {formatPrice(listing.product.original_price)}
-                        </span>
-                      </AdminTableCell>
+                {/* Price */}
+                <AdminTableCell>
+                  <span className="font-medium text-green-600 dark:text-green-400">
+                    {formatPrice(listing.product.original_price)}
+                  </span>
+                </AdminTableCell>
 
-                      {/* Stage */}
-                      <AdminTableCell>
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStageColor(
-                            listing.product.current_stage
-                          )}`}
-                        >
-                          {listing.product.current_stage}
-                        </span>
-                      </AdminTableCell>
+                {/* Stage */}
+                <AdminTableCell>
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStageColor(
+                      listing.product.current_stage
+                    )}`}
+                  >
+                    {listing.product.current_stage}
+                  </span>
+                </AdminTableCell>
 
-                      {/* Status */}
-                      <AdminTableCell>
-                        <div className="flex items-center space-x-2">
-                          <div
-                            className={`w-2 h-2 rounded-full ${
-                              listing.is_listed_for_resale
-                                ? "bg-green-500"
-                                : "bg-yellow-500"
-                            }`}
-                          ></div>
-                          <span className="text-sm">
-                            {listing.is_listed_for_resale ? "Listed" : "Available"}
-                          </span>
-                          {listing.resale_eligible && (
-                            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full ml-2">
-                              Eligible
-                            </span>
-                          )}
-                        </div>
-                      </AdminTableCell>
+                {/* Status */}
+                <AdminTableCell>
+                  <div className="flex items-center space-x-2">
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        listing.is_listed_for_resale
+                          ? "bg-green-500"
+                          : "bg-yellow-500"
+                      }`}
+                    ></div>
+                    <span className="text-sm">
+                      {listing.is_listed_for_resale ? "Listed" : "Available"}
+                    </span>
+                    {listing.resale_eligible && (
+                      <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full ml-2">
+                        Eligible
+                      </span>
+                    )}
+                  </div>
+                </AdminTableCell>
 
-                      {/* Round */}
-                      <AdminTableCell>
-                        <span className="text-gray-900 dark:text-white">
-                          {listing.product.current_round}
-                        </span>
-                      </AdminTableCell>
+                {/* Round */}
+                <AdminTableCell>
+                  <span className="text-gray-900 dark:text-white">
+                    {listing.product.current_round}
+                  </span>
+                </AdminTableCell>
 
-                      {/* Acquired Date */}
-                      <AdminTableCell>
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-500 dark:text-gray-400">
-                            {formatDate(listing.acquired_at)}
-                          </span>
-                        </div>
-                      </AdminTableCell>
-                    </AdminTableRow>
-                  ))
-                )}
-              </AdminTableBody>
-            </AdminTable>
-          {/* </div>
+                {/* Acquired Date */}
+                <AdminTableCell>
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-500 dark:text-gray-400">
+                      {formatDate(listing.acquired_at)}
+                    </span>
+                  </div>
+                </AdminTableCell>
+              </AdminTableRow>
+            ))
+          )}
+        </AdminTableBody>
+      </AdminTable>
+      {/* </div>
         </div>
       </div> */}
 
