@@ -27,8 +27,11 @@ import {
 import { useGetUserById } from "@/features/admin/user/hooks/useGetUserById";
 import { useUpdateUserStatus } from "@/features/admin/user/hooks/useUpdateUserStatus";
 import { useUpdateUserRole } from "@/features/admin/user/hooks/useUpdateUserRole";
+import { useAssignBadge } from "@/features/admin/badge/hooks/useAssignBadge";
+import { useGetUserBadgeStatus } from "@/features/admin/badge/hooks/useGetUserBadgeStatus";
 import AdminUserDetailSkeleton from "@/components/ui/AdminUserDetailSkeleton";
 import StatusUpdateModal from "@/components/ui/StatusUpdateModal";
+import BadgeAssignmentModal from "@/components/ui/BadgeAssignmentModal";
 import {
   AdminUser,
   UserStatistics,
@@ -49,10 +52,14 @@ export default function AdminUserDetailPage() {
     reason: "",
   });
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
 
   const { data, isLoading, error } = useGetUserById(userId);
+  const { data: badgeData, isLoading: badgeLoading } =
+    useGetUserBadgeStatus(userId);
   const updateStatusMutation = useUpdateUserStatus();
   const updateRoleMutation = useUpdateUserRole();
+  const assignBadgeMutation = useAssignBadge();
 
   // Initialize editData when user data loads
   React.useEffect(() => {
@@ -172,6 +179,20 @@ export default function AdminUserDetailPage() {
         onError: (error) => {
           // Show error message or toast
           swal("Error", createUserFriendlyError(error), "error");
+        },
+      }
+    );
+  };
+
+  const handleBadgeAssignment = () => {
+    assignBadgeMutation.mutate(
+      {
+        userId,
+        badgeType: "reseller",
+      },
+      {
+        onSuccess: () => {
+          setIsBadgeModalOpen(false);
         },
       }
     );
@@ -431,6 +452,206 @@ export default function AdminUserDetailPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Badge Management */}
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <div className="p-1.5 sm:p-2 bg-flyverr-primary/10 rounded-lg">
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
+                  </div>
+                  Badge Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Verified Reseller Badge
+                    </Label>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                      <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                        Verified Reseller
+                      </Badge>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsBadgeModalOpen(true)}
+                        className="border-flyverr-primary text-flyverr-primary hover:bg-flyverr-primary/10 text-sm sm:text-base px-3 sm:px-4 py-2"
+                      >
+                        <Crown className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                        Make User Verified Reseller
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                    Assign the verified reseller badge to allow this user to
+                    create and list products for sale. This badge is required
+                    for product creation.
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* User Badge Status */}
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <div className="p-1.5 sm:p-2 bg-flyverr-primary/10 rounded-lg">
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-flyverr-primary" />
+                  </div>
+                  User Badge Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {badgeLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-6 h-6 animate-spin rounded-full border-2 border-flyverr-primary border-t-transparent" />
+                  </div>
+                ) : badgeData?.data ? (
+                  <div className="space-y-4">
+                    {/* Badge Count and Status */}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          Total Badges Earned
+                        </p>
+                        <p className="text-2xl font-bold text-flyverr-primary">
+                          {badgeData.data.badgeCount}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          Can Create Products
+                        </p>
+                        <Badge
+                          className={
+                            badgeData.data.canCreateProducts
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800"
+                              : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800"
+                          }
+                        >
+                          {badgeData.data.canCreateProducts ? "Yes" : "No"}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* User's Badges */}
+                    {badgeData.data.badges.length > 0 ? (
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-gray-900 dark:text-white">
+                          Earned Badges:
+                        </h4>
+                        <div className="space-y-2">
+                          {badgeData.data.badges.map((userBadge) => (
+                            <div
+                              key={userBadge.id}
+                              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+                            >
+                              <div className="flex items-center gap-4">
+                                <div
+                                  className="w-12 h-12 rounded-lg flex items-center justify-center shadow-md border-2"
+                                  style={{
+                                    backgroundColor:
+                                      userBadge.badge.color + "15",
+                                    borderColor: userBadge.badge.color + "40",
+                                  }}
+                                >
+                                  <img
+                                    src={userBadge.badge.icon_url}
+                                    alt={userBadge.badge.display_name}
+                                    className="w-8 h-8 object-contain"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = "none";
+                                    }}
+                                  />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-sm text-gray-900 dark:text-white">
+                                    {userBadge.badge.display_name}
+                                  </p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    Earned:{" "}
+                                    {new Date(
+                                      userBadge.earned_at
+                                    ).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800 text-xs">
+                                  {userBadge.badge.tier}
+                                </Badge>
+                                {userBadge.current_amount > 0 && (
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    ${userBadge.current_amount}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6">
+                        <Crown className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          No badges earned yet
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Highest Badges */}
+                    {(badgeData.data.highestBadges.creator ||
+                      badgeData.data.highestBadges.reseller) && (
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-gray-900 dark:text-white">
+                          Highest Achievements:
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {badgeData.data.highestBadges.creator && (
+                            <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                              <div className="flex items-center gap-2">
+                                <Users className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                                  Creator:{" "}
+                                  {
+                                    badgeData.data.highestBadges.creator
+                                      .display_name
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                          {badgeData.data.highestBadges.reseller && (
+                            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                              <div className="flex items-center gap-2">
+                                <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                                  Reseller:{" "}
+                                  {
+                                    badgeData.data.highestBadges.reseller
+                                      .display_name
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Unable to load badge information
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Right Column - Stats & Info */}
@@ -596,6 +817,16 @@ export default function AdminUserDetailPage() {
         currentStatus={user.status}
         onUpdate={handleStatusUpdate}
         isLoading={updateStatusMutation.isPending}
+      />
+
+      {/* Badge Assignment Modal */}
+      <BadgeAssignmentModal
+        isOpen={isBadgeModalOpen}
+        onClose={() => setIsBadgeModalOpen(false)}
+        onConfirm={handleBadgeAssignment}
+        isLoading={assignBadgeMutation.isPending}
+        userName={`${user.first_name} ${user.last_name}`}
+        badgeType="reseller"
       />
     </div>
   );

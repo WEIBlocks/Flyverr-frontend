@@ -18,6 +18,7 @@ import {
   CheckCircle,
   ArrowRight,
   Star,
+  Gift,
 } from "lucide-react";
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,6 +41,11 @@ const schema = yup.object().shape({
     .email("Invalid email address")
     .required("Email is required"),
   password: yup.string().required("Password is required"),
+  referralCode: yup
+    .string()
+    .required("Referral code is required")
+    .min(3, "Referral code must be at least 3 characters")
+    .max(20, "Referral code must be less than 20 characters"),
 });
 
 export default function SignupPage() {
@@ -47,6 +53,7 @@ export default function SignupPage() {
   const [isSocialLoading, setIsSocialLoading] = React.useState(false);
   const [agreedToTerms, setAgreedToTerms] = React.useState(false);
   const [passwordStrength, setPasswordStrength] = React.useState(0);
+  const [codeCopied, setCodeCopied] = React.useState(false);
   const { register: registerForm, isRegistering } = useRegister();
   const router = useRouter();
 
@@ -85,8 +92,6 @@ export default function SignupPage() {
       },
     });
   };
-
- 
 
   return (
     <ProtectedRoute>
@@ -169,6 +174,19 @@ export default function SignupPage() {
                         </h3>
                         <p className="text-xs text-muted-foreground">
                           Automated digital product delivery
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <div className="p-1.5 rounded-full bg-primary/10 dark:bg-primary/20">
+                        <Gift className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm text-foreground">
+                          Referral Rewards
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Earn $1 for signups and $4 for first purchases
                         </p>
                       </div>
                     </div>
@@ -284,6 +302,12 @@ export default function SignupPage() {
                   <p className="text-xs text-muted-foreground">
                     Join thousands of successful digital creators
                   </p>
+                  <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-xs text-blue-700 dark:text-blue-300 font-medium">
+                      <Gift className="w-3 h-3 inline mr-1" />
+                      Referral code required to sign up
+                    </p>
+                  </div>
                 </div>
 
                 {/* Social Login Buttons */}
@@ -528,6 +552,40 @@ export default function SignupPage() {
                         </p>
                       </div>
                     )}
+                  </div>
+
+                  <div>
+                    <Label
+                      htmlFor="referralCode"
+                      className="text-xs font-medium text-muted-foreground"
+                    >
+                      Referral Code
+                    </Label>
+                    <div className="relative mt-1">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <Gift className="w-4 h-4" />
+                      </span>
+                      <Input
+                        id="referralCode"
+                        {...register("referralCode")}
+                        type="text"
+                        autoComplete="off"
+                        placeholder="Enter referral code"
+                        className="pl-10 h-10 border-input focus:border-flyverr-primary focus:ring-flyverr-primary uppercase"
+                        onChange={(e) => {
+                          e.target.value = e.target.value.toUpperCase();
+                          register("referralCode").onChange(e);
+                        }}
+                      />
+                      {errors.referralCode && (
+                        <p className="text-xs text-red-500">
+                          {errors.referralCode.message}
+                        </p>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Enter the referral code provided by your referrer
+                    </p>
                   </div>
 
                   {/* Terms and Conditions */}

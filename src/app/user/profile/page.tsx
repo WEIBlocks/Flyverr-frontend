@@ -12,6 +12,7 @@ import { useEditCurrentUser, useGetCurrentUser } from "@/features/auth/hooks";
 import { useForm } from "react-hook-form";
 import { isPlainObject } from "@/lib/utils";
 import type { EditUserData } from "@/features/auth/auth.types";
+import { ReferralCodeCard } from "@/features/user/referral/components";
 
 // Skeleton Loading Component
 const ProfileSkeleton = () => (
@@ -370,11 +371,6 @@ function ProfileContent() {
           <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800 shadow-lg">
             <CardContent className="p-6">
               <div className="text-center">
-              
-                
-
-                
-
                 {/* User Info */}
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
                   {watchedValues.firstName} {watchedValues.lastName}
@@ -581,6 +577,9 @@ function ProfileContent() {
               </Button>
             </div>
           </Card>
+
+          {/* Referral Code */}
+          <ReferralCodeCard />
 
           {/* Account Information */}
           <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg">

@@ -30,30 +30,30 @@ export default function AdminLayout({
       href: "/admin/pending-products",
       iconName: "pending",
     },
-    { 
-      name: "All Products", 
-      href: "/admin/products", 
-      iconName: "all-products" 
+    {
+      name: "All Products",
+      href: "/admin/products",
+      iconName: "all-products",
     },
-    { 
-      name: "Platform Products", 
-      href: "/admin/platform-products", 
-      iconName: "platform" 
+    {
+      name: "Platform Products",
+      href: "/admin/platform-products",
+      iconName: "platform",
     },
-    { 
-      name: "Users", 
-      href: "/admin/users", 
-      iconName: "users" 
+    {
+      name: "Users",
+      href: "/admin/users",
+      iconName: "users",
     },
     {
       name: "Stale Resales (30d)",
       href: "/admin/stale-resales",
       iconName: "stale",
     },
-    { 
-      name: "Reviews", 
-      href: "/admin/reviews", 
-      iconName: "reviews" 
+    {
+      name: "Reviews",
+      href: "/admin/reviews",
+      iconName: "reviews",
     },
     {
       name: "Sponsored Products",
@@ -69,6 +69,11 @@ export default function AdminLayout({
       name: "Payout Requests",
       href: "/admin/payout-requests",
       iconName: "payout",
+    },
+    {
+      name: "Badge & Referral Stats",
+      href: "/admin/badges",
+      iconName: "badge",
     },
   ];
 

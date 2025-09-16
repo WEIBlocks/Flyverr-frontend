@@ -36,6 +36,7 @@ export default function UserLayout({
       iconName: "payout",
     },
     { name: "Royalty", href: "/user/royalty", iconName: "revenue" },
+    { name: "My Badges", href: "/user/badges", iconName: "badge" },
   ];
   return (
     <ProtectedRoute requireAuth allowedRoles={["user"]}>

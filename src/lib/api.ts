@@ -7,7 +7,6 @@ import { storage } from "./utils";
  */
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api",
-
 });
 
 /**
@@ -40,19 +39,22 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Clear stored auth data on unauthorized
       storage.clearAuth();
-      
+
       // Optionally redirect to login (uncomment if needed)
       // if (typeof window !== 'undefined') {
       //   window.location.href = "/login";
       // }
     }
-    
+
     // Handle token expiration (if you have refresh token logic)
-    if (error.response?.status === 403 && error.response?.data?.message?.includes('expired')) {
+    if (
+      error.response?.status === 403 &&
+      error.response?.data?.message?.includes("expired")
+    ) {
       // Could implement refresh token logic here
       storage.clearAuth();
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -66,14 +68,15 @@ export const login = (data: { email: string; password: string }) =>
 
 /**
  * Signup API helper - Updated to match backend requirements
- * @param data { firstName, lastName, username, email, password }
+ * @param data { firstName, lastName, username, email, password, referralCode }
  */
-export const signup = (data: { 
-  firstName: string; 
-  lastName: string; 
-  username: string; 
-  email: string; 
-  password: string; 
+export const signup = (data: {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+  referralCode: string;
 }) => api.post("/auth/signup", data);
 
 /**
@@ -91,4 +94,4 @@ export const resetPassword = (data: { password: string; token: string }) => {
   return api.post("/auth/reset-password", data);
 };
 
-export default api; 
+export default api;
