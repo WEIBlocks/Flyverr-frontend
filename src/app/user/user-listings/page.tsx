@@ -11,6 +11,7 @@ import {
   Calendar,
   DollarSign,
   ArrowLeft,
+  Filter,
 } from "lucide-react";
 import { useResaleListings } from "@/features/user/dashboard/hooks/useResaleListings";
 import { ResaleListing } from "@/features/user/dashboard/dashboard.types";
@@ -31,11 +32,13 @@ export default function UserListingsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [soldFilter, setSoldFilter] = useState<boolean | undefined>(undefined);
   const limit = 10;
 
   const { data, isLoading, error, refetch } = useResaleListings(
     currentPage,
-    limit
+    limit,
+    soldFilter
   );
 
   React.useEffect(() => {
@@ -43,6 +46,11 @@ export default function UserListingsPage() {
       setIsRefreshing(false);
     }
   }, [isLoading]);
+
+  // Reset to first page when filter changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [soldFilter]);
 
   const listings = (data as any)?.data?.listings || [];
   const pagination = (data as any)?.data?.pagination;
@@ -76,7 +84,7 @@ export default function UserListingsPage() {
   };
 
   // Filter listings based on search term
-  const filteredListings = listings.filter((listing) =>
+  const filteredListings = listings.filter((listing: ResaleListing) =>
     listing.product.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -163,6 +171,54 @@ export default function UserListingsPage() {
         </div>
       </div>
 
+      {/* Filter Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+        <div className="flex items-center space-x-2">
+          <Filter className="w-4 h-4 text-gray-500" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Filter by status:
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {/* <Button
+            variant={soldFilter === undefined ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSoldFilter(undefined)}
+            className={`text-xs ${
+              soldFilter === undefined
+                ? "bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
+                : "hover:bg-flyverr-primary/10"
+            }`}
+          >
+            All
+          </Button> */}
+          <Button
+            variant={soldFilter === false ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSoldFilter(false)}
+            className={`text-xs ${
+              soldFilter === false
+                ? "bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
+                : "hover:bg-flyverr-primary/10"
+            }`}
+          >
+            Available
+          </Button>
+          <Button
+            variant={soldFilter === true ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSoldFilter(true)}
+            className={`text-xs ${
+              soldFilter === true
+                ? "bg-flyverr-primary hover:bg-flyverr-primary/90 text-white"
+                : "hover:bg-flyverr-primary/10"
+            }`}
+          >
+            Sold
+          </Button>
+        </div>
+      </div>
+
       {/* Listings Table */}
       {/* <div className="overflow-x-auto -mx-4 sm:mx-0">
         <div className="max-h-[60vh] md:max-h-[70vh] lg:max-h-none ">
@@ -175,7 +231,7 @@ export default function UserListingsPage() {
             <AdminTableHeaderCell>Stage</AdminTableHeaderCell>
             <AdminTableHeaderCell>Status</AdminTableHeaderCell>
             <AdminTableHeaderCell>Round</AdminTableHeaderCell>
-            <AdminTableHeaderCell>Acquired Date</AdminTableHeaderCell>
+            {/* <AdminTableHeaderCell>Acquired Date</AdminTableHeaderCell> */}
           </tr>
         </AdminTableHeader>
         <AdminTableBody>
@@ -219,7 +275,7 @@ export default function UserListingsPage() {
             </AdminTableRow>
           ) : (
             filteredListings.map((listing: ResaleListing) => (
-              <AdminTableRow key={listing.id}>
+              <AdminTableRow key={listing.license_id}>
                 {/* Product */}
                 <AdminTableCell>
                   <div className="flex items-center space-x-3">
@@ -227,14 +283,15 @@ export default function UserListingsPage() {
                       src={listing.product.thumbnail_url}
                       alt={listing.product.title}
                       className="w-12 h-12 object-cover rounded-lg"
-                      fallbackSrc="/placeholder-product.jpg"
+                      width={48}
+                      height={48}
                     />
                     <div>
                       <div className="font-medium text-gray-900 dark:text-white line-clamp-2 max-w-[220px] sm:max-w-none">
                         {listing.product.title}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        ID: {listing.id.slice(0, 8)}...
+                        ID: {listing.license_id.slice(0, 8)}...
                       </div>
                     </div>
                   </div>
@@ -287,14 +344,14 @@ export default function UserListingsPage() {
                 </AdminTableCell>
 
                 {/* Acquired Date */}
-                <AdminTableCell>
+                {/* <AdminTableCell>
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4 text-gray-400" />
                     <span className="text-gray-500 dark:text-gray-400">
                       {formatDate(listing.acquired_at)}
                     </span>
                   </div>
-                </AdminTableCell>
+                </AdminTableCell> */}
               </AdminTableRow>
             ))
           )}

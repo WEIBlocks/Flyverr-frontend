@@ -11,7 +11,7 @@ export interface DashboardStatsResponse {
 }
 
 export interface ResaleListing {
-  id: string;
+  license_id: string;
   license_token: string;
   purchase_type: string;
   resale_eligible: boolean;
