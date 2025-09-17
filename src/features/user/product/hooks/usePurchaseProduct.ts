@@ -19,9 +19,10 @@ export function usePurchaseProduct() {
         purchaseType: string;
         hasInsurance: boolean;
         paymentMethod: string;
+        useSignupCredit?: boolean;
       };
     }) => await purchaseProduct(id, data),
-    onSuccess: (data: any) => {
+    onSuccess: async (data: any) => {
       console.log("data", data);
 
       // Show success message with payment button
@@ -38,11 +39,14 @@ export function usePurchaseProduct() {
               queryKey: ["user-products"],
             });
             await queryClient.invalidateQueries({ queryKey: ["product"] });
+            // Invalidate credit query to refresh credit status after purchase
+            await queryClient.invalidateQueries({ queryKey: ["user-credits"] });
             window.open(data?.data?.data?.payment_url, "_blank");
           }
         });
       } else {
         // Fallback success message
+        await queryClient.invalidateQueries({ queryKey: ["user-credits"] });
         swal("Success", "Purchase initiated successfully", "success");
       }
     },

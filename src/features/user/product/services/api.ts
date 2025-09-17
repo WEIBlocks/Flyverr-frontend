@@ -36,6 +36,7 @@ export function purchaseProduct(
     purchaseType: string;
     hasInsurance: boolean;
     paymentMethod: string;
+    useSignupCredit?: boolean;
   }
 ) {
   return api.post(`marketplace/products/${id}/purchase`, data);

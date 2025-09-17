@@ -61,8 +61,12 @@ const productSchema = yup.object({
   categoryId: yup.string().required("Category is required"),
   originalPrice: yup
     .string()
-    .required("Price is required").min(10, "Price must be at least 10")
-    .matches(/^\d+(\.\d{1,2})?$/, "Price must be a valid number"),
+    .required("Price is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Price must be a valid number")
+    .test("min-price", "Price must be at least $10", (value) => {
+      const num = parseFloat(value || "0");
+      return num >= 10;
+    }),
   totalLicenses: yup
     .string()
     .required("Total licenses is required")
@@ -92,8 +96,12 @@ const platformProductSchema = yup.object({
   categoryId: yup.string().optional(),
   originalPrice: yup
     .string()
-    .required("Price is required").min(10, "Price must be at least 10")
-    .matches(/^\d+(\.\d{1,2})?$/, "Price must be a valid number"),
+    .required("Price is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Price must be a valid number")
+    .test("min-price", "Price must be at least $10", (value) => {
+      const num = parseFloat(value || "0");
+      return num >= 10;
+    }),
   totalLicenses: yup
     .string()
     .required("Total licenses is required")

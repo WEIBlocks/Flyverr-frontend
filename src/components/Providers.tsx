@@ -15,7 +15,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            
             retry: (failureCount, error: any) => {
               if (
                 error?.response?.status >= 400 &&

@@ -6,6 +6,7 @@ import { Shield, TrendingUp } from "lucide-react";
 import Modal from "@/components/Modal";
 import { ProductDetail } from "@/features/marketplace/marketplace.types";
 import withStripeOnboarding from "./withStripeOnboarding";
+import { CreditCheckbox } from "@/components/CreditCheckbox";
 
 interface BuyToResellButtonProps {
   product: ProductDetail;
@@ -27,6 +28,7 @@ function BuyToResellButton({
   >(null);
   const [isInsuranceModalOpen, setIsInsuranceModalOpen] = useState(false);
   const [isBuyingToResell, setIsBuyingToResell] = useState(false);
+  const [useSignupCredit, setUseSignupCredit] = useState(false);
   const { mutate: purchaseProduct } = usePurchaseProduct();
 
   const handleBuyToResell = () => {
@@ -52,6 +54,7 @@ function BuyToResellButton({
       purchaseType: selectedPurchaseType,
       hasInsurance,
       paymentMethod: "stripe",
+      useSignupCredit,
     };
 
     if (licenseId) {
@@ -133,10 +136,10 @@ function BuyToResellButton({
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-flyverr-text dark:text-white">
-                  Insurance Fee (5%):
+                  Insurance Fee:
                 </span>
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  ${(product.current_price * 0.05).toFixed(2)}
+                  $5.00
                 </span>
               </div>
               <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-600 pt-2">
@@ -144,18 +147,25 @@ function BuyToResellButton({
                   Total Price:
                 </span>
                 <span className="text-sm font-bold text-flyverr-accent">
-                  ${(product.current_price * 1.05).toFixed(2)}
+                  ${(product.current_price + 5.0).toFixed(2)}
                 </span>
               </div>
             </div>
 
             <div className="space-y-3">
+              {/* Credit Checkbox */}
+              <CreditCheckbox
+                checked={useSignupCredit}
+                onChange={setUseSignupCredit}
+                disabled={isBuyingToResell}
+              />
+
               <Button
                 className="w-full bg-flyverr-accent hover:bg-flyverr-accent/90 text-white py-3 font-semibold"
                 onClick={() => handleInsuranceChoice(true)}
               >
                 <Shield className="h-5 w-5 mr-2" />
-                Yes, Add Insurance (+5%)
+                Yes, Add Insurance (+$5.00)
               </Button>
 
               <Button
