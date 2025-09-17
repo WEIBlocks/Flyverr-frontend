@@ -41,7 +41,7 @@ export function usePurchaseProduct() {
             await queryClient.invalidateQueries({ queryKey: ["product"] });
             // Invalidate credit query to refresh credit status after purchase
             await queryClient.invalidateQueries({ queryKey: ["user-credits"] });
-            window.open(data?.data?.data?.payment_url, "_blank");
+            window.open(data?.data?.data?.payment_url, "_blank"); 
           }
         });
       } else {

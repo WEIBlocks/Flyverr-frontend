@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DollarSign,
   RefreshCw,
@@ -15,10 +15,10 @@ import {
   Clock,
   XCircle,
   AlertCircle,
-  User,
 } from "lucide-react";
 import { usePayoutInfo } from "@/features/user/payout/hooks/usePayoutInfo";
 import { useUserPayouts } from "@/features/user/payout/hooks/useUserPayouts";
+import { useEarnings } from "@/features/user/earnings/hooks/useEarnings";
 import {
   useCreatePayoutMethod,
   useRequestPayout,
@@ -58,12 +58,16 @@ export default function PayoutRequestsPage() {
     error: userPayoutsError,
     refetch: refetchUserPayouts,
   } = useUserPayouts();
+  const { data: earningsData } = useEarnings();
 
   const createPayoutMethodMutation = useCreatePayoutMethod();
   const requestPayoutMutation = useRequestPayout();
 
   const payoutInfo = (payoutInfoData as any)?.data;
   const userPayouts = (userPayoutsData as any)?.data || [];
+  const earnings = (earningsData as any)?.data;
+  const availableBalance = earnings?.summary?.available || 0;
+  const canRequestPayout = availableBalance >= 20;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -123,13 +127,19 @@ export default function PayoutRequestsPage() {
       setIsAddMethodModalOpen(false);
       setPaymentMethod("bank");
       setAccountNote("");
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   };
 
   const handleRequestPayout = async () => {
     if (!payoutAmount || !selectedPayoutMethodId || !payoutNotes.trim()) return;
+
+    // Check minimum earnings requirement
+    if (!canRequestPayout) {
+      alert("You must have earned at least $20 to request a payout.");
+      return;
+    }
 
     try {
       await requestPayoutMutation.mutateAsync({
@@ -142,7 +152,7 @@ export default function PayoutRequestsPage() {
       setPayoutAmount("");
       setPayoutNotes("");
       setSelectedPayoutMethodId("");
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   };
@@ -216,13 +226,33 @@ export default function PayoutRequestsPage() {
           <Button
             onClick={() => setIsRequestPayoutModalOpen(true)}
             className="bg-flyverr-primary hover:bg-flyverr-primary/90"
-            disabled={!payoutInfo?.summary.hasActivePayoutMethod}
+            disabled={
+              !payoutInfo?.summary.hasActivePayoutMethod || !canRequestPayout
+            }
           >
             <DollarSign className="w-4 h-4 mr-2" />
             Request Payout
           </Button>
         </div>
       </div>
+
+      {/* Minimum Earnings Notice */}
+      {!canRequestPayout && (
+        <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+          <div className="flex items-start">
+            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 mr-3 flex-shrink-0" />
+            <div>
+              <h3 className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                Minimum Earnings Required
+              </h3>
+              <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">
+                You need to earn at least $20 before you can request a payout.
+                Current available balance: {formatCurrency(availableBalance)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Payout Methods Section */}
       <div className="mb-8">
@@ -526,11 +556,13 @@ export default function PayoutRequestsPage() {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 >
                   <option value="">Select payout method</option>
-                  {payoutInfo?.payoutMethods.active.map((method: PayoutMethod) => (
-                    <option key={method.id} value={method.id}>
-                      {method.payment_method} - {method.account_details.note}
-                    </option>
-                  ))}
+                  {payoutInfo?.payoutMethods.active.map(
+                    (method: PayoutMethod) => (
+                      <option key={method.id} value={method.id}>
+                        {method.payment_method} - {method.account_details.note}
+                      </option>
+                    )
+                  )}
                 </select>
               </div>
               <div>
@@ -559,6 +591,7 @@ export default function PayoutRequestsPage() {
                     !payoutAmount ||
                     !selectedPayoutMethodId ||
                     !payoutNotes.trim() ||
+                    !canRequestPayout ||
                     requestPayoutMutation.isPending
                   }
                   className="bg-flyverr-primary hover:bg-flyverr-primary/90"
