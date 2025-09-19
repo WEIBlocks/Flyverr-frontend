@@ -275,7 +275,7 @@ export default function UserListingsPage() {
             </AdminTableRow>
           ) : (
             filteredListings.map((listing: ResaleListing) => (
-              <AdminTableRow key={listing.license_id}>
+              <AdminTableRow key={listing.id}>
                 {/* Product */}
                 <AdminTableCell>
                   <div className="flex items-center space-x-3">
@@ -291,7 +291,7 @@ export default function UserListingsPage() {
                         {listing.product.title}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        ID: {listing.license_id.slice(0, 8)}...
+                        ID: {listing.id.slice(0, 8)}...
                       </div>
                     </div>
                   </div>
