@@ -61,7 +61,7 @@ export default function DashboardPage() {
       color: "text-blue-600",
     },
     {
-      title: "Total Licenses",
+      title: "Listed Total Licenses",
       value: stats ? stats.total_licenses.toString() : "0",
       change: "+0",
       changeType: "neutral",

@@ -11,7 +11,7 @@ export interface DashboardStatsResponse {
 }
 
 export interface ResaleListing {
-  license_id: string;
+  id: string;
   license_token: string;
   purchase_type: string;
   resale_eligible: boolean;
@@ -21,6 +21,7 @@ export interface ResaleListing {
   is_enabled_by_user_for_resale: boolean;
   created_at: string;
   acquired_at: string;
+  current_price: number; // Current round price for available listings or sale price for sold listings
   product: {
     id: string;
     title: string;
