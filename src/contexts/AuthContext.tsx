@@ -19,7 +19,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
 export const useAuth = () => {
   const context = useContext(AuthContext);
 
@@ -28,7 +27,6 @@ export const useAuth = () => {
   }
   return context;
 };
- 
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -67,13 +65,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Error checking auth:", error);
       setIsLoading(false as boolean);
       logout();
-
     } finally {
       setIsLoading(false as boolean);
     }
   };
 
-console.log("isLoading", isLoading);
+  console.log("isLoading", isLoading);
 
   const logout = () => {
     // Clear local storage
