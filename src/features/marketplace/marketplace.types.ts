@@ -42,6 +42,13 @@ export interface MarketplaceProduct {
 export interface ProductDetail {
   id: string;
   creator_id: string;
+  creator?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
+  };
   category_id: string | null;
   category_name: string | null;
   title: string;

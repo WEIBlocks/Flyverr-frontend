@@ -853,10 +853,10 @@ export default function AdminProductDetailPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Product ID
+                      Product Title
                     </span>
                     <span className="text-xs font-mono text-gray-900 dark:text-white">
-                      {shortenId(product.id)}
+                      {product.title}
                     </span>
                   </div>
                 </CardContent>
@@ -977,7 +977,7 @@ export default function AdminProductDetailPage() {
                               className="border-t border-gray-200 dark:border-gray-700"
                             >
                               <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">
-                                {shortenId(lic.id)}
+                                Round {lic.current_round}
                               </td>
                               <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
                                 {lic.acquired_at
@@ -1043,8 +1043,9 @@ export default function AdminProductDetailPage() {
                               key={tx.id}
                               className="border-t border-gray-200 dark:border-gray-700"
                             >
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">
-                                {shortenId(tx.id)}
+                              <td className="py-2 pr-3 text-xs text-gray-900 dark:text-gray-100">
+                                {tx.transaction_type.charAt(0).toUpperCase() +
+                                  tx.transaction_type.slice(1)}
                               </td>
                               <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
                                 ${tx.amount}
@@ -1055,11 +1056,13 @@ export default function AdminProductDetailPage() {
                               <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
                                 {tx.transaction_type}
                               </td>
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">
-                                {shortenId(tx.buyer_id)}
+                              <td className="py-2 pr-3 text-xs text-gray-700 dark:text-gray-300">
+                                {tx.buyer ? `@${tx.buyer.username}` : "Unknown"}
                               </td>
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">
-                                {shortenId(tx.seller_id)}
+                              <td className="py-2 pr-3 text-xs text-gray-700 dark:text-gray-300">
+                                {tx.seller
+                                  ? `@${tx.seller.username}`
+                                  : "Unknown"}
                               </td>
                               <td className="py-2 text-gray-700 dark:text-gray-300">
                                 {formatDate(tx.created_at)}

@@ -1,6 +1,17 @@
 import axios from "axios";
 import { storage } from "./utils";
 
+interface RefreshTokenResponse {
+  success: boolean;
+  data: {
+    session: {
+      accessToken: string;
+      refreshToken: string;
+      expiresAt: number;
+    };
+  };
+}
+
 /**
  * Axios instance for all API requests.
  * Configured with base URL, credentials, and timeout.
@@ -27,23 +38,57 @@ api.interceptors.request.use(
 
 /**
  * Response interceptor: Handle global error responses.
- * Clears auth data on unauthorized responses.
+ * Automatically refreshes tokens on 401 errors.
  */
 api.interceptors.response.use(
   (response) => {
     // Just return the response - no automatic token storage
     return response;
   },
-  (error) => {
-    // Handle 401 Unauthorized globally
-    if (error.response?.status === 401) {
-      // Clear stored auth data on unauthorized
-      storage.clearAuth();
+  async (error) => {
+    const originalRequest = error.config;
 
-      // Optionally redirect to login (uncomment if needed)
-      // if (typeof window !== 'undefined') {
-      //   window.location.href = "/login";
-      // }
+    // Handle 401 Unauthorized with automatic token refresh
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      const refreshToken = storage.getRefreshToken();
+
+      if (refreshToken) {
+        try {
+          // Call refresh token API
+          const response = await axios.post(
+            `${
+              process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+            }/auth/refresh`,
+            { refreshToken }
+          );
+
+          const refreshData = response.data as RefreshTokenResponse;
+          if (refreshData.success) {
+            // Store new tokens
+            storage.setToken(refreshData.data.session.accessToken);
+            storage.setRefreshToken(refreshData.data.session.refreshToken);
+
+            // Retry original request with new token
+            originalRequest.headers.Authorization = `Bearer ${refreshData.data.session.accessToken}`;
+            return api(originalRequest);
+          }
+        } catch (refreshError) {
+          console.error("Token refresh failed:", refreshError);
+          // If refresh fails, clear auth and redirect to login
+          storage.clearAuth();
+          if (typeof window !== "undefined") {
+            window.location.href = "/login";
+          }
+        }
+      } else {
+        // No refresh token available, clear auth and redirect to login
+        storage.clearAuth();
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+      }
     }
 
     // Handle token expiration (if you have refresh token logic)

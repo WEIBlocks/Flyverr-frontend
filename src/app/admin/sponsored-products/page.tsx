@@ -322,11 +322,21 @@ export default function AdminSponsoredProductsPage() {
         <AdminTable>
           <AdminTableHeader>
             <tr>
-              <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px] lg:min-w-[320px]">Product</AdminTableHeaderCell>
-              <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">Creator</AdminTableHeaderCell>
-              <AdminTableHeaderCell className="min-w-[150px] sm:min-w-[180px] lg:min-w-[220px]">Sponsorship Details</AdminTableHeaderCell>
-              <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px] lg:min-w-[240px]">Payment & Status</AdminTableHeaderCell>
-              <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px] lg:min-w-[240px]">Timeline</AdminTableHeaderCell>
+              <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px] lg:min-w-[320px]">
+                Product
+              </AdminTableHeaderCell>
+              <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">
+                Creator
+              </AdminTableHeaderCell>
+              <AdminTableHeaderCell className="min-w-[150px] sm:min-w-[180px] lg:min-w-[220px]">
+                Sponsorship Details
+              </AdminTableHeaderCell>
+              <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px] lg:min-w-[240px]">
+                Payment & Status
+              </AdminTableHeaderCell>
+              <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px] lg:min-w-[240px]">
+                Timeline
+              </AdminTableHeaderCell>
             </tr>
           </AdminTableHeader>
           <AdminTableBody>
@@ -335,7 +345,9 @@ export default function AdminSponsoredProductsPage() {
                 <td colSpan={5} className="text-center py-8">
                   <div className="text-gray-500 dark:text-gray-400">
                     <Package className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm sm:text-base">No sponsored products found</p>
+                    <p className="text-sm sm:text-base">
+                      No sponsored products found
+                    </p>
                   </div>
                 </td>
               </AdminTableRow>
@@ -388,7 +400,7 @@ export default function AdminSponsoredProductsPage() {
                         {formatCurrency(sponsorship.amount)}
                       </div>
                       <div className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400">
-                        Sponsorship ID: {sponsorship.id.slice(0, 8)}...
+                        by @{sponsorship.creator.username}
                       </div>
                     </div>
                   </AdminTableCell>

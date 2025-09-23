@@ -224,7 +224,11 @@ export default function ProductDetailPage() {
   const ownsLicense = React.useMemo(() => {
     // Don't compute if still loading or has errors
     if (isLoadingMyLicenses || myLicensesError || !myLicenses) {
-      console.log("ownsLicense - Early return:", { isLoadingMyLicenses, myLicensesError, hasMyLicenses: !!myLicenses });
+      console.log("ownsLicense - Early return:", {
+        isLoadingMyLicenses,
+        myLicensesError,
+        hasMyLicenses: !!myLicenses,
+      });
       return false;
     }
 
@@ -237,40 +241,47 @@ export default function ProductDetailPage() {
     // Type-safe access to licenses data
     const licensesData = (myLicenses as MyLicensesResponse)?.data?.licenses;
     console.log("ownsLicense - licensesData:", licensesData);
-    console.log("ownsLicense - productId:", productId, "type:", typeof productId);
-    
+    console.log(
+      "ownsLicense - productId:",
+      productId,
+      "type:",
+      typeof productId
+    );
+
     if (!licensesData || !Array.isArray(licensesData)) {
       console.log("ownsLicense - No licenses data or not array");
       return false;
     }
 
     // Debug: Log each group to see what we're checking
-    console.log("ownsLicense - Checking groups:", licensesData.map(group => ({
-      productId: group?.product?.id,
-      productTitle: group?.product?.title,
-      licensesCount: group?.licenses?.length,
-      targetProductId: productId,
-      productIdType: typeof group?.product?.id
-    })));
-
-    const result = licensesData.some(
-      (group: LicenseGroup) => {
-        const groupProductId = group?.product?.id;
-        const hasMatchingProduct = String(groupProductId) === String(productId);
-        const hasLicenses = Array.isArray(group.licenses) && group.licenses.length > 0;
-        
-        console.log("ownsLicense - Group check:", {
-          groupProductId,
-          targetProductId: productId,
-          hasMatchingProduct,
-          hasLicenses,
-          licenses: group?.licenses,
-          comparison: `${groupProductId} === ${productId}`
-        });
-        
-        return hasMatchingProduct && hasLicenses;
-      }
+    console.log(
+      "ownsLicense - Checking groups:",
+      licensesData.map((group) => ({
+        productId: group?.product?.id,
+        productTitle: group?.product?.title,
+        licensesCount: group?.licenses?.length,
+        targetProductId: productId,
+        productIdType: typeof group?.product?.id,
+      }))
     );
+
+    const result = licensesData.some((group: LicenseGroup) => {
+      const groupProductId = group?.product?.id;
+      const hasMatchingProduct = String(groupProductId) === String(productId);
+      const hasLicenses =
+        Array.isArray(group.licenses) && group.licenses.length > 0;
+
+      console.log("ownsLicense - Group check:", {
+        groupProductId,
+        targetProductId: productId,
+        hasMatchingProduct,
+        hasLicenses,
+        licenses: group?.licenses,
+        comparison: `${groupProductId} === ${productId}`,
+      });
+
+      return hasMatchingProduct && hasLicenses;
+    });
 
     console.log("ownsLicense - Final result:", result);
     return result;
@@ -311,7 +322,6 @@ export default function ProductDetailPage() {
       ? product.images_urls
       : [product.thumbnail_url];
   // Safely compute ownsLicense with proper loading and error checks
-
 
   console.log("ownsLicense", ownsLicense);
 
@@ -422,7 +432,12 @@ export default function ProductDetailPage() {
                     {product.title}
                   </h1>
                   <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-300">
-                    by {product.creator_id}
+                    by{" "}
+                    {(product as any).creator
+                      ? `${(product as any).creator.first_name} ${
+                          (product as any).creator.last_name
+                        }`
+                      : "Unknown Creator"}
                   </p>
                 </div>
                 <div className="flex gap-2 self-end sm:self-start">
@@ -741,7 +756,9 @@ export default function ProductDetailPage() {
                       </div>
                       <div>
                         <h3 className="text-lg sm:text-xl font-semibold text-flyverr-text dark:text-white">
-                          Creator ID: {product.creator_id}
+                          {(product as any).creator
+                            ? `@${(product as any).creator.username}`
+                            : "Unknown Creator"}
                         </h3>
                         <div className="flex items-center gap-4 mt-2">
                           <span className="text-sm text-gray-600 dark:text-gray-400">

@@ -406,12 +406,25 @@ export default function AdminPayoutRequestsPage() {
           <AdminTable>
             <AdminTableHeader>
               <tr>
-                <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px] lg:min-w-[320px]">Request Details</AdminTableHeaderCell>
-                <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">User Information</AdminTableHeaderCell>
-                <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">Amount & Status</AdminTableHeaderCell>
-                <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px] lg:min-w-[240px]">Timeline</AdminTableHeaderCell>
-                <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[240px] lg:min-w-[300px]">Notes</AdminTableHeaderCell>
-                <AdminTableHeaderCell align="center" className="min-w-[120px] sm:min-w-[150px] lg:min-w-[200px]">
+                <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px] lg:min-w-[320px]">
+                  Request Details
+                </AdminTableHeaderCell>
+                <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">
+                  User Information
+                </AdminTableHeaderCell>
+                <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">
+                  Amount & Status
+                </AdminTableHeaderCell>
+                <AdminTableHeaderCell className="min-w-[160px] sm:min-w-[200px] lg:min-w-[240px]">
+                  Timeline
+                </AdminTableHeaderCell>
+                <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[240px] lg:min-w-[300px]">
+                  Notes
+                </AdminTableHeaderCell>
+                <AdminTableHeaderCell
+                  align="center"
+                  className="min-w-[120px] sm:min-w-[150px] lg:min-w-[200px]"
+                >
                   Actions
                 </AdminTableHeaderCell>
               </tr>
@@ -436,10 +449,16 @@ export default function AdminPayoutRequestsPage() {
                           Payout Request
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
-                          ID: {payout.id.slice(0, 8)}...
+                          {(payout as any).user
+                            ? `@${(payout as any).user.username}`
+                            : "Unknown User"}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
-                          Info ID: {payout.payout_info_id.slice(0, 8)}...
+                          {(payout as any).user
+                            ? `${(payout as any).user.first_name} ${
+                                (payout as any).user.last_name
+                              }`
+                            : "Unknown Name"}
                         </div>
                         {payout.retry_count && payout.retry_count > 0 && (
                           <div className="text-xs text-orange-600 dark:text-orange-400">
@@ -501,7 +520,9 @@ export default function AdminPayoutRequestsPage() {
                           <div className="text-sm text-gray-900 dark:text-white">
                             <div className="flex items-start space-x-1">
                               <MessageSquare className="w-3 h-3 mt-0.5 text-gray-500" />
-                              <span className="line-clamp-2">{payout.notes}</span>
+                              <span className="line-clamp-2">
+                                {payout.notes}
+                              </span>
                             </div>
                           </div>
                         ) : (
@@ -526,7 +547,9 @@ export default function AdminPayoutRequestsPage() {
                               size="sm"
                               variant="outline"
                               className="hover:bg-green-50 dark:hover:bg-green-900/20 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400"
-                              onClick={() => openActionDialog(payout, "approve")}
+                              onClick={() =>
+                                openActionDialog(payout, "approve")
+                              }
                             >
                               <ThumbsUp className="w-3 h-3" />
                             </Button>

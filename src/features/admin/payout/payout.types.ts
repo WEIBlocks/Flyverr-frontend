@@ -10,6 +10,13 @@ export interface Payout {
   processed_by?: string | null;
   retry_count?: number | null;
   last_error?: string | null;
+  user?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
+  };
 }
 
 export interface PayoutResponse {
