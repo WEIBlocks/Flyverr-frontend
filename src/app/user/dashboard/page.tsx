@@ -61,7 +61,7 @@ export default function DashboardPage() {
       color: "text-blue-600",
     },
     {
-      title: "Total Licenses",
+      title: "Listed Total Licenses",
       value: stats ? stats.total_licenses.toString() : "0",
       change: "+0",
       changeType: "neutral",
@@ -303,7 +303,8 @@ export default function DashboardPage() {
                                 {listing.product.title}
                               </div>
                               <div className="text-sm text-gray-500 dark:text-gray-400">
-                                ID: {listing.id.slice(0, 8)}...
+                                Round {listing.product.current_round} •{" "}
+                                {listing.product.current_stage}
                               </div>
                             </div>
                           </div>

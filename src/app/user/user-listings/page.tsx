@@ -3,18 +3,12 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Package,
-  Search,
-  RefreshCw,
-  Tag,
-  Calendar,
-  DollarSign,
-  ArrowLeft,
-  Filter,
-} from "lucide-react";
+import { Package, Search, RefreshCw, ArrowLeft, Filter } from "lucide-react";
 import { useResaleListings } from "@/features/user/dashboard/hooks/useResaleListings";
-import { ResaleListing } from "@/features/user/dashboard/dashboard.types";
+import {
+  ResaleListing,
+  ResaleListingsResponse,
+} from "@/features/user/dashboard/dashboard.types";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import PaginationControls from "@/components/ui/PaginationControls";
 import { useRouter } from "next/navigation";
@@ -52,8 +46,8 @@ export default function UserListingsPage() {
     setCurrentPage(1);
   }, [soldFilter]);
 
-  const listings = (data as any)?.data?.listings || [];
-  const pagination = (data as any)?.data?.pagination;
+  const listings = (data as ResaleListingsResponse)?.data?.listings || [];
+  const pagination = (data as ResaleListingsResponse)?.data?.pagination;
 
   const getStageColor = (stage: string) => {
     switch (stage) {
@@ -73,14 +67,6 @@ export default function UserListingsPage() {
       style: "currency",
       currency: "USD",
     }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
   };
 
   // Filter listings based on search term
@@ -291,7 +277,8 @@ export default function UserListingsPage() {
                         {listing.product.title}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        ID: {listing.id.slice(0, 8)}...
+                        Round {listing.product.current_round} •{" "}
+                        {listing.product.current_stage}
                       </div>
                     </div>
                   </div>
@@ -300,7 +287,7 @@ export default function UserListingsPage() {
                 {/* Price */}
                 <AdminTableCell>
                   <span className="font-medium text-green-600 dark:text-green-400">
-                    {formatPrice(listing.product.original_price)}
+                    {formatPrice(listing.current_price)}
                   </span>
                 </AdminTableCell>
 

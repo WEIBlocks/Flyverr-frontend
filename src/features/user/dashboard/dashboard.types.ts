@@ -21,6 +21,7 @@ export interface ResaleListing {
   is_enabled_by_user_for_resale: boolean;
   created_at: string;
   acquired_at: string;
+  current_price: number; // Current round price for available listings or sale price for sold listings
   product: {
     id: string;
     title: string;

@@ -277,7 +277,7 @@ export default function AdminPlatformRevenuePage() {
           </p>
         </div>
       </div>
-      
+
       {/* Revenue Overview Cards */}
       {isRevenueLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -599,7 +599,9 @@ export default function AdminPlatformRevenuePage() {
             <AdminTable>
               <AdminTableHeader>
                 <tr>
-                  <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px] lg:min-w-[320px]">Product</AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[220px] sm:min-w-[260px] lg:min-w-[320px]">
+                    Product
+                  </AdminTableHeaderCell>
                   <AdminTableHeaderCell className="min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">
                     <button
                       onClick={() => handleSort("transaction_type")}
@@ -609,7 +611,9 @@ export default function AdminPlatformRevenuePage() {
                       {getSortIcon("transaction_type")}
                     </button>
                   </AdminTableHeaderCell>
-                  <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[240px] lg:min-w-[300px]">Participants</AdminTableHeaderCell>
+                  <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[240px] lg:min-w-[300px]">
+                    Participants
+                  </AdminTableHeaderCell>
                   <AdminTableHeaderCell className="min-w-[200px] sm:min-w-[240px] lg:min-w-[300px]">
                     <button
                       onClick={() => handleSort("amount")}
@@ -669,7 +673,9 @@ export default function AdminPlatformRevenuePage() {
                       {/* Type & Status Cell */}
                       <AdminTableCell>
                         <div className="space-y-2">
-                          {getTransactionTypeBadge(transaction.transaction_type)}
+                          {getTransactionTypeBadge(
+                            transaction.transaction_type
+                          )}
                           {getStatusBadge(transaction.status)}
                           <div className="text-xs text-gray-500 dark:text-gray-400">
                             {transaction.purchase_type === "resell"
@@ -715,14 +721,18 @@ export default function AdminPlatformRevenuePage() {
                           </div>
                           <div className="text-xs space-y-1">
                             <div className="flex justify-between">
-                              <span className="text-gray-500">Platform Fee:</span>
+                              <span className="text-gray-500">
+                                Platform Fee:
+                              </span>
                               <span className="text-blue-600 dark:text-blue-400 font-medium">
                                 {formatCurrency(transaction.platform_fee)}
                               </span>
                             </div>
                             {transaction.has_insurance && (
                               <div className="flex justify-between">
-                                <span className="text-gray-500">Insurance:</span>
+                                <span className="text-gray-500">
+                                  Insurance:
+                                </span>
                                 <span className="text-purple-600 dark:text-purple-400 font-medium">
                                   {formatCurrency(transaction.insurance_fee)}
                                 </span>
@@ -761,7 +771,8 @@ export default function AdminPlatformRevenuePage() {
                             </div>
                           )}
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            ID: {transaction.id.slice(0, 8)}...
+                            {transaction.product.title} • Round{" "}
+                            {transaction.product.current_round}
                           </div>
                         </div>
                       </AdminTableCell>

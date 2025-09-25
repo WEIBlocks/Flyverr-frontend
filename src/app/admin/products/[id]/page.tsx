@@ -123,7 +123,7 @@ interface Product {
   updated_at: string;
   creator: Creator;
   category: Category;
-  round_pricing: RoundPricing;
+  round_pricing: RoundPricing[];
 }
 
 interface ProductStatistics {
@@ -162,13 +162,13 @@ export default function AdminProductDetailPage() {
 
   const { data, isLoading, error } = useGetProductById(productId);
 
-  console.log("weiblocks prodcuts",data)
-  
+  console.log("weiblocks prodcuts", data);
+
   const editProductMutation = useEditProduct();
   const flagProductMutation = useFlagProduct();
 
   const [showHotDealModal, setShowHotDealModal] = useState(false);
- 
+
   const {
     register,
     handleSubmit,
@@ -198,7 +198,10 @@ export default function AdminProductDetailPage() {
   useEffect(() => {
     if (data?.data?.product) {
       const product = data.data.product;
-    
+      const roundPricing = Array.isArray(product.round_pricing)
+        ? product.round_pricing[0]
+        : undefined; // Get first round pricing object
+
       reset({
         title: product.title,
         description: product.description,
@@ -208,16 +211,14 @@ export default function AdminProductDetailPage() {
         featured: product.featured,
         adminNotes: product.admin_notes || "",
         roundPricing: {
-          exitPrice: product.round_pricing?.exit_price || 0,
-          blossomPrice: product.round_pricing?.blossom_price || 0,
-          evergreenPrice: product.round_pricing?.evergreen_price || 0,
+          exitPrice: roundPricing?.exit_price || 0,
+          blossomPrice: roundPricing?.blossom_price || 0,
+          evergreenPrice: roundPricing?.evergreen_price || 0,
         },
       });
     }
   }, [data, reset]);
 
-
- 
   const onSubmit = (formData: any) => {
     editProductMutation.mutate({
       productId,
@@ -431,13 +432,14 @@ export default function AdminProductDetailPage() {
 
             {/* Admin Actions */}
             <div className="flex flex-wrap gap-2 sm:gap-3 justify-start md:justify-end w-full md:w-auto">
-              {Array.isArray(product?.dealTypes) && !product?.dealTypes?.includes("hot_deals") && (
-                <HotDealModal
-                  productId={productId}
-                  buttonLabel="Mark Hot Deal"
-                  buttonClassName="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20 shadow-sm"
-                />
-              )}
+              {Array.isArray(product?.dealTypes) &&
+                !product?.dealTypes?.includes("hot_deals") && (
+                  <HotDealModal
+                    productId={productId}
+                    buttonLabel="Mark Hot Deal"
+                    buttonClassName="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/20 shadow-sm"
+                  />
+                )}
               {product.status === "approved" && (
                 <Button
                   variant="outline"
@@ -543,8 +545,12 @@ export default function AdminProductDetailPage() {
                     <div className="w-full">
                       {(() => {
                         const allImages = [
-                          ...(product.thumbnail_url ? [product.thumbnail_url] : []),
-                          ...(Array.isArray(product.images_urls) ? product.images_urls : [])
+                          ...(product.thumbnail_url
+                            ? [product.thumbnail_url]
+                            : []),
+                          ...(Array.isArray(product.images_urls)
+                            ? product.images_urls
+                            : []),
                         ];
                         return allImages.length > 0 ? (
                           <ProductImageCarousel images={allImages} />
@@ -641,28 +647,6 @@ export default function AdminProductDetailPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Exit Price ($) *
-                      </Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        {...register("roundPricing.exitPrice", {
-                          valueAsNumber: true,
-                        })}
-                        className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 ${
-                          errors.roundPricing?.exitPrice
-                            ? "border-red-500 focus:border-red-500"
-                            : ""
-                        }`}
-                      />
-                      {errors.roundPricing?.exitPrice && (
-                        <p className="text-sm text-red-600 dark:text-red-400">
-                          {errors.roundPricing.exitPrice.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         Blossom Price ($) *
                       </Label>
                       <Input
@@ -702,6 +686,28 @@ export default function AdminProductDetailPage() {
                       {errors.roundPricing?.evergreenPrice && (
                         <p className="text-sm text-red-600 dark:text-red-400">
                           {errors.roundPricing.evergreenPrice.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Exit Price ($) *
+                      </Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        {...register("roundPricing.exitPrice", {
+                          valueAsNumber: true,
+                        })}
+                        className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 ${
+                          errors.roundPricing?.exitPrice
+                            ? "border-red-500 focus:border-red-500"
+                            : ""
+                        }`}
+                      />
+                      {errors.roundPricing?.exitPrice && (
+                        <p className="text-sm text-red-600 dark:text-red-400">
+                          {errors.roundPricing.exitPrice.message}
                         </p>
                       )}
                     </div>
@@ -847,10 +853,10 @@ export default function AdminProductDetailPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Product ID
+                      Product Title
                     </span>
                     <span className="text-xs font-mono text-gray-900 dark:text-white">
-                      {shortenId(product.id)}
+                      {product.title}
                     </span>
                   </div>
                 </CardContent>
@@ -971,7 +977,7 @@ export default function AdminProductDetailPage() {
                               className="border-t border-gray-200 dark:border-gray-700"
                             >
                               <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">
-                                {shortenId(lic.id)}
+                                Round {lic.current_round}
                               </td>
                               <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
                                 {lic.acquired_at
@@ -1037,8 +1043,9 @@ export default function AdminProductDetailPage() {
                               key={tx.id}
                               className="border-t border-gray-200 dark:border-gray-700"
                             >
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-900 dark:text-gray-100">
-                                {shortenId(tx.id)}
+                              <td className="py-2 pr-3 text-xs text-gray-900 dark:text-gray-100">
+                                {tx.transaction_type.charAt(0).toUpperCase() +
+                                  tx.transaction_type.slice(1)}
                               </td>
                               <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
                                 ${tx.amount}
@@ -1049,11 +1056,13 @@ export default function AdminProductDetailPage() {
                               <td className="py-2 pr-3 text-gray-700 dark:text-gray-300">
                                 {tx.transaction_type}
                               </td>
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">
-                                {shortenId(tx.buyer_id)}
+                              <td className="py-2 pr-3 text-xs text-gray-700 dark:text-gray-300">
+                                {tx.buyer ? `@${tx.buyer.username}` : "Unknown"}
                               </td>
-                              <td className="py-2 pr-3 font-mono text-xs text-gray-700 dark:text-gray-300">
-                                {shortenId(tx.seller_id)}
+                              <td className="py-2 pr-3 text-xs text-gray-700 dark:text-gray-300">
+                                {tx.seller
+                                  ? `@${tx.seller.username}`
+                                  : "Unknown"}
                               </td>
                               <td className="py-2 text-gray-700 dark:text-gray-300">
                                 {formatDate(tx.created_at)}
@@ -1270,13 +1279,17 @@ function ProductImageCarousel({ images }: { images: string[] }) {
       {images.map((img, idx) => (
         <div
           key={img}
-          className={`absolute top-0 left-0 w-full h-full transition-opacity duration-700 ${idx === current ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+          className={`absolute top-0 left-0 w-full h-full transition-opacity duration-700 ${
+            idx === current ? "opacity-100 z-10" : "opacity-0 z-0"
+          }`}
         >
           <ImageWithFallback
             src={img}
             alt={`Product image ${idx + 1}`}
             fill={true}
-            fallbackIcon={<ImageIcon className="w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-gray-400" />}
+            fallbackIcon={
+              <ImageIcon className="w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-gray-400" />
+            }
             className="w-full h-full object-cover"
           />
         </div>
@@ -1286,7 +1299,11 @@ function ProductImageCarousel({ images }: { images: string[] }) {
         {images.map((_, idx) => (
           <span
             key={idx}
-            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${idx === current ? 'bg-flyverr-primary' : 'bg-gray-300 dark:bg-gray-600'}`}
+            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
+              idx === current
+                ? "bg-flyverr-primary"
+                : "bg-gray-300 dark:bg-gray-600"
+            }`}
           />
         ))}
       </div>

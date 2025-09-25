@@ -96,6 +96,61 @@ export default function BadgeProgressBar({
         </div>
       )}
 
+      {/* Highest Badge Achieved */}
+      {progress.currentBadge &&
+        !progress.nextBadge &&
+        progress.progress === 100 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Trophy className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+              <h4 className="font-medium text-gray-900 dark:text-white">
+                🎉 You've achieved the highest {badgeType} badge!
+              </h4>
+            </div>
+
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-12 h-12 rounded-lg flex items-center justify-center shadow-md border-2"
+                  style={{
+                    backgroundColor: progress.currentBadge.color + "15",
+                    borderColor: progress.currentBadge.color + "40",
+                  }}
+                >
+                  <img
+                    src={progress.currentBadge.icon_url}
+                    alt={progress.currentBadge.display_name}
+                    className="w-8 h-8 object-contain"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      {progress.currentBadge.display_name}
+                    </h3>
+                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                      <Trophy className="w-3 h-3 mr-1" />
+                      <span className="text-xs">Highest Tier</span>
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {progress.currentBadge.description}
+                  </p>
+                  <div className="flex items-center gap-1 mt-2 text-sm text-green-600 dark:text-green-400">
+                    <DollarSign className="w-4 h-4" />
+                    <span>Total: {formatAmount(progress.totalAmount)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       {/* Progress to Next Badge */}
       {progress.nextBadge && (
         <div className="space-y-3">

@@ -5,8 +5,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Star, Clock, User, MessageSquare, X, Trash2, List, Search } from "lucide-react";
-import { useGetReviews, useApproveReview } from "@/features/admin/reviews/hooks";
+import {
+  Star,
+  Clock,
+  User,
+  MessageSquare,
+  X,
+  Trash2,
+  List,
+  Search,
+} from "lucide-react";
+import {
+  useGetReviews,
+  useApproveReview,
+} from "@/features/admin/reviews/hooks";
 
 import { ReviewActionData } from "@/features/admin/reviews/reviews.types";
 import { formatDistanceToNow } from "date-fns";
@@ -20,7 +32,9 @@ import { createUserFriendlyError } from "@/lib/errorUtils";
 export default function AdminReviewsPage() {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState<"pending" | "active" | "rejected" | "deleted" | "all">("pending");
+  const [status, setStatus] = useState<
+    "pending" | "active" | "rejected" | "deleted" | "all"
+  >("pending");
   const [rating, setRating] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -60,13 +74,14 @@ export default function AdminReviewsPage() {
   };
 
   const statusTabs = useMemo(
-    () => [
-      { key: "pending", label: "Pending" },
-      { key: "active", label: "Active" },
-      { key: "rejected", label: "Rejected" },
-      // { key: "deleted", label: "Deleted" },
-      { key: "all", label: "All" },
-    ] as const,
+    () =>
+      [
+        { key: "pending", label: "Pending" },
+        { key: "active", label: "Active" },
+        { key: "rejected", label: "Rejected" },
+        // { key: "deleted", label: "Deleted" },
+        { key: "all", label: "All" },
+      ] as const,
     []
   );
 
@@ -110,19 +125,17 @@ export default function AdminReviewsPage() {
             `Review ${
               action === "approve" ? "approved" : "rejected"
             } successfully!`,
-            "success"
-            ,async ()=>{
-              await queryClient.invalidateQueries({ queryKey: ["admin-reviews"] });
+            "success",
+            async () => {
+              await queryClient.invalidateQueries({
+                queryKey: ["admin-reviews"],
+              });
             }
           );
           closeModal();
         },
-        onError: (err:any) => {
-          swal(
-            "Error",
-            createUserFriendlyError(err),
-            "error"
-          );
+        onError: (err: any) => {
+          swal("Error", createUserFriendlyError(err), "error");
         },
       }
     );
@@ -177,36 +190,36 @@ export default function AdminReviewsPage() {
       </div>
 
       {/* Search and Filters Section - Always visible */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 sm:p-4 lg:p-6 shadow-sm">
-            {/* Section Header */}
-            <div className="mb-4 sm:mb-6">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Search & Filters
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                Find specific reviews by searching content or applying filters
-              </p>
-            </div>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 sm:p-4 lg:p-6 shadow-sm">
+        {/* Section Header */}
+        <div className="mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            Search & Filters
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            Find specific reviews by searching content or applying filters
+          </p>
+        </div>
 
         {/* Status Tabs - Enhanced Design */}
-            <div className="mb-4 sm:mb-6">
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
-                Review Status
-              </label>
+        <div className="mb-4 sm:mb-6">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+            Review Status
+          </label>
           <div className="flex flex-wrap gap-1 sm:gap-2">
             {statusTabs.map((tab) => {
               const isActive = status === tab.key;
               const getStatusIcon = (key: string) => {
                 switch (key) {
-                  case 'pending':
+                  case "pending":
                     return <Clock className="w-3 h-3 sm:w-4 sm:h-4" />;
-                  case 'active':
+                  case "active":
                     return <Star className="w-3 h-3 sm:w-4 sm:h-4" />;
-                  case 'rejected':
+                  case "rejected":
                     return <X className="w-3 h-3 sm:w-4 sm:h-4" />;
                   // case 'deleted':
                   //   return <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />;
-                  case 'all':
+                  case "all":
                     return <List className="w-3 h-3 sm:w-4 sm:h-4" />;
                   default:
                     return null;
@@ -215,44 +228,48 @@ export default function AdminReviewsPage() {
 
               const getStatusColor = (key: string) => {
                 switch (key) {
-                  case 'pending':
-                    return isActive 
-                      ? 'bg-yellow-500 text-white border-yellow-500' 
-                      : 'text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:border-yellow-300 dark:text-yellow-400 dark:border-yellow-700 dark:hover:bg-yellow-900/20 dark:hover:border-yellow-600';
-                  case 'active':
-                    return isActive 
-                      ? 'bg-green-500 text-white border-green-500' 
-                      : 'text-green-600 border-green-200 hover:bg-green-50 hover:border-green-300 dark:text-green-400 dark:border-green-700 dark:hover:bg-green-900/20 dark:hover:border-green-600';
-                  case 'rejected':
-                    return isActive 
-                      ? 'bg-red-500 text-white border-red-500' 
-                      : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-yellow-300 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-900/20 dark:hover:border-red-600';
+                  case "pending":
+                    return isActive
+                      ? "bg-yellow-500 text-white border-yellow-500"
+                      : "text-yellow-600 border-yellow-200 hover:bg-yellow-50 hover:border-yellow-300 dark:text-yellow-400 dark:border-yellow-700 dark:hover:bg-yellow-900/20 dark:hover:border-yellow-600";
+                  case "active":
+                    return isActive
+                      ? "bg-green-500 text-white border-green-500"
+                      : "text-green-600 border-green-200 hover:bg-green-50 hover:border-green-300 dark:text-green-400 dark:border-green-700 dark:hover:bg-green-900/20 dark:hover:border-green-600";
+                  case "rejected":
+                    return isActive
+                      ? "bg-red-500 text-white border-red-500"
+                      : "text-red-600 border-red-200 hover:bg-red-50 hover:border-yellow-300 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-900/20 dark:hover:border-red-600";
                   // case 'deleted':
-                  //   return isActive 
-                  //     ? 'bg-gray-500 text-white border-gray-500' 
+                  //   return isActive
+                  //     ? 'bg-gray-500 text-white border-gray-500'
                   //     : 'text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-900/20 dark:hover:border-gray-600';
-                  case 'all':
-                    return isActive 
-                      ? 'bg-blue-500 text-white border-blue-500' 
-                      : 'text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 dark:text-blue-400 dark:border-blue-700 dark:hover:bg-blue-900/20 dark:hover:border-blue-600';
+                  case "all":
+                    return isActive
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 dark:text-blue-400 dark:border-blue-700 dark:hover:bg-blue-900/20 dark:hover:border-blue-600";
                   default:
-                    return '';
+                    return "";
                 }
               };
 
               return (
-                    <button
-                      key={tab.key}
-                      onClick={() => {
-                        setStatus(tab.key);
-                        setCurrentPage(1);
-                      }}
-                      disabled={isLoading}
+                <button
+                  key={tab.key}
+                  onClick={() => {
+                    setStatus(tab.key);
+                    setCurrentPage(1);
+                  }}
+                  disabled={isLoading}
                   className={`
                     flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 lg:py-2.5 rounded-lg border-2 font-medium text-xs sm:text-sm transition-all duration-200 
                     disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95
                     ${getStatusColor(tab.key)}
-                    ${isActive ? 'shadow-lg ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800' : ''}
+                    ${
+                      isActive
+                        ? "shadow-lg ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800"
+                        : ""
+                    }
                   `}
                 >
                   {getStatusIcon(tab.key)}
@@ -260,138 +277,167 @@ export default function AdminReviewsPage() {
                   {isActive && (
                     <div className="ml-1 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-current rounded-full animate-pulse"></div>
                   )}
-                    </button>
+                </button>
               );
             })}
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
+          {/* Search Section */}
+          <div className="flex-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Search Reviews
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
               </div>
+              <Input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search by comment, product title, or username..."
+                className="pl-8 sm:pl-10 pr-8 sm:pr-10 text-xs sm:text-sm"
+                disabled={isLoading}
+              />
+              {searchInput && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <button
+                    onClick={() => setSearchInput("")}
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
+                  >
+                    <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </button>
+                </div>
+              )}
             </div>
-            
-            <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
-              {/* Search Section */}
-              <div className="flex-1">
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Search Reviews
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
-                  </div>
-                  <Input
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    placeholder="Search by comment, product title, or username..."
-                    className="pl-8 sm:pl-10 pr-8 sm:pr-10 text-xs sm:text-sm"
-                    disabled={isLoading}
-                  />
-                  {searchInput && (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                      <button
-                        onClick={() => setSearchInput("")}
-                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
-                      >
-                        <X className="h-3 w-3 sm:h-4 sm:w-4" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-                {searchInput && (
-                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    Auto-searching in {searchInput !== search ? "500ms..." : "..."}
-                  </p>
-                )}
-              </div>
-
-              {/* Filters Section */}
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                {/* Rating Filter */}
-                <div className="min-w-[120px] sm:min-w-[140px]">
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Rating Filter
-                  </label>
-                  <select
-                    value={rating ?? ""}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setRating(value ? Number(value) : null);
-                      setCurrentPage(1);
-                    }}
-                    disabled={isLoading}
-                    className="w-full px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs sm:text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <option value="">All Ratings</option>
-                    <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
-                    <option value="4">⭐⭐⭐⭐ 4 Stars</option>
-                    <option value="3">⭐⭐⭐ 3 Stars</option>
-                    <option value="2">⭐⭐ 2 Stars</option>
-                    <option value="1">⭐ 1 Star</option>
-                  </select>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
-                  <button
-                    onClick={clearFilters}
-                    disabled={isLoading}
-                    className="px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-1 sm:gap-2 justify-center"
-                  >
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Reset
-                  </button>
-                  <button
-                    onClick={() => refetch()}
-                    disabled={isLoading || isRefetching}
-                    className="px-3 sm:px-4 py-2 sm:py-2.5 border border-flyverr-primary/30 text-flyverr-primary text-xs sm:text-sm font-medium rounded-lg hover:bg-flyverr-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-1 sm:gap-2 justify-center"
-                  >
-                    {isRefetching ? (
-                      <>
-                        <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-flyverr-primary border-t-transparent rounded-full animate-spin"></div>
-                        Refreshing...
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Refresh
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Active Filters Display */}
-            {(status !== "pending" || rating !== null || search) && (
-              <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-medium">Active Filters:</span>
-                  {status !== "pending" && (
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200 text-xs">
-                      Status: {status.charAt(0).toUpperCase() + status.slice(1)}
-                    </Badge>
-                  )}
-                  {rating !== null && (
-                    <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-200 text-xs">
-                      Rating: {rating} ⭐
-                    </Badge>
-                  )}
-                  {search && (
-                    <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-200 text-xs">
-                      Search: "{search}"
-                    </Badge>
-                  )}
-                  <button
-                    onClick={clearFilters}
-                    className="ml-2 text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline"
-                  >
-                    Clear All
-                  </button>
-                </div>
-              </div>
+            {searchInput && (
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                Auto-searching in {searchInput !== search ? "500ms..." : "..."}
+              </p>
             )}
           </div>
+
+          {/* Filters Section */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            {/* Rating Filter */}
+            <div className="min-w-[120px] sm:min-w-[140px]">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Rating Filter
+              </label>
+              <select
+                value={rating ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setRating(value ? Number(value) : null);
+                  setCurrentPage(1);
+                }}
+                disabled={isLoading}
+                className="w-full px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs sm:text-sm focus:ring-2 focus:ring-flyverr-primary focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">All Ratings</option>
+                <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                <option value="3">⭐⭐⭐ 3 Stars</option>
+                <option value="2">⭐⭐ 2 Stars</option>
+                <option value="1">⭐ 1 Star</option>
+              </select>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
+              <button
+                onClick={clearFilters}
+                disabled={isLoading}
+                className="px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-1 sm:gap-2 justify-center"
+              >
+                <svg
+                  className="w-3 h-3 sm:w-4 sm:h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Reset
+              </button>
+              <button
+                onClick={() => refetch()}
+                disabled={isLoading || isRefetching}
+                className="px-3 sm:px-4 py-2 sm:py-2.5 border border-flyverr-primary/30 text-flyverr-primary text-xs sm:text-sm font-medium rounded-lg hover:bg-flyverr-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-1 sm:gap-2 justify-center"
+              >
+                {isRefetching ? (
+                  <>
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-flyverr-primary border-t-transparent rounded-full animate-spin"></div>
+                    Refreshing...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-3 h-3 sm:w-4 sm:h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                    Refresh
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Active Filters Display */}
+        {(status !== "pending" || rating !== null || search) && (
+          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+              <span className="font-medium">Active Filters:</span>
+              {status !== "pending" && (
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200 text-xs"
+                >
+                  Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+                </Badge>
+              )}
+              {rating !== null && (
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-200 text-xs"
+                >
+                  Rating: {rating} ⭐
+                </Badge>
+              )}
+              {search && (
+                <Badge
+                  variant="secondary"
+                  className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-200 text-xs"
+                >
+                  Search: "{search}"
+                </Badge>
+              )}
+              <button
+                onClick={clearFilters}
+                className="ml-2 text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Enhanced Reviews Table */}
       <Card className="border-0 bg-white dark:bg-gray-800 shadow-lg">
@@ -503,7 +549,9 @@ export default function AdminReviewsPage() {
                     <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 font-semibold text-xs sm:text-sm uppercase tracking-wide min-w-[100px] sm:min-w-[120px] lg:min-w-[150px]">
                       Date
                     </th>
-                    <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 font-semibold text-xs sm:text-sm uppercase tracking-wide min-w-[120px] sm:min-w-[150px] lg:min-w-[200px]">Actions</th>
+                    <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 font-semibold text-xs sm:text-sm uppercase tracking-wide min-w-[120px] sm:min-w-[150px] lg:min-w-[200px]">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
@@ -547,8 +595,9 @@ export default function AdminReviewsPage() {
                           <p className="font-semibold text-gray-900 dark:text-white truncate text-xs sm:text-sm">
                             {review.product.title}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
-                            ID: {review.product.id.slice(0, 8)}
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Round {review.product.current_round} •{" "}
+                            {review.product.current_stage}
                           </p>
                         </div>
                       </td>
@@ -609,7 +658,8 @@ export default function AdminReviewsPage() {
                               : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-200"
                           }`}
                         >
-                          {review.status.charAt(0).toUpperCase() + review.status.slice(1)}
+                          {review.status.charAt(0).toUpperCase() +
+                            review.status.slice(1)}
                         </Badge>
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4">
