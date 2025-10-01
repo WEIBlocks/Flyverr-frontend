@@ -86,7 +86,7 @@ export default function Login() {
                   <Zap className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <h1 className="text-3xl font-bold text-flyverr-primary bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl font-bold bg-clip-text text-foreground mb-2">
                 Welcome Back to Your Marketplace
               </h1>
               <p className="text-base text-muted-foreground max-w-2xl mx-auto">
