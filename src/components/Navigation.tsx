@@ -45,26 +45,16 @@ const Navigation = () => {
     setMounted(true);
   }, []);
 
-  const navigationItems = isAuthenticated
-    ? [
-        { name: "Home", href: "/", icon: Home },
-        { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
-        { name: "FAQ", href: "/faq", icon: HelpCircle },
-        {
-          name: "Contact Us",
-          href: "/contact",
-          icon: Mail,
-        },
-      ]
-    : [
-        { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
-        { name: "FAQ", href: "/faq", icon: HelpCircle },
-        {
-          name: "Contact Us",
-          href: "/contact",
-          icon: Mail,
-        },
-      ];
+  const navigationItems = [
+    { name: "Home", href: "/", icon: Home },
+    { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
+    { name: "FAQ", href: "/faq", icon: HelpCircle },
+    {
+      name: "Contact Us",
+      href: "/contact",
+      icon: Mail,
+    },
+  ];
 
   const isActive = (href: string) => {
     if (href === "/") {
@@ -158,10 +148,7 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16 sm:h-18 lg:h-20">
           {/* Logo */}
           <div className="flex items-center">
-            <Link
-              href={isAuthenticated ? "/" : "/marketplace"}
-              className="flex items-center space-x-2 group"
-            >
+            <Link href="/" className="flex items-center space-x-2 group">
               <div className="relative">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-flyverr-primary rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <svg
@@ -445,10 +432,7 @@ const Navigation = () => {
               <div className="flex flex-col h-full">
                 {/* Mobile Header - Fixed at top */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
-                  <Link
-                    href={isAuthenticated ? "/" : "/marketplace"}
-                    className="flex items-center space-x-2"
-                  >
+                  <Link href="/" className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-flyverr-primary rounded-lg flex items-center justify-center">
                       <svg
                         className="w-5 h-5 text-white"
