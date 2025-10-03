@@ -1,21 +1,14 @@
 "use client";
-import { AnimatedHero } from "@/components/AnimatedHero";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
   TrendingUp,
-  Star,
   Sparkles,
-  Download,
   DollarSign,
-  Heart,
-  Plus,
   Check,
   Zap,
-  Shield,
-  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -23,7 +16,6 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { useAuth } from "@/contexts/AuthContext";
-import AddProuduct from "@/features/user/product/components/AddProuduct";
 
 /**
  * Home Page - Public Route
@@ -92,119 +84,137 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-100 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900">
-        {/* Modern Geometric Background Pattern */}
+      <section className="relative overflow-hidden bg-[#1A1A1A] dark:bg-[#1A1A1A] h-screen md:h-[92vh]">
+        {/* Background Image */}
         <div className="absolute inset-0">
-          {/* Subtle Grid Pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.08)_1px,transparent_1px)] bg-[size:20px_20px] sm:bg-[size:25px_25px] md:bg-[size:30px_30px] lg:bg-[size:35px_35px] xl:bg-[size:40px_40px] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] dark:bg-[size:20px_20px] dark:sm:bg-[size:25px_25px] dark:md:bg-[size:30px_30px] dark:lg:bg-[size:35px_35px] dark:xl:bg-[size:40px_40px]"></div>
-
-          {/* Modern Floating Elements */}
-          <div className="absolute top-8 sm:top-12 md:top-16 lg:top-20 xl:top-24 left-4 sm:left-6 md:left-8 lg:left-10 xl:left-12 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 xl:w-3 xl:h-3 bg-blue-500 rounded-full opacity-40 animate-pulse shadow-lg shadow-blue-200"></div>
-          <div className="absolute top-12 sm:top-16 md:top-20 lg:top-24 xl:top-28 left-8 sm:left-12 md:left-16 lg:left-20 xl:left-24 w-0.5 h-0.5 sm:w-1 sm:h-1 md:w-1.5 md:h-1.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 bg-indigo-500 rounded-full opacity-50 shadow-lg shadow-indigo-200"></div>
-          <div className="absolute top-16 sm:top-20 md:top-24 lg:top-28 xl:top-32 left-6 sm:left-10 md:left-12 lg:left-16 xl:left-20 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 xl:w-3 xl:h-3 bg-purple-500 rounded-full opacity-45 shadow-lg shadow-purple-200"></div>
-
-          <div className="absolute top-10 sm:top-14 md:top-18 lg:top-22 xl:top-26 right-8 sm:right-12 md:right-16 lg:right-20 xl:right-24 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 xl:w-3 xl:h-3 bg-emerald-500 rounded-full opacity-40 animate-pulse delay-1000 shadow-lg shadow-emerald-200"></div>
-          <div className="absolute top-14 sm:top-18 md:top-22 lg:top-26 xl:top-30 right-12 sm:right-16 md:right-20 lg:right-24 xl:right-28 w-0.5 h-0.5 sm:w-1 sm:h-1 md:w-1.5 md:h-1.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 bg-teal-500 rounded-full opacity-50 shadow-lg shadow-teal-200"></div>
-          <div className="absolute top-18 sm:top-22 md:top-26 lg:top-30 xl:top-34 right-10 sm:right-14 md:right-18 lg:right-22 xl:right-26 w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-2.5 lg:h-2.5 xl:w-3 xl:h-3 bg-cyan-500 rounded-full opacity-45 shadow-lg shadow-cyan-200"></div>
-
-          {/* Subtle Accent Lines */}
-          <div className="absolute top-1/4 left-0 w-8 sm:w-12 md:w-16 lg:w-20 xl:w-24 h-0.5 sm:h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent dark:via-blue-800 shadow-sm shadow-blue-200"></div>
-          <div className="absolute top-1/3 right-0 w-12 sm:w-16 md:w-20 lg:w-24 xl:w-28 h-0.5 sm:h-px bg-gradient-to-l from-transparent via-indigo-400 to-transparent dark:via-indigo-800 shadow-sm shadow-indigo-200"></div>
-
-          {/* Modern Card-like Elements */}
-          <div className="absolute top-1/2 left-2 sm:left-3 md:left-4 lg:left-6 xl:left-8 w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-32 lg:w-28 lg:h-36 xl:w-32 xl:h-40 bg-white/60 dark:bg-gray-800/40 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/40 dark:border-gray-700/20 shadow-lg shadow-gray-200/50 transform rotate-6 sm:rotate-8 md:rotate-10 lg:rotate-12 xl:rotate-15"></div>
-          <div className="absolute bottom-1/3 right-4 sm:right-6 md:right-8 lg:right-10 xl:right-12 w-12 h-16 sm:w-16 sm:h-20 md:w-20 md:h-28 lg:w-24 lg:h-32 xl:w-28 xl:h-36 bg-white/50 dark:bg-gray-800/30 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/40 dark:border-gray-700/20 shadow-lg shadow-gray-200/50 transform -rotate-4 sm:-rotate-5 md:-rotate-6 lg:-rotate-8 xl:-rotate-10"></div>
-
-          {/* Additional Light Mode Background Elements */}
-          <div className="absolute top-1/3 left-1/4 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 bg-blue-50/30 dark:bg-blue-900/10 rounded-full blur-3xl opacity-60"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 bg-indigo-50/30 dark:bg-indigo-900/10 rounded-full blur-3xl opacity-60"></div>
-          <div className="absolute top-3/4 left-1/3 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 bg-purple-50/30 dark:bg-purple-900/10 rounded-full blur-3xl opacity-60"></div>
+          <Image
+            src="/hero.png"
+            alt="Hero Background"
+            fill
+            className="object-cover opacity-100"
+            priority
+          />
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pt-8 sm:pt-12 md:pt-16 lg:pt-20 xl:pt-24 pb-12 sm:pb-16 md:pb-20 lg:pb-24 xl:pb-28">
-          {/* Centered Content Layout */}
-          <div className="text-center max-w-4xl mx-auto">
-            {/* Badge - Modern and Appealing */}
-            <div
-              className={`inline-flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-2 sm:py-3 md:py-4 lg:py-4 xl:py-5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-800 dark:text-white border border-gray-200/50 dark:border-gray-700/50 text-xs sm:text-xs md:text-xs lg:text-sm xl:text-base font-semibold rounded-xl sm:rounded-2xl shadow-lg shadow-gray-200/50 dark:shadow-gray-900/50 mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 transform transition-all duration-700 hover:scale-105 hover:shadow-xl ${
-                isVisible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
-              }`}
-            >
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 lg:w-3 lg:h-3 xl:w-3.5 xl:h-3.5 bg-flyverr-primary rounded-full animate-pulse"></div>
-              <span className="px-1 sm:px-2">
-                B2C & C2C Digital Resale Marketplace
-              </span>
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 lg:w-3 lg:h-3 xl:w-3.5 xl:h-3.5 bg-flyverr-primary rounded-full animate-pulse delay-1000"></div>
+        {/* Main Content Container */}
+        <div className="relative h-full flex flex-col">
+          {/* Content Area */}
+          <div className="flex-1 flex items-center">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
+                {/* Left Side - Text Content */}
+                <div className="text-left space-y-4 sm:space-y-6 lg:space-y-8 order-2 lg:order-1">
+                  {/* Main Heading */}
+                  <div
+                    className={`transform transition-all duration-1000 delay-200 ${
+                      isVisible
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-10 opacity-0"
+                    }`}
+                  >
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl text-white leading-tight font-normal">
+                      <span className="font-bold">Profit</span> From What You
+                      <br />
+                      <span className="font-bold">Love</span>
+                    </h1>
+                  </div>
+
+                  {/* Subheading */}
+                  <div
+                    className={`transform transition-all duration-1000 delay-400 ${
+                      isVisible
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-10 opacity-0"
+                    }`}
+                  >
+                    <p className="text-base sm:text-lg md:text-xl lg:text-xl text-[#CCCCCC] leading-relaxed max-w-xl">
+                      The marketplace for creators and traders building wealth
+                      in the digital economy.
+                    </p>
+                  </div>
+
+                  {/* CTA Buttons */}
+                  <div
+                    className={`flex flex-col sm:flex-row gap-4 lg:gap-4 transform transition-all duration-1000 delay-600 ${
+                      isVisible
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-10 opacity-0"
+                    }`}
+                  >
+                    {isAuthenticated ? (
+                      <Link href="/user/products">
+                        <Button className="group relative px-8 py-4 bg-white hover:bg-gray-50 text-[#1A1A1A] text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden w-full sm:w-auto">
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                          <span className="relative z-10 flex items-center justify-center gap-2">
+                            <Sparkles className="w-5 h-5" />
+                            Get Started
+                          </span>
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Link href="/signup">
+                        <Button className="group relative px-8 py-4 bg-white hover:bg-gray-50 text-[#1A1A1A] text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden w-full sm:w-auto">
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                          <span className="relative z-10 flex items-center justify-center gap-2">
+                            <Sparkles className="w-5 h-5" />
+                            Get Started
+                          </span>
+                        </Button>
+                      </Link>
+                    )}
+
+                    <Button
+                      onClick={handleExploreMarketplace}
+                      variant="outline"
+                      className="group px-8 py-4 bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#1A1A1A] text-base font-semibold rounded-full transition-all duration-300 transform hover:scale-105 w-full sm:w-auto"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        Explore products
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Right Side - 3D Illustration */}
+                <div className="relative flex justify-center lg:justify-end order-3ete lg:order-2">
+                  <div
+                    className={`transform transition-all duration-1000 delay-1000 ${
+                      isVisible
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-10 opacity-0"
+                    }`}
+                  >
+                    <Image
+                      src="/Bag.png"
+                      alt="3D Briefcase with Shield and Coins"
+                      width={700}
+                      height={700}
+                      className="w-full max-w-md lg:max-w-lg xl:max-w-xl h-auto"
+                      priority
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
 
-            {/* Main Heading - Clean Typography */}
+          {/* Bottom Tagline - Absolute Bottom Center */}
+          <div className="absolute bottom-8 lg:bottom-12 left-0 right-0 flex justify-center">
             <div
-              className={`space-y-4 sm:space-y-6 mb-4 sm:mb-6 transform transition-all duration-1000 delay-200 ${
+              className={`transform transition-all duration-1000 delay-800 ${
                 isVisible
                   ? "translate-y-0 opacity-100"
                   : "translate-y-10 opacity-0"
               }`}
             >
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                Profit From What You{" "}
-                <span className="relative">
-                  <span className="relative z-10 text-flyverr-primary dark:text-flyverr-primary">
-                    Love
-                  </span>
-                  <span className="absolute -bottom-1 sm:-bottom-1.5 md:-bottom-2 lg:-bottom-2.5 xl:-bottom-3 left-0 right-0 h-2 sm:h-2.5 md:h-3 lg:h-3.5 xl:h-4 bg-yellow-200 dark:bg-yellow-800/30 rounded-full transform -rotate-1"></span>
-                </span>
-              </h1>
-
-              {/* Subheadline - Clear and Concise */}
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto font-normal px-2 sm:px-4">
-                The marketplace for creators and traders building wealth in the
-                digital economy.
-                <span className="block mt-2 sm:mt-3 md:mt-4 lg:mt-5 xl:mt-5 text-flyverr-primary dark:text-flyverr-primary font-semibold">
-                  <span className="inline-block overflow-hidden">
-                    <span className="typing-animation">
-                      Create. Trade. Earn.
-                    </span>
-                  </span>
-                </span>
+              <p className="text-[#CCCCCC] text-sm sm:text-base md:text-lg text-center">
+                <span className="font-bold">Create.</span>
+                <span className="mx-4 sm:mx-6 md:mx-8"></span>
+                <span className="font-bold">Trade.</span>
+                <span className="mx-4 sm:mx-6 md:mx-8"></span>
+                <span className="font-bold">Earn.</span>
               </p>
-            </div>
-
-            {/* CTA Buttons - Clean and Contrasting */}
-            <div
-              className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 transform transition-all duration-1000 delay-500 ${
-                isVisible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
-              }`}
-            >
-              {isAuthenticated ? (
-                <Link href="/user/products">
-                  <Button className="group relative px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-3 sm:py-4 md:py-4 lg:py-5 xl:py-6 bg-flyverr-primary hover:bg-flyverr-primary/90 dark:bg-flyverr-primary dark:hover:bg-flyverr-primary/90 text-white text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                    <Sparkles className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 mr-1.5 sm:mr-2 md:mr-2.5 lg:mr-3 xl:mr-4" />
-                    <span className="relative z-10">Start Creating Today</span>
-                  </Button>
-                </Link>
-              ) : (
-                <Link href="/signup">
-                  <Button className="group relative px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-3 sm:py-4 md:py-4 lg:py-5 xl:py-6 bg-flyverr-primary hover:bg-flyverr-primary/90 dark:bg-flyverr-primary dark:hover:bg-flyverr-primary/90 text-white text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                    <Sparkles className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 mr-1.5 sm:mr-2 md:mr-2.5 lg:mr-3 xl:mr-4" />
-                    <span className="relative z-10">Get Started Free</span>
-                  </Button>
-                </Link>
-              )}
-
-              <Button
-                onClick={handleExploreMarketplace}
-                variant="outline"
-                className="group px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-3 sm:py-4 md:py-4 lg:py-5 xl:py-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-2 border-gray-200/50 dark:border-gray-700/50 text-gray-700 dark:text-gray-300 hover:border-flyverr-primary hover:text-flyverr-primary dark:hover:border-flyverr-primary dark:hover:text-flyverr-primary text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 hover:bg-white dark:hover:bg-gray-800"
-              >
-                <span className="relative z-10">Find Profitable Products</span>
-                <ArrowRight className="ml-1.5 sm:ml-2 md:ml-2.5 lg:ml-3 xl:ml-4 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 transition-transform group-hover:translate-x-1" />
-              </Button>
             </div>
           </div>
         </div>
@@ -536,7 +546,7 @@ export default function Home() {
             {/* Left Card - Platform Features */}
             <div className="sm:col-span-2 lg:col-span-1 lg:row-span-2 bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-lg border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
-                What's in Your Creator Kit?
+                What&apos;s in Your Creator Kit?
               </h3>
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center gap-2 sm:gap-3">
