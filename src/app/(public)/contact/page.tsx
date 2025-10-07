@@ -22,6 +22,7 @@ import {
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { sendContactForm } from "@/features/contact/services/api";
+import ColorSchemeTest from "@/components/ColorSchemeTest";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({

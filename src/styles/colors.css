@@ -1,0 +1,195 @@
+/* 
+ * Global Color Scheme for Flyverr
+ * This file contains all color definitions for the application
+ * 
+ * Light Theme Colors:
+ * - Primary Dark: #1B1C25
+ * - Background White: #FFFFFF
+ * 
+ * Dark Theme: Remains unchanged from existing implementation
+ */
+
+:root {
+  /* ===== LIGHT THEME COLORS ===== */
+
+  /* Base Colors */
+  --background: 0 0% 100%; /* #FFFFFF */
+  --foreground: 240 5% 10%; /* #1B1C25 - converted to HSL */
+
+  /* Card Colors */
+  --card: 0 0% 100%; /* #FFFFFF */
+  --card-foreground: 240 5% 10%; /* #1B1C25 */
+
+  /* Popover Colors */
+  --popover: 0 0% 100%; /* #FFFFFF */
+  --popover-foreground: 240 5% 10%; /* #1B1C25 */
+
+  /* Primary Colors */
+  --primary: 240 5% 10%; /* #1B1C25 */
+  --primary-foreground: 0 0% 100%; /* #FFFFFF */
+
+  /* Secondary Colors */
+  --secondary: 240 5% 96%; /* Light gray for secondary elements */
+  --secondary-foreground: 240 5% 10%; /* #1B1C25 */
+
+  /* Muted Colors */
+  --muted: 240 5% 96%; /* Light gray for muted elements */
+  --muted-foreground: 240 5% 46%; /* Medium gray for muted text */
+
+  /* Accent Colors */
+  --accent: 240 5% 96%; /* Light gray for accent elements */
+  --accent-foreground: 240 5% 10%; /* #1B1C25 */
+
+  /* Destructive Colors */
+  --destructive: 0 84% 60%; /* Red for destructive actions */
+  --destructive-foreground: 0 0% 100%; /* #FFFFFF */
+
+  /* Border and Input Colors */
+  --border: 240 5% 90%; /* Light gray for borders */
+  --input: 240 5% 90%; /* Light gray for inputs */
+  --ring: 240 5% 10%; /* #1B1C25 for focus rings */
+
+  /* Border Radius */
+  --radius: 0.5rem;
+
+  /* ===== FLYVERR CUSTOM COLORS - LIGHT THEME ===== */
+  --flyverr-primary: #1b1c25; /* Primary dark color */
+  --flyverr-secondary: #1b1c25; /* Same as primary for consistency */
+  --flyverr-accent: #1b1c25; /* Same as primary for consistency */
+  --flyverr-neutral: #ffffff; /* Background white */
+  --flyverr-text: #1b1c25; /* Text color */
+  --flyverr-text-muted: #6b7280; /* Muted text color */
+  --flyverr-border: #e5e7eb; /* Border color */
+  --flyverr-hover: #f9fafb; /* Hover background */
+}
+
+/* ===== DARK THEME COLORS ===== */
+/* Dark theme remains unchanged from existing implementation */
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 215, 14%, 34%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+
+  /* Flyverr Custom Colors - Dark Mode (unchanged) */
+  --flyverr-primary: #4f46e5;
+  --flyverr-secondary: #4f46e5;
+  --flyverr-accent: #fbbf24;
+  --flyverr-neutral: #1f2937;
+  --flyverr-text: #f9fafb;
+  --flyverr-text-muted: #9ca3af;
+  --flyverr-border: #374151;
+  --flyverr-hover: #374151;
+}
+
+/* ===== COLOR UTILITY CLASSES ===== */
+/* These classes provide easy access to the color variables */
+
+/* Background Colors */
+.bg-flyverr-primary {
+  background-color: var(--flyverr-primary);
+}
+
+.bg-flyverr-secondary {
+  background-color: var(--flyverr-secondary);
+}
+
+.bg-flyverr-accent {
+  background-color: var(--flyverr-accent);
+}
+
+.bg-flyverr-neutral {
+  background-color: var(--flyverr-neutral);
+}
+
+.bg-flyverr-hover {
+  background-color: var(--flyverr-hover);
+}
+
+/* Text Colors */
+.text-flyverr-primary {
+  color: var(--flyverr-primary);
+}
+
+.text-flyverr-secondary {
+  color: var(--flyverr-secondary);
+}
+
+.text-flyverr-accent {
+  color: var(--flyverr-accent);
+}
+
+.text-flyverr-text {
+  color: var(--flyverr-text);
+}
+
+.text-flyverr-text-muted {
+  color: var(--flyverr-text-muted);
+}
+
+/* Border Colors */
+.border-flyverr-primary {
+  border-color: var(--flyverr-primary);
+}
+
+.border-flyverr-secondary {
+  border-color: var(--flyverr-secondary);
+}
+
+.border-flyverr-border {
+  border-color: var(--flyverr-border);
+}
+
+/* Hover States */
+.hover\:bg-flyverr-primary:hover {
+  background-color: var(--flyverr-primary);
+}
+
+.hover\:bg-flyverr-secondary:hover {
+  background-color: var(--flyverr-secondary);
+}
+
+.hover\:bg-flyverr-hover:hover {
+  background-color: var(--flyverr-hover);
+}
+
+.hover\:text-flyverr-primary:hover {
+  color: var(--flyverr-primary);
+}
+
+.hover\:text-flyverr-secondary:hover {
+  color: var(--flyverr-secondary);
+}
+
+/* Focus States */
+.focus\:ring-flyverr-primary:focus {
+  --tw-ring-color: var(--flyverr-primary);
+}
+
+.focus\:ring-flyverr-secondary:focus {
+  --tw-ring-color: var(--flyverr-secondary);
+}
+
+/* Ring Colors */
+.ring-flyverr-primary {
+  --tw-ring-color: var(--flyverr-primary);
+}
+
+.ring-flyverr-secondary {
+  --tw-ring-color: var(--flyverr-secondary);
+}

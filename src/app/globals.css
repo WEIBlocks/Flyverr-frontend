@@ -1,69 +1,8 @@
+@import "../styles/colors.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-
-    /* Flyverr Custom Colors */
-    --flyverr-primary: #2D2A7A;
-    --flyverr-secondary: #5AD6A7;
-    --flyverr-accent: #FACC15;
-    --flyverr-neutral: #F8FAFC;
-    --flyverr-text: #0F172A;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 215, 14%, 34%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-
-    /* Flyverr Custom Colors - Dark Mode */
-    --flyverr-primary: #4F46E5;
-    --flyverr-secondary: #4F46E5;
-    --flyverr-accent: #FBBF24;
-    --flyverr-neutral: #1F2937;
-    --flyverr-text: #F9FAFB;
-  }
-}
-
-
 
 @layer base {
   * {
@@ -73,7 +12,6 @@
     @apply bg-flyverr-neutral dark:bg-gray-900 text-foreground;
   }
 }
-  
 
 /* hidden control button of number input field  */
 input::-webkit-outer-spin-button,
@@ -81,7 +19,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -109,78 +47,14 @@ input[type=number] {
     }
   }
 
-  /* Flyverr Color Utilities */
-  .bg-flyverr-primary {
-    background-color: var(--flyverr-primary);
-  }
-  
-  .bg-flyverr-secondary {
-    background-color: var(--flyverr-secondary);
-  }
-  
-  .bg-flyverr-accent {
-    background-color: var(--flyverr-accent);
-  }
-  
-  .bg-flyverr-neutral {
-    background-color: var(--flyverr-neutral);
-  }
-  
-  .text-flyverr-primary {
-    color: var(--flyverr-primary);
-  }
-  
-  .text-flyverr-secondary {
-    color: var(--flyverr-secondary);
-  }
-  
-  .text-flyverr-accent {
-    color: var(--flyverr-accent);
-  }
-  
-  .text-flyverr-text {
-    color: var(--flyverr-text);
-  }
-  
-  .border-flyverr-primary {
-    border-color: var(--flyverr-primary);
-  }
-  
-  .border-flyverr-secondary {
-    border-color: var(--flyverr-secondary);
-  }
-  
-  .hover\:bg-flyverr-primary:hover {
-    background-color: var(--flyverr-primary);
-  }
-  
-  .hover\:bg-flyverr-secondary:hover {
-    background-color: var(--flyverr-secondary);
-  }
-  
-  .hover\:text-flyverr-primary:hover {
-    color: var(--flyverr-primary);
-  }
-  
-  .hover\:text-flyverr-secondary:hover {
-    color: var(--flyverr-secondary);
-  }
-  
-  .ring-flyverr-primary {
-    --tw-ring-color: var(--flyverr-primary);
-  }
-  
-  .ring-flyverr-secondary {
-    --tw-ring-color: var(--flyverr-secondary);
-  }
-
   /* Typing Animation */
   .typing-animation {
     display: inline-block;
     overflow: hidden;
     border-right: 3px solid currentColor;
     white-space: nowrap;
-    animation: typing 3s steps(20, end), blink-caret 0.75s step-end 8, hide-cursor 0.1s 3s forwards;
+    animation: typing 3s steps(20, end), blink-caret 0.75s step-end 8,
+      hide-cursor 0.1s 3s forwards;
     animation-fill-mode: forwards;
   }
 
@@ -194,7 +68,8 @@ input[type=number] {
   }
 
   @keyframes blink-caret {
-    from, to {
+    from,
+    to {
       border-color: transparent;
     }
     50% {

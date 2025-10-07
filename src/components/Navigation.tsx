@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
@@ -45,26 +46,16 @@ const Navigation = () => {
     setMounted(true);
   }, []);
 
-  const navigationItems = isAuthenticated
-    ? [
-        { name: "Home", href: "/", icon: Home },
-        { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
-        { name: "FAQ", href: "/faq", icon: HelpCircle },
-        {
-          name: "Contact Us",
-          href: "/contact",
-          icon: Mail,
-        },
-      ]
-    : [
-        { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
-        { name: "FAQ", href: "/faq", icon: HelpCircle },
-        {
-          name: "Contact Us",
-          href: "/contact",
-          icon: Mail,
-        },
-      ];
+  const navigationItems = [
+    { name: "Home", href: "/", icon: Home },
+    { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
+    { name: "FAQ", href: "/faq", icon: HelpCircle },
+    {
+      name: "Contact Us",
+      href: "/contact",
+      icon: Mail,
+    },
+  ];
 
   const isActive = (href: string) => {
     if (href === "/") {
@@ -158,21 +149,16 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16 sm:h-18 lg:h-20">
           {/* Logo */}
           <div className="flex items-center">
-            <Link
-              href={isAuthenticated ? "/" : "/marketplace"}
-              className="flex items-center space-x-2 group"
-            >
+            <Link href="/" className="flex items-center space-x-3 group">
               <div className="relative">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-flyverr-primary rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                  </svg>
-                </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                <Image
+                  src="/logo.png"
+                  alt="Flyverr Logo"
+                  width={40}
+                  height={40}
+                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 group-hover:scale-105 transition-transform duration-300"
+                  priority
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-lg sm:text-xl lg:text-2xl font-bold text-flyverr-primary">
@@ -445,10 +431,7 @@ const Navigation = () => {
               <div className="flex flex-col h-full">
                 {/* Mobile Header - Fixed at top */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
-                  <Link
-                    href={isAuthenticated ? "/" : "/marketplace"}
-                    className="flex items-center space-x-2"
-                  >
+                  <Link href="/" className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-flyverr-primary rounded-lg flex items-center justify-center">
                       <svg
                         className="w-5 h-5 text-white"

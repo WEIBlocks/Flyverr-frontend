@@ -8,7 +8,7 @@ import { useRouter, usePathname } from "next/navigation";
 
 /**
  * Public Layout with selective access control:
- * - Home page (/) - Protected (requires login)
+ * - Home page (/) - Public (no login required)
  * - FAQ page (/faq) - Public (no login required)
  * - Marketplace page (/marketplace) - Public (no login required)
  * - Blog page (/blog) - Public (no login required)
@@ -22,7 +22,6 @@ export default function PublicLayout({
   const router = useRouter();
   const pathname = usePathname();
 
-
   useEffect(() => {
     // Wait for auth to be determined before making decisions
     if (isLoading || !mounted) return;
@@ -32,18 +31,14 @@ export default function PublicLayout({
       return;
     }
 
-    // Only protect the home page (/) - require login for access
-    // All other pages in this layout are public (faq, marketplace, blog)
-    if (!isAuthenticated && pathname === "/") {
-      router.push("/login");
-      return;
-    }
+    // All pages in this layout are public (home, faq, marketplace, blog)
+    // No authentication required for any of these pages
 
     // Allow rendering if auth check is complete
   }, [isAuthenticated, isLoading, pathname, router, mounted]);
 
   // Don't render until we've determined auth status and mounted
-  if (isLoading  || !mounted) {
+  if (isLoading || !mounted) {
     return (
       <div className="min-h-screen bg-flyverr-neutral dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
