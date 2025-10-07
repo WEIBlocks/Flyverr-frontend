@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -87,7 +88,9 @@ export default function DashboardLayout({
     };
 
     document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("touchstart", handlePointerDown, { passive: true });
+    document.addEventListener("touchstart", handlePointerDown, {
+      passive: true,
+    });
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
@@ -205,9 +208,14 @@ export default function DashboardLayout({
         {/* Top Section - Logo */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-border flex-shrink-0">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-flyverr-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">F</span>
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Flyverr Logo"
+              width={32}
+              height={32}
+              className="w-8 h-8"
+              priority
+            />
             <span className="ml-3 text-xl font-bold">
               <span
                 className={`transition-opacity duration-200 ${
@@ -239,7 +247,11 @@ export default function DashboardLayout({
               const isActive = pathname === item.href;
               const IconComp = getIconByName(item.iconName);
               return (
-                <Link key={item.name} href={item.href} onClick={() => setSidebarOpen(false)}>
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                >
                   <div
                     className={`
                     flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer transition-all duration-200 relative
@@ -597,7 +609,9 @@ export default function DashboardLayout({
                         mounted && user ? "opacity-100" : "opacity-0"
                       }`}
                     >
-                      {mounted && user ? user.first_name?.charAt(0) || "U" : "U"}
+                      {mounted && user
+                        ? user.first_name?.charAt(0) || "U"
+                        : "U"}
                     </span>
                   </span>
                 </button>
@@ -607,7 +621,9 @@ export default function DashboardLayout({
                     <div className="px-4 py-3">
                       <p className="text-sm font-medium">
                         {mounted && user
-                          ? `${user?.first_name || ""} ${user?.last_name || ""}`.trim() || "User"
+                          ? `${user?.first_name || ""} ${
+                              user?.last_name || ""
+                            }`.trim() || "User"
                           : "User"}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
@@ -615,7 +631,10 @@ export default function DashboardLayout({
                       </p>
                     </div>
                     <div className="py-1 border-t border-border">
-                      <Link href={profileHref ?? "/user/profile"} onClick={() => setUserMenuOpen(false)}>
+                      <Link
+                        href={profileHref ?? "/user/profile"}
+                        onClick={() => setUserMenuOpen(false)}
+                      >
                         <div className="w-full px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
                           Profile
                         </div>
