@@ -313,7 +313,7 @@ export default function Home() {
       </section>
 
       {/* Trusted by Thousands of Creators Section */}
-      <section className="py-16 sm:py-20 md:py-24 lg:py-28 bg-gray-50 dark:bg-gray-900">
+      <section className="py-16 sm:py-20 md:py-24 lg:py-24 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-start">
             {/* Left Side - Title */}
