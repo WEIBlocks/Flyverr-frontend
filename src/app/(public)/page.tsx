@@ -176,7 +176,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-flyverr-neutral dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[#1A1A1A] dark:bg-[#1A1A1A] h-screen md:h-[92vh]">
+      <section className="relative overflow-hidden bg-[#1A1A1A] dark:bg-[#1A1A1A] h-[calc(100vh-4rem)] sm:h-[calc(100vh-4.5rem)] lg:h-[calc(70vh)]">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
